@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "034509b3e431d9f2",
+      "ts": 1791137206360,
+      "baslik": "İran Petrol Bakanı Muhsin Paknejad istifa etti"
+    },
+    {
       "anahtar": "5c324da6fc910d71",
       "ts": 1791016394942,
       "baslik": "Dolar endeksi yılın 9 ayında Fed'e ilişkin beklentiler ve jeopolitik gelişmelerle yükseldi"
@@ -254,11 +259,6 @@
       "anahtar": "5e17e246be5fe69d",
       "ts": 1790560142535,
       "baslik": "İran ve ABD Hürmüz konusunda anlaşamadı, petrol yükseldi"
-    },
-    {
-      "anahtar": "e47db8249fac0713",
-      "ts": 1790450242083,
-      "baslik": "SON DAKİKA: Amine Cansu Çelik partisinden istifa etti"
     }
   ]
 }
