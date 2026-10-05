@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "f1666bd427d984f7",
+      "ts": 1791180648248,
+      "baslik": "Bakıra Fed desteği: Fiyatlar haftanın ilk gününde yükseldi"
+    },
+    {
       "anahtar": "be87ee6cb0b1b348",
       "ts": 1791164353033,
       "baslik": "Zayıf istihdam verisi Fed faiz artışı beklentilerini azaltırken altın yükseldi"
@@ -254,16 +259,6 @@
       "anahtar": "fe2aeb64fc72695f",
       "ts": 1790584904155,
       "baslik": "Alman tahvil faizleri durdu, yatırımcılar enerji enflasyonunu tarttı"
-    },
-    {
-      "anahtar": "447dab2a03ce6b19",
-      "ts": 1790560142535,
-      "baslik": "Altın 4.300 doların altına geriledi: Petrol ve Fed baskısı sürüyor"
-    },
-    {
-      "anahtar": "5e17e246be5fe69d",
-      "ts": 1790560142535,
-      "baslik": "İran ve ABD Hürmüz konusunda anlaşamadı, petrol yükseldi"
     }
   ]
 }
