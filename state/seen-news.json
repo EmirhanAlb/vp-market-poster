@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "65660e0819c3cf85",
+      "ts": 1791190311946,
+      "baslik": "Bakan Şimşek: Yıllık enflasyon 57 ay sonra %30’un altına geriledi"
+    },
+    {
       "anahtar": "85cbe0baf48127bc",
       "ts": 1791184272264,
       "baslik": "Son dakika... Eylül ayı enflasyon verileri açıklandı"
@@ -264,11 +269,6 @@
       "anahtar": "2798fe59a7c64760",
       "ts": 1790593401718,
       "baslik": "Petrol fiyatları sıçradı: Bitcoin için savaş baskısı artıyor"
-    },
-    {
-      "anahtar": "fe2aeb64fc72695f",
-      "ts": 1790584904155,
-      "baslik": "Alman tahvil faizleri durdu, yatırımcılar enerji enflasyonunu tarttı"
     }
   ]
 }
