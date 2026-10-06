@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "fd8a1dc8fc1da57a",
+      "ts": 1791270447190,
+      "baslik": "Enflasyon %29,73’e geriledi: TCMB 22 Ekim’de 100 baz puan indirecek mi?"
+    },
+    {
       "anahtar": "c03ac475cbf30946",
       "ts": 1791269227857,
       "baslik": "Dolar ve Hazine tahvil getirileri Fed faiz artışı beklentilerini gölgede bırakırken altın geriledi"
@@ -269,11 +274,6 @@
       "anahtar": "0dc5f5e83f6dc760",
       "ts": 1790667113264,
       "baslik": "İspanya’da perakende satışlar Ağustos’ta %0,4 düştü"
-    },
-    {
-      "anahtar": "2722254324ca4a35",
-      "ts": 1790665289376,
-      "baslik": "Yükselen tahvil getirileri ve petrol fiyatları Asya borsalarını baskı altına aldı; RBA faiz artırdı"
     }
   ]
 }
