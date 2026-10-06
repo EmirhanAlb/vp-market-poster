@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "796a0bd36b85ca06",
+      "ts": 1791265608599,
+      "baslik": "Tayland’da TÜFE enflasyonu Eylül’de %2,82’ye yükseldi"
+    },
+    {
       "anahtar": "562d346214306253",
       "ts": 1791252336622,
       "baslik": "Fed’in faiz artırımı beklentisi azalınca Nasdaq rekor kırdı"
@@ -259,16 +264,6 @@
       "anahtar": "2722254324ca4a35",
       "ts": 1790665289376,
       "baslik": "Yükselen tahvil getirileri ve petrol fiyatları Asya borsalarını baskı altına aldı; RBA faiz artırdı"
-    },
-    {
-      "anahtar": "fb85fdf15c72cd06",
-      "ts": 1790658048355,
-      "baslik": "RBA faiz oranlarını 25 baz puan artırdı; enflasyon riskleri artıyor"
-    },
-    {
-      "anahtar": "dfc5c2228b937615",
-      "ts": 1790648989733,
-      "baslik": "Yatırımcılar Fed’i izlerken bir restoran hissesi %18,66 yükseldi"
     }
   ]
 }
