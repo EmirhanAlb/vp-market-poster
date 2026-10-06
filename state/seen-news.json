@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "849f85df44939078",
+      "ts": 1791300026969,
+      "baslik": "TCMB Başkanı Karahan açıkladı: Fonlardan çıkan para nereye gitti?"
+    },
+    {
       "anahtar": "1ee8e130d762d0e6",
       "ts": 1791281307241,
       "baslik": "İspanya’da sanayi üretimi Ağustos’ta %0,7 düştü"
@@ -249,21 +254,6 @@
       "anahtar": "c0f652ab6b402f7f",
       "ts": 1790710681989,
       "baslik": "Mısır Cumhurbaşkanı Sisi, Süveyş'teki zararın boyutunu açıkladı"
-    },
-    {
-      "anahtar": "d0c6ec09b85de888",
-      "ts": 1790687063983,
-      "baslik": "İngiltere'de akaryakıt krizi alarmı: Petrol stoku 43 güne düştü, kotalı satış dönemi kapıda"
-    },
-    {
-      "anahtar": "63a54e73bd9186e2",
-      "ts": 1790685845559,
-      "baslik": "Brezilya’da kredi temerrütleri Ağustos’ta rekor kırdı"
-    },
-    {
-      "anahtar": "b4765ec16b589160",
-      "ts": 1790681034788,
-      "baslik": "Petrol geriledi, piyasalar nefes aldı: Gözler ABD istihdam verisinde"
     }
   ]
 }
