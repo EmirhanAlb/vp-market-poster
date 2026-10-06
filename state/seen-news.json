@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "1ee8e130d762d0e6",
+      "ts": 1791281307241,
+      "baslik": "İspanya’da sanayi üretimi Ağustos’ta %0,7 düştü"
+    },
+    {
       "anahtar": "aea87e0a04d230b3",
       "ts": 1791278884335,
       "baslik": "Tanker ücretleri Hürmüz Boğazı kapanması ile rekor kırdı"
@@ -259,16 +264,6 @@
       "anahtar": "b4765ec16b589160",
       "ts": 1790681034788,
       "baslik": "Petrol geriledi, piyasalar nefes aldı: Gözler ABD istihdam verisinde"
-    },
-    {
-      "anahtar": "76e6ddfdb9ac2ec8",
-      "ts": 1790675593916,
-      "baslik": "İngiltere Merkez Bankası verileri açıkladı: Bireysel kredi kullanımı fırladı, ipotek talebi düştü"
-    },
-    {
-      "anahtar": "23e2fcfb9d13c93c",
-      "ts": 1790675593916,
-      "baslik": "TEPAV: Gıda enflasyonu yüzde 2,23’e yükseldi"
     }
   ]
 }
