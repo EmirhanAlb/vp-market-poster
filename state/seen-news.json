@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "aea87e0a04d230b3",
+      "ts": 1791278884335,
+      "baslik": "Tanker ücretleri Hürmüz Boğazı kapanması ile rekor kırdı"
+    },
+    {
       "anahtar": "1c9363773ecfe8b8",
       "ts": 1791275861327,
       "baslik": "Avrupa’da gaz fiyatları Hürmüz’den artan LNG sevkiyatına rağmen yükseldi"
@@ -264,11 +269,6 @@
       "anahtar": "23e2fcfb9d13c93c",
       "ts": 1790675593916,
       "baslik": "TEPAV: Gıda enflasyonu yüzde 2,23’e yükseldi"
-    },
-    {
-      "anahtar": "dbc46c0f91388ae0",
-      "ts": 1790671342358,
-      "baslik": "İspanya'da enflasyon eylülde yüzde 5 ile son 3,5 yılın en yüksek seviyesine çıktı"
     }
   ]
 }
