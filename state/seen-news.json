@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "1c9363773ecfe8b8",
+      "ts": 1791275861327,
+      "baslik": "Avrupa’da gaz fiyatları Hürmüz’den artan LNG sevkiyatına rağmen yükseldi"
+    },
+    {
       "anahtar": "fd8a1dc8fc1da57a",
       "ts": 1791270447190,
       "baslik": "Enflasyon %29,73’e geriledi: TCMB 22 Ekim’de 100 baz puan indirecek mi?"
@@ -264,16 +269,6 @@
       "anahtar": "dbc46c0f91388ae0",
       "ts": 1790671342358,
       "baslik": "İspanya'da enflasyon eylülde yüzde 5 ile son 3,5 yılın en yüksek seviyesine çıktı"
-    },
-    {
-      "anahtar": "1d53a776f77768a2",
-      "ts": 1790668313204,
-      "baslik": "Avustralya Merkez Bankası faiz artırdı: Oran 15 yılın zirvesine çıktı"
-    },
-    {
-      "anahtar": "0dc5f5e83f6dc760",
-      "ts": 1790667113264,
-      "baslik": "İspanya’da perakende satışlar Ağustos’ta %0,4 düştü"
     }
   ]
 }
