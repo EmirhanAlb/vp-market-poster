@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "562d346214306253",
+      "ts": 1791252336622,
+      "baslik": "Fed’in faiz artırımı beklentisi azalınca Nasdaq rekor kırdı"
+    },
+    {
       "anahtar": "f0d8983125a72e8b",
       "ts": 1791196949160,
       "baslik": "Avro Bölgesi'nde ÜFE ağustosta yüzde 8,2 arttı"
@@ -264,21 +269,6 @@
       "anahtar": "dfc5c2228b937615",
       "ts": 1790648989733,
       "baslik": "Yatırımcılar Fed’i izlerken bir restoran hissesi %18,66 yükseldi"
-    },
-    {
-      "anahtar": "ed090692f42b935a",
-      "ts": 1790646567671,
-      "baslik": "Altın yedi haftanın dibinde, Fed faiz artırımı beklentileri yükseldi"
-    },
-    {
-      "anahtar": "d87e60c1595a7f37",
-      "ts": 1790594601270,
-      "baslik": "Avrupa doğal gazı Ortadoğu görüşmeleri çıkmaza girince %3 sıçradı"
-    },
-    {
-      "anahtar": "2798fe59a7c64760",
-      "ts": 1790593401718,
-      "baslik": "Petrol fiyatları sıçradı: Bitcoin için savaş baskısı artıyor"
     }
   ]
 }
