@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "397145269be6bb16",
+      "ts": 1791406421657,
+      "baslik": "Son dakika... AK Parti'den istifa etti! Fatma Betül Sayan Kaya ve eşinin savcılık ifadesi ortaya çıktı"
+    },
+    {
       "anahtar": "217d6f602d736b02",
       "ts": 1791391922561,
       "baslik": "ABD'de tüketicilerin kısa vadeli enflasyon beklentisi, Mayıs 2023'ten bu yana en yüksek seviyeye çıktı"
@@ -234,21 +239,6 @@
       "anahtar": "e730cadc742a2d06",
       "ts": 1790827916804,
       "baslik": "Asya para birimleri karışık seyretti, yen BOJ sinyalleriyle geriledi"
-    },
-    {
-      "anahtar": "7a3a8bb6ecebb594",
-      "ts": 1790798308132,
-      "baslik": "Kolombiya merkez bankası faiz oranını %12,25’e yükseltti"
-    },
-    {
-      "anahtar": "554a31767d6a70dc",
-      "ts": 1790792258151,
-      "baslik": "Pemex’in ham petrol ihracatı Ağustos’ta yüzde 45 düştü"
-    },
-    {
-      "anahtar": "1562ccbc5e1cab49",
-      "ts": 1790789857879,
-      "baslik": "ECB Başkanı Lagarde, 2027 Fransa cumhurbaşkanlığı adaylığını reddetti"
     }
   ]
 }
