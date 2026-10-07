@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "44d0c00f7811c495",
+      "ts": 1791358685766,
+      "baslik": "TCMB'den enflasyon değerlendirmesi: Ana eğilim geriledi"
+    },
+    {
+      "anahtar": "4c4a10198a8f94cb",
+      "ts": 1791358685766,
+      "baslik": "Avrupa hisseleri düştü, petrol yükseldi, FOMC tutanakları bekleniyor"
+    },
+    {
       "anahtar": "209b624b8a06747e",
       "ts": 1791355669056,
       "baslik": "Asya borsaları petrol ve tahvil faizlerinin baskısıyla geriledi; RBI faiz artırdı"
@@ -249,21 +259,6 @@
       "anahtar": "436d712e512ae31f",
       "ts": 1790756636004,
       "baslik": "Fon krizinin Borsa İstanbul’a faturası: İşlem hacmi yüzde 29 düştü"
-    },
-    {
-      "anahtar": "493f7c26b37c4383",
-      "ts": 1790753017876,
-      "baslik": "Fed üyesi konuştu, piyasa beklentileri kısa sürede çakıldı"
-    },
-    {
-      "anahtar": "75009f2709b065b0",
-      "ts": 1790752983916,
-      "baslik": "Dış ticaret açığı ağustosta yüzde 22,3 arttı"
-    },
-    {
-      "anahtar": "e0f1cf471c16bd42",
-      "ts": 1790752983916,
-      "baslik": "Türkiye'de işsizlik oranı ağustosta bir önceki aya göre 0,3 puan azaldı"
     }
   ]
 }
