@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "2dfc48f36a82b366",
+      "ts": 1791367747581,
+      "baslik": "Almanya’da sanayi üretimi Ağustos’ta yüzde 2 arttı"
+    },
+    {
+      "anahtar": "aec8c29b135639e9",
+      "ts": 1791367146494,
+      "baslik": "Macaristan’da enflasyon Eylül’de %1,6’ya yükseldi, tahminlerin altında kaldı"
+    },
+    {
       "anahtar": "44d0c00f7811c495",
       "ts": 1791358685766,
       "baslik": "TCMB'den enflasyon değerlendirmesi: Ana eğilim geriledi"
@@ -244,21 +254,6 @@
       "anahtar": "4f566872a052be17",
       "ts": 1790763871308,
       "baslik": "Yunanistan’da perakende satış hacmi Temmuz’da %5,2 arttı"
-    },
-    {
-      "anahtar": "6f7a8fb3ae13504f",
-      "ts": 1790762049897,
-      "baslik": "Polonya’da enflasyon Eylül’de %4,0’a yükseldi"
-    },
-    {
-      "anahtar": "405f0b71add9b649",
-      "ts": 1790759653956,
-      "baslik": "İtalya’da tüketici güveni Eylül’de düştü, iş dünyası morali zayıfladı"
-    },
-    {
-      "anahtar": "436d712e512ae31f",
-      "ts": 1790756636004,
-      "baslik": "Fon krizinin Borsa İstanbul’a faturası: İşlem hacmi yüzde 29 düştü"
     }
   ]
 }
