@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "217d6f602d736b02",
+      "ts": 1791391922561,
+      "baslik": "ABD'de tüketicilerin kısa vadeli enflasyon beklentisi, Mayıs 2023'ten bu yana en yüksek seviyeye çıktı"
+    },
+    {
       "anahtar": "a7bd8f36eefb1178",
       "ts": 1791370167937,
       "baslik": "Portekiz Merkez Bankası 2026 büyüme tahminini %2,3’e yükseltti"
@@ -244,16 +249,6 @@
       "anahtar": "1562ccbc5e1cab49",
       "ts": 1790789857879,
       "baslik": "ECB Başkanı Lagarde, 2027 Fransa cumhurbaşkanlığı adaylığını reddetti"
-    },
-    {
-      "anahtar": "019891b19f43db8c",
-      "ts": 1790776548625,
-      "baslik": "Fed stres testi değişikliklerini şeffaflık için onayladı"
-    },
-    {
-      "anahtar": "9dab93b16b48d796",
-      "ts": 1790775347656,
-      "baslik": "ABD’den gelen enflasyon verisi Bitcoin’i yukarı taşıdı: BTC 85 bin dolara fırladı"
     }
   ]
 }
