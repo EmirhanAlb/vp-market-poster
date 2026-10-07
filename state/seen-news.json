@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "3b1e9444b54c7652",
+      "ts": 1791351430069,
+      "baslik": "RBI 3 yılın ardından faiz artırdı, yeni artışlara kapı araladı"
+    },
+    {
       "anahtar": "362d5d659b91412a",
       "ts": 1791347812315,
       "baslik": "Wall Street Ağustos’tan bu yana ilk rekorunu kırdı, teknoloji hissemiz %61 arttı"
@@ -249,11 +254,6 @@
       "anahtar": "f20075dd5176efa1",
       "ts": 1790749958035,
       "baslik": "Asya hisseleri ABD PCE enflasyon verisi öncesinde yükseldi"
-    },
-    {
-      "anahtar": "e755a8ab2ae6af26",
-      "ts": 1790743918934,
-      "baslik": "Zayıf veri ve ılımlı açıklamalar sonrası Ekim faiz artırımı beklentisi düştü"
     }
   ]
 }
