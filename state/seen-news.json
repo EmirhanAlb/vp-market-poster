@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "a7bd8f36eefb1178",
+      "ts": 1791370167937,
+      "baslik": "Portekiz Merkez Bankası 2026 büyüme tahminini %2,3’e yükseltti"
+    },
+    {
       "anahtar": "2dfc48f36a82b366",
       "ts": 1791367747581,
       "baslik": "Almanya’da sanayi üretimi Ağustos’ta yüzde 2 arttı"
@@ -249,11 +254,6 @@
       "anahtar": "9dab93b16b48d796",
       "ts": 1790775347656,
       "baslik": "ABD’den gelen enflasyon verisi Bitcoin’i yukarı taşıdı: BTC 85 bin dolara fırladı"
-    },
-    {
-      "anahtar": "4f566872a052be17",
-      "ts": 1790763871308,
-      "baslik": "Yunanistan’da perakende satış hacmi Temmuz’da %5,2 arttı"
     }
   ]
 }
