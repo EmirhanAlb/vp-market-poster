@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "209b624b8a06747e",
+      "ts": 1791355669056,
+      "baslik": "Asya borsaları petrol ve tahvil faizlerinin baskısıyla geriledi; RBI faiz artırdı"
+    },
+    {
+      "anahtar": "2ce5734fc3b5569a",
+      "ts": 1791355669056,
+      "baslik": "Güçlenen dolar Fed faiz artışı beklentilerini gölgede bırakırken altın 4.150 doların altına geriledi"
+    },
+    {
       "anahtar": "cfeb5db5162d0f88",
       "ts": 1791352051526,
       "baslik": "Hindistan Merkez Bankası yaklaşık dört yıl sonra faiz artırdı"
@@ -254,11 +264,6 @@
       "anahtar": "e0f1cf471c16bd42",
       "ts": 1790752983916,
       "baslik": "Türkiye'de işsizlik oranı ağustosta bir önceki aya göre 0,3 puan azaldı"
-    },
-    {
-      "anahtar": "f20075dd5176efa1",
-      "ts": 1790749958035,
-      "baslik": "Asya hisseleri ABD PCE enflasyon verisi öncesinde yükseldi"
     }
   ]
 }
