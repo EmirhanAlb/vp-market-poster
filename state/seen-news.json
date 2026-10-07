@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "362d5d659b91412a",
+      "ts": 1791347812315,
+      "baslik": "Wall Street Ağustos’tan bu yana ilk rekorunu kırdı, teknoloji hissemiz %61 arttı"
+    },
+    {
+      "anahtar": "ae7445f88562ba14",
+      "ts": 1791346612427,
+      "baslik": "Altın geriledi, yatırımcının gözü Fed’in faiz mesajında"
+    },
+    {
       "anahtar": "181e3fa722a3552a",
       "ts": 1791312762552,
       "baslik": "Bitcoin 87 bin dolar eşiğinde zorlanırken ABD borsaları rekor kırdı"
@@ -244,21 +254,6 @@
       "anahtar": "e755a8ab2ae6af26",
       "ts": 1790743918934,
       "baslik": "Zayıf veri ve ılımlı açıklamalar sonrası Ekim faiz artırımı beklentisi düştü"
-    },
-    {
-      "anahtar": "85a56db5d84e256d",
-      "ts": 1790738504781,
-      "baslik": "Avustralya’da TÜFE enflasyonu Ağustos’ta %4’e yükseldi, tahminlerin altında kaldı"
-    },
-    {
-      "anahtar": "c7427b0885c93ebf",
-      "ts": 1790736081190,
-      "baslik": "Piyasalar dolar baskısıyla geriledi - ancak bu güneş enerjisi hissesi bugün %10,84 sıçradı"
-    },
-    {
-      "anahtar": "c0f652ab6b402f7f",
-      "ts": 1790710681989,
-      "baslik": "Mısır Cumhurbaşkanı Sisi, Süveyş'teki zararın boyutunu açıkladı"
     }
   ]
 }
