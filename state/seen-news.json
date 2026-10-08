@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "c0057e96b0f3bd68",
+      "ts": 1791442078264,
+      "baslik": "Hürmüz gerginliği Fed faiz artışı beklentilerini güçlendirirken Altın toparlandı"
+    },
+    {
       "anahtar": "397145269be6bb16",
       "ts": 1791406421657,
       "baslik": "Son dakika... AK Parti'den istifa etti! Fatma Betül Sayan Kaya ve eşinin savcılık ifadesi ortaya çıktı"
@@ -224,21 +229,6 @@
       "anahtar": "4b71cc67316e44df",
       "ts": 1790837583914,
       "baslik": "BoJ özeti sonrası yende kayıp derinleşti, ekim artışı fiyatlaması geriledi"
-    },
-    {
-      "anahtar": "373b43c11ed301b2",
-      "ts": 1790835184291,
-      "baslik": "Eylül düşüşünün ardından altın yükseldi: Yumuşak PCE, Fed faiz artışı beklentilerini azalttı"
-    },
-    {
-      "anahtar": "846b6d82856714a2",
-      "ts": 1790829137804,
-      "baslik": "Çip üreticisi kazançları ve düşük ABD enflasyonuyla Asya borsaları yükseldi; Nikkei öne çıktı"
-    },
-    {
-      "anahtar": "e730cadc742a2d06",
-      "ts": 1790827916804,
-      "baslik": "Asya para birimleri karışık seyretti, yen BOJ sinyalleriyle geriledi"
     }
   ]
 }
