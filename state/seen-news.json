@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "9340a48bcf44e2c2",
+      "ts": 1791481322103,
+      "baslik": "ABD İran’a yeni yaptırımlar açıkladı, petrol taşıyan gemiler hedefte"
+    },
+    {
       "anahtar": "cb334f41ec45442f",
       "ts": 1791463181714,
       "baslik": "Meksika’da enflasyon Eylül’de yüzde 3,45’e yükseldi"
@@ -229,16 +234,6 @@
       "anahtar": "1114df239aa14c1d",
       "ts": 1790879874545,
       "baslik": "TCMB, KOBİ kredileri için yüzde 4,5 olan büyüme sınırını yüzde 5’e yükseltti"
-    },
-    {
-      "anahtar": "ada219806a364c78",
-      "ts": 1790875647195,
-      "baslik": "İtalya’nın devlet bütçe açığı Eylül’de 27 milyar euroya yükseldi"
-    },
-    {
-      "anahtar": "6c76f7057d3c738b",
-      "ts": 1790859952116,
-      "baslik": "Fed’in Kashkari’si enflasyon savaşında faiz artışına kapı araladı"
     }
   ]
 }
