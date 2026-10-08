@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "9044f4fef5955cd9",
+      "ts": 1791451726300,
+      "baslik": "Polonya merkez bankası faiz oranını yüzde 3,75’te sabit tuttu"
+    },
+    {
+      "anahtar": "f1db9a1999b6777a",
+      "ts": 1791451726300,
+      "baslik": "Sterlin bugün: Şahin Fed tutanakları doları destekledi, sterlin geriledi"
+    },
+    {
       "anahtar": "c0057e96b0f3bd68",
       "ts": 1791442078264,
       "baslik": "Hürmüz gerginliği Fed faiz artışı beklentilerini güçlendirirken Altın toparlandı"
@@ -214,21 +224,6 @@
       "anahtar": "6c76f7057d3c738b",
       "ts": 1790859952116,
       "baslik": "Fed’in Kashkari’si enflasyon savaşında faiz artışına kapı araladı"
-    },
-    {
-      "anahtar": "076f0b8815f89aed",
-      "ts": 1790846055670,
-      "baslik": "Kalıcı oturma izninde sıkılaştırma kararı: Başvuru harcı 20 kat arttı!"
-    },
-    {
-      "anahtar": "dbbe2bbd038da81a",
-      "ts": 1790843629256,
-      "baslik": "İtalya’da işsizlik oranı Ağustos’ta %6,2’ye yükseldi"
-    },
-    {
-      "anahtar": "4b71cc67316e44df",
-      "ts": 1790837583914,
-      "baslik": "BoJ özeti sonrası yende kayıp derinleşti, ekim artışı fiyatlaması geriledi"
     }
   ]
 }
