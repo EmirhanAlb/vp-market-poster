@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "20c8e2d58c3bdf0b",
+      "ts": 1791557486924,
+      "baslik": "ABD’de tüketici güveni Ekim’de geriledi, UMich anketi"
+    },
+    {
       "anahtar": "69c952a6d92826cc",
       "ts": 1791533303125,
       "baslik": "TCMB brüt rezervleri 167,4 milyar dolara geriledi"
@@ -204,31 +209,6 @@
       "anahtar": "5c324da6fc910d71",
       "ts": 1791016394942,
       "baslik": "Dolar endeksi yılın 9 ayında Fed'e ilişkin beklentiler ve jeopolitik gelişmelerle yükseldi"
-    },
-    {
-      "anahtar": "9d8bdca77934aeac",
-      "ts": 1790948133497,
-      "baslik": "Brezilya sanayi üretimi Ağustos’ta yüzde 0,6 düştü"
-    },
-    {
-      "anahtar": "74ba007cf191a556",
-      "ts": 1790946314303,
-      "baslik": "ABD 10 yıllık tahvil faizi, tarım dışı istihdam verilerinin ardından geriledi"
-    },
-    {
-      "anahtar": "13c411ac5afddc33",
-      "ts": 1790946314303,
-      "baslik": "ABD ekonomisi beklentinin altında iş ekledi, işsizlik oranı yükseldi"
-    },
-    {
-      "anahtar": "3ff9c0d882e2bc11",
-      "ts": 1790945713905,
-      "baslik": "Piyasaların beklediği veri açıklandı: ABD'de tarım dışı istihdamda aşağı yönlü sürpriz"
-    },
-    {
-      "anahtar": "1cf17aad1f282004",
-      "ts": 1790934236754,
-      "baslik": "Euro Bölgesi'nde yıllık enflasyon eylülde yüzde 3,8'e yükseldi"
     }
   ]
 }
