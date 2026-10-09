@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "896584d55fb02680",
+      "ts": 1791530881874,
+      "baslik": "Dr. Nuri Sevgen’den fon krizi uyarısı: İşlem hacmi %30 düştü, sektör küçülüyor"
+    },
+    {
       "anahtar": "9340a48bcf44e2c2",
       "ts": 1791481322103,
       "baslik": "ABD İran’a yeni yaptırımlar açıkladı, petrol taşıyan gemiler hedefte"
@@ -219,21 +224,6 @@
       "anahtar": "1cf17aad1f282004",
       "ts": 1790934236754,
       "baslik": "Euro Bölgesi'nde yıllık enflasyon eylülde yüzde 3,8'e yükseldi"
-    },
-    {
-      "anahtar": "63f6508776868577",
-      "ts": 1790922160596,
-      "baslik": "ABD imalat PMI yükseldi: Fed’in faiz patikası nasıl şekillenecek?"
-    },
-    {
-      "anahtar": "0efacf47b714221e",
-      "ts": 1790898625139,
-      "baslik": "Güney Kore’de TÜFE enflasyonu Eylül’de hafif geriledi"
-    },
-    {
-      "anahtar": "1114df239aa14c1d",
-      "ts": 1790879874545,
-      "baslik": "TCMB, KOBİ kredileri için yüzde 4,5 olan büyüme sınırını yüzde 5’e yükseltti"
     }
   ]
 }
