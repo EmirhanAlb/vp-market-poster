@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "f39bfb67f8a7159d",
+      "ts": 1791789882970,
+      "baslik": "Ticaret ve perakende satış hacmi ağustosta yıllık bazda arttı"
+    },
+    {
       "anahtar": "87313e1c9d4b039c",
       "ts": 1791780835037,
       "baslik": "Hindistan rupisi merkez bankası destekleriyle sert yükseldi"
@@ -199,21 +204,6 @@
       "anahtar": "65660e0819c3cf85",
       "ts": 1791190311946,
       "baslik": "Bakan Şimşek: Yıllık enflasyon 57 ay sonra %30’un altına geriledi"
-    },
-    {
-      "anahtar": "85cbe0baf48127bc",
-      "ts": 1791184272264,
-      "baslik": "Son dakika... Eylül ayı enflasyon verileri açıklandı"
-    },
-    {
-      "anahtar": "68a970dd2084a375",
-      "ts": 1791182472093,
-      "baslik": "ENAG eylül enflasyonunu açıkladı: Yıllık artış yüzde 46,61"
-    },
-    {
-      "anahtar": "f1666bd427d984f7",
-      "ts": 1791180648248,
-      "baslik": "Bakıra Fed desteği: Fiyatlar haftanın ilk gününde yükseldi"
     }
   ]
 }
