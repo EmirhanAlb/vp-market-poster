@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "d97e036848e41ce7",
+      "ts": 1791765114096,
+      "baslik": "Trump’ın enerji ateşkesi açıklamasıyla petrol düştü"
+    },
+    {
       "anahtar": "7c6149cd20e93d3f",
       "ts": 1791580427370,
       "baslik": "TCMB, Parakolay'un faaliyet iznini iptal etti"
@@ -204,16 +209,6 @@
       "anahtar": "be87ee6cb0b1b348",
       "ts": 1791164353033,
       "baslik": "Zayıf istihdam verisi Fed faiz artışı beklentilerini azaltırken altın yükseldi"
-    },
-    {
-      "anahtar": "034509b3e431d9f2",
-      "ts": 1791137206360,
-      "baslik": "İran Petrol Bakanı Muhsin Paknejad istifa etti"
-    },
-    {
-      "anahtar": "5c324da6fc910d71",
-      "ts": 1791016394942,
-      "baslik": "Dolar endeksi yılın 9 ayında Fed'e ilişkin beklentiler ve jeopolitik gelişmelerle yükseldi"
     }
   ]
 }
