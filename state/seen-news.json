@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "87313e1c9d4b039c",
+      "ts": 1791780835037,
+      "baslik": "Hindistan rupisi merkez bankası destekleriyle sert yükseldi"
+    },
+    {
       "anahtar": "531ae7405d9e7376",
       "ts": 1791768756472,
       "baslik": "Altın 4.200 dolar yakınında yükseldi, enerji ateşkesi tartışılıyor"
@@ -209,11 +214,6 @@
       "anahtar": "f1666bd427d984f7",
       "ts": 1791180648248,
       "baslik": "Bakıra Fed desteği: Fiyatlar haftanın ilk gününde yükseldi"
-    },
-    {
-      "anahtar": "be87ee6cb0b1b348",
-      "ts": 1791164353033,
-      "baslik": "Zayıf istihdam verisi Fed faiz artışı beklentilerini azaltırken altın yükseldi"
     }
   ]
 }
