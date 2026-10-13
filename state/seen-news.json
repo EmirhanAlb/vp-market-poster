@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "71a24b09d608cccc",
+      "ts": 1791873783631,
+      "baslik": "Filipinler merkez bankası 2026 cari açık tahminini açıkladı"
+    },
+    {
+      "anahtar": "4f9a02394fad3869",
+      "ts": 1791873783631,
+      "baslik": "Romanya’da enflasyon Eylül’de %6,61’e yükseldi"
+    },
+    {
       "anahtar": "64346ec577f23f85",
       "ts": 1791859312906,
       "baslik": "Citigroup büyük banka kazançları ve kritik TÜFE öncesi %13 yükseldi"
@@ -194,11 +204,6 @@
       "anahtar": "83d2d1677e1da5c4",
       "ts": 1791269227857,
       "baslik": "Enflasyon sonrası piyasada yeni denge arayışı: TCMB, Borsa ve fon krizi"
-    },
-    {
-      "anahtar": "796a0bd36b85ca06",
-      "ts": 1791265608599,
-      "baslik": "Tayland’da TÜFE enflasyonu Eylül’de %2,82’ye yükseldi"
     }
   ]
 }
