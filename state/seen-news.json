@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "21b3b915dbc69b24",
+      "ts": 1791884051932,
+      "baslik": "Buğday fiyatlarında sert düşüş: Eylül ayında yüzde 12,7 geriledi"
+    },
+    {
       "anahtar": "71a24b09d608cccc",
       "ts": 1791873783631,
       "baslik": "Filipinler merkez bankası 2026 cari açık tahminini açıkladı"
@@ -179,31 +184,6 @@
       "anahtar": "1ee8e130d762d0e6",
       "ts": 1791281307241,
       "baslik": "İspanya’da sanayi üretimi Ağustos’ta %0,7 düştü"
-    },
-    {
-      "anahtar": "aea87e0a04d230b3",
-      "ts": 1791278884335,
-      "baslik": "Tanker ücretleri Hürmüz Boğazı kapanması ile rekor kırdı"
-    },
-    {
-      "anahtar": "1c9363773ecfe8b8",
-      "ts": 1791275861327,
-      "baslik": "Avrupa’da gaz fiyatları Hürmüz’den artan LNG sevkiyatına rağmen yükseldi"
-    },
-    {
-      "anahtar": "fd8a1dc8fc1da57a",
-      "ts": 1791270447190,
-      "baslik": "Enflasyon %29,73’e geriledi: TCMB 22 Ekim’de 100 baz puan indirecek mi?"
-    },
-    {
-      "anahtar": "c03ac475cbf30946",
-      "ts": 1791269227857,
-      "baslik": "Dolar ve Hazine tahvil getirileri Fed faiz artışı beklentilerini gölgede bırakırken altın geriledi"
-    },
-    {
-      "anahtar": "83d2d1677e1da5c4",
-      "ts": 1791269227857,
-      "baslik": "Enflasyon sonrası piyasada yeni denge arayışı: TCMB, Borsa ve fon krizi"
     }
   ]
 }
