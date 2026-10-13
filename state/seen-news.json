@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "64346ec577f23f85",
+      "ts": 1791859312906,
+      "baslik": "Citigroup büyük banka kazançları ve kritik TÜFE öncesi %13 yükseldi"
+    },
+    {
       "anahtar": "e281ea48dbd58c67",
       "ts": 1791850853720,
       "baslik": "Japonya ÜFE eylülde güçlü yen ve düşen petrol ile geriledi"
@@ -194,11 +199,6 @@
       "anahtar": "796a0bd36b85ca06",
       "ts": 1791265608599,
       "baslik": "Tayland’da TÜFE enflasyonu Eylül’de %2,82’ye yükseldi"
-    },
-    {
-      "anahtar": "562d346214306253",
-      "ts": 1791252336622,
-      "baslik": "Fed’in faiz artırımı beklentisi azalınca Nasdaq rekor kırdı"
     }
   ]
 }
