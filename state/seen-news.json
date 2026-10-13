@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "e281ea48dbd58c67",
+      "ts": 1791850853720,
+      "baslik": "Japonya ÜFE eylülde güçlü yen ve düşen petrol ile geriledi"
+    },
+    {
       "anahtar": "931f8b5735e62cda",
       "ts": 1791796522283,
       "baslik": "Sterlin bugün: Pound yükseldi, euro geriledi, Fed beklentileri dolara destek verdi"
@@ -194,16 +199,6 @@
       "anahtar": "562d346214306253",
       "ts": 1791252336622,
       "baslik": "Fed’in faiz artırımı beklentisi azalınca Nasdaq rekor kırdı"
-    },
-    {
-      "anahtar": "f0d8983125a72e8b",
-      "ts": 1791196949160,
-      "baslik": "Avro Bölgesi'nde ÜFE ağustosta yüzde 8,2 arttı"
-    },
-    {
-      "anahtar": "0c1b86a7e01c0a7c",
-      "ts": 1791192128413,
-      "baslik": "Türkiye’de enflasyon Eylül’de beklenenden fazla düştü"
     }
   ]
 }
