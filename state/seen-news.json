@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "324a62f57d96d7cf",
+      "ts": 1791893108630,
+      "baslik": "Siber saldırı krizi bir ülkeye daha sıçradı: Raflar boş kaldı, siparişler aksadı"
+    },
+    {
       "anahtar": "21b3b915dbc69b24",
       "ts": 1791884051932,
       "baslik": "Buğday fiyatlarında sert düşüş: Eylül ayında yüzde 12,7 geriledi"
@@ -179,11 +184,6 @@
       "anahtar": "849f85df44939078",
       "ts": 1791300026969,
       "baslik": "TCMB Başkanı Karahan açıkladı: Fonlardan çıkan para nereye gitti?"
-    },
-    {
-      "anahtar": "1ee8e130d762d0e6",
-      "ts": 1791281307241,
-      "baslik": "İspanya’da sanayi üretimi Ağustos’ta %0,7 düştü"
     }
   ]
 }
