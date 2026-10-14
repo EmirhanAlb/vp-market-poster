@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "9afc2924173339df",
+      "ts": 1791981930994,
+      "baslik": "ABD'de enflasyon yıllık yüzde 3,7 ile beklentilerin üzerinde arttı"
+    },
+    {
       "anahtar": "6f942b462539afdb",
       "ts": 1791971067750,
       "baslik": "Merkez Bankası rezervlerinde tarihi değişim! Swap yüzde 67'den yüzde 7,7'ye geriledi"
@@ -159,21 +164,6 @@
       "anahtar": "217d6f602d736b02",
       "ts": 1791391922561,
       "baslik": "ABD'de tüketicilerin kısa vadeli enflasyon beklentisi, Mayıs 2023'ten bu yana en yüksek seviyeye çıktı"
-    },
-    {
-      "anahtar": "a7bd8f36eefb1178",
-      "ts": 1791370167937,
-      "baslik": "Portekiz Merkez Bankası 2026 büyüme tahminini %2,3’e yükseltti"
-    },
-    {
-      "anahtar": "2dfc48f36a82b366",
-      "ts": 1791367747581,
-      "baslik": "Almanya’da sanayi üretimi Ağustos’ta yüzde 2 arttı"
-    },
-    {
-      "anahtar": "aec8c29b135639e9",
-      "ts": 1791367146494,
-      "baslik": "Macaristan’da enflasyon Eylül’de %1,6’ya yükseldi, tahminlerin altında kaldı"
     }
   ]
 }
