@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "d9bd20343220ef63",
+      "ts": 1792000050602,
+      "baslik": "Uganda merkez bankası şilini desteklemek için faizi %12’ye yükseltti"
+    },
+    {
       "anahtar": "8cd5955d58ddc64a",
       "ts": 1791983751520,
       "baslik": "ABD enflasyonu beklenenden yüksek geldi: Bitcoin yatay kaldı, altın düştü"
@@ -164,11 +169,6 @@
       "anahtar": "397145269be6bb16",
       "ts": 1791406421657,
       "baslik": "Son dakika... AK Parti'den istifa etti! Fatma Betül Sayan Kaya ve eşinin savcılık ifadesi ortaya çıktı"
-    },
-    {
-      "anahtar": "217d6f602d736b02",
-      "ts": 1791391922561,
-      "baslik": "ABD'de tüketicilerin kısa vadeli enflasyon beklentisi, Mayıs 2023'ten bu yana en yüksek seviyeye çıktı"
     }
   ]
 }
