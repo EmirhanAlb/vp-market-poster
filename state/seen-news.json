@@ -1,6 +1,26 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "234e1aa5f1197d94",
+      "ts": 1791963799848,
+      "baslik": "ASML’nin satış tahmini Avrupa borsalarını yükseltti; ABD TÜFE verisi bekleniyor"
+    },
+    {
+      "anahtar": "fc76fdb6a2cb6eb0",
+      "ts": 1791962599221,
+      "baslik": "Tüccarlar Fed’in faiz görünümünü değerlendirirken altın düştü"
+    },
+    {
+      "anahtar": "b7536d4193ce9e34",
+      "ts": 1791962599221,
+      "baslik": "İspanya’da enflasyon Eylül’de %5,0’a yükseldi"
+    },
+    {
+      "anahtar": "2a8216a2d7f298bc",
+      "ts": 1791962599221,
+      "baslik": "Dolar, ABD enflasyon verisi öncesinde geriledi; Çin ve Singapur verileri odakta"
+    },
+    {
       "anahtar": "3132de986617970c",
       "ts": 1791937217798,
       "baslik": "Petrol fiyatları Husi-Suudi saldırıları sonrası yükseldi"
@@ -144,46 +164,6 @@
       "anahtar": "aec8c29b135639e9",
       "ts": 1791367146494,
       "baslik": "Macaristan’da enflasyon Eylül’de %1,6’ya yükseldi, tahminlerin altında kaldı"
-    },
-    {
-      "anahtar": "44d0c00f7811c495",
-      "ts": 1791358685766,
-      "baslik": "TCMB'den enflasyon değerlendirmesi: Ana eğilim geriledi"
-    },
-    {
-      "anahtar": "4c4a10198a8f94cb",
-      "ts": 1791358685766,
-      "baslik": "Avrupa hisseleri düştü, petrol yükseldi, FOMC tutanakları bekleniyor"
-    },
-    {
-      "anahtar": "209b624b8a06747e",
-      "ts": 1791355669056,
-      "baslik": "Asya borsaları petrol ve tahvil faizlerinin baskısıyla geriledi; RBI faiz artırdı"
-    },
-    {
-      "anahtar": "2ce5734fc3b5569a",
-      "ts": 1791355669056,
-      "baslik": "Güçlenen dolar Fed faiz artışı beklentilerini gölgede bırakırken altın 4.150 doların altına geriledi"
-    },
-    {
-      "anahtar": "cfeb5db5162d0f88",
-      "ts": 1791352051526,
-      "baslik": "Hindistan Merkez Bankası yaklaşık dört yıl sonra faiz artırdı"
-    },
-    {
-      "anahtar": "3b1e9444b54c7652",
-      "ts": 1791351430069,
-      "baslik": "RBI 3 yılın ardından faiz artırdı, yeni artışlara kapı araladı"
-    },
-    {
-      "anahtar": "362d5d659b91412a",
-      "ts": 1791347812315,
-      "baslik": "Wall Street Ağustos’tan bu yana ilk rekorunu kırdı, teknoloji hissemiz %61 arttı"
-    },
-    {
-      "anahtar": "ae7445f88562ba14",
-      "ts": 1791346612427,
-      "baslik": "Altın geriledi, yatırımcının gözü Fed’in faiz mesajında"
     }
   ]
 }
