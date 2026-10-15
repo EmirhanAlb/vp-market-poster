@@ -114,6 +114,18 @@
         "U09H81N1BK9",
         "U09F81W7231"
       ]
+    },
+    {
+      "tarih": "15.10.2026",
+      "kanal": "C08AJ51934P",
+      "ts": "1792068125.192419",
+      "acilisFiyat": 4153.62,
+      "kapanisFiyat": 4155.74,
+      "degisim": 0.051,
+      "yon": "duragan",
+      "oySayisi": 5,
+      "gecersiz": 0,
+      "kazananlar": []
     }
   ]
 }
