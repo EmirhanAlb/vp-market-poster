@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "9b83b0fde4f98968",
+      "ts": 1792049604973,
+      "baslik": "Dolar, sıcak ABD TÜFE verisine rağmen geriledi; yen müdahale uyarılarıyla güçlendi"
+    },
+    {
       "anahtar": "98a5f76fbf181b1a",
       "ts": 1792046585109,
       "baslik": "Bitcoin, ABD TÜFE verileriyle 81 bin doların altına düştü"
@@ -209,11 +214,6 @@
       "anahtar": "f1db9a1999b6777a",
       "ts": 1791451726300,
       "baslik": "Sterlin bugün: Şahin Fed tutanakları doları destekledi, sterlin geriledi"
-    },
-    {
-      "anahtar": "c0057e96b0f3bd68",
-      "ts": 1791442078264,
-      "baslik": "Hürmüz gerginliği Fed faiz artışı beklentilerini güçlendirirken Altın toparlandı"
     }
   ]
 }
