@@ -5,8 +5,15 @@ const POSTER_WIDTH = 1080;
 const POSTER_HEIGHT = 1350;
 
 // Sayfa canli fiyatlari Binance / CoinGecko / open.er-api'den cekiyor.
-// Fiyatlar gelene kadar satirlarda "·····" (vpmp-row__price--pending) ve
-// durum rozetinde vpmp__live--connecting sinifi duruyor. Bunlarin gecmesini bekliyoruz.
+// Fiyatlar gelene kadar her fiyat alaninda "·····" ve "--pending" sinifi
+// duruyor. Bunlarin hepsinin gecmesini bekliyoruz.
+//
+// Sinif adi tasarimla degisiyor: eski liste tasariminda vpmp-row__price,
+// Ekim 2026 kart tasariminda vpmp-card__price. Ikisini de yakalamak icin
+// "__price" ekine bakiyoruz. Durum rozeti (vpmp__live--live) tek basina
+// yetmez: ilk fiyat gelir gelmez "LIVE" oluyor, diger kartlar hala bos.
+const FIYAT = '.vpmp [class*="__price"]';
+const BEKLEYEN_FIYAT = '.vpmp [class*="__price--pending"]';
 const LIVE_TIMEOUT_MS = Number(process.env.LIVE_TIMEOUT_MS || 60_000);
 
 /**
@@ -40,18 +47,30 @@ export async function capturePoster(outPath) {
 
     // Fiyatlarin gelmesini bekle. Gelmezse yine de poster'i cekiyoruz ama
     // "live" olmadigini raporluyoruz ki Slack mesajinda belli olsun.
+    //
+    // Fiyat alani hic bulunamazsa da beklemeye devam ediyoruz: tasarim sinif
+    // adlarini yeniden degistirirse kontrol sessizce gecip bos kartlari
+    // cekmesin, zaman asimina dussun ve Slack notunda gorunsun.
     let live = true;
     try {
       await page.waitForFunction(
-        () =>
+        ([fiyat, bekleyen]) =>
           document.querySelector('.vpmp__live--live') !== null &&
-          document.querySelectorAll('.vpmp-row__price--pending').length === 0,
-        null,
+          document.querySelectorAll(fiyat).length > 0 &&
+          document.querySelectorAll(bekleyen).length === 0,
+        [FIYAT, BEKLEYEN_FIYAT],
         { timeout: LIVE_TIMEOUT_MS },
       );
     } catch {
       live = false;
-      console.warn(`Uyari: ${LIVE_TIMEOUT_MS}ms icinde "live" durumuna gecilmedi, mevcut haliyle cekiliyor.`);
+      const [toplam, bekleyen] = await page.evaluate(
+        ([fiyat, bek]) => [document.querySelectorAll(fiyat).length, document.querySelectorAll(bek).length],
+        [FIYAT, BEKLEYEN_FIYAT],
+      );
+      console.warn(
+        `Uyari: ${LIVE_TIMEOUT_MS}ms icinde tum fiyatlar gelmedi (${toplam - bekleyen}/${toplam}), mevcut haliyle cekiliyor.` +
+          (toplam === 0 ? ' Fiyat alani bulunamadi: poster tasarimi sinif adlarini degistirmis olabilir.' : ''),
+      );
     }
 
     // Sayfa karti ekrana sigdirmak icin CSS transform ile kucultuyor (--s degiskeni).

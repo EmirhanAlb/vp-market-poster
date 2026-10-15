@@ -18,6 +18,10 @@ const dryRun = process.argv.includes('--dry-run');
  * Hem testi kolaylastirir hem de is ortasinda coktuyse kurtarma saglar.
  */
 const settleMode = process.argv.includes('--settle');
+/** Zincir modu: workflow her calistirmada bir halka yurutur, bkz. zincirHalkasi(). */
+const loopMode = process.argv.includes('--loop');
+/** Bir zincir halkasinin calisma suresi (dakika). */
+const HALKA_DK = Number(process.env.LOOP_MINUTES || 300);
 
 function arg(ad) {
   const i = process.argv.indexOf(ad);
@@ -123,13 +127,16 @@ async function scopeler(token) {
   }
 }
 
-function kayitEkle(kayit) {
-  let gecmis = [];
+function gecmisOku() {
   try {
-    gecmis = JSON.parse(fs.readFileSync(KAYIT_DOSYASI, 'utf8'))?.oylamalar || [];
+    return JSON.parse(fs.readFileSync(KAYIT_DOSYASI, 'utf8'))?.oylamalar || [];
   } catch {
-    gecmis = [];
+    return [];
   }
+}
+
+function kayitEkle(kayit) {
+  const gecmis = gecmisOku();
   gecmis.push(kayit);
   fs.mkdirSync(path.dirname(KAYIT_DOSYASI), { recursive: true });
   fs.writeFileSync(KAYIT_DOSYASI, `${JSON.stringify({ oylamalar: gecmis.slice(-120) }, null, 2)}\n`);
@@ -385,13 +392,10 @@ async function main() {
     return;
   }
 
-  const paylasAni = bugunSaat(PAYLAS_S, PAYLAS_D, 'Europe/Istanbul');
-  const acilisAni = bugunSaat(ACILIS_S, ACILIS_D, 'America/New_York');
-  const sonucAni = new Date(acilisAni.getTime() + SONUC_DK * 60_000);
-
-  console.log(`Oylama    : ${trSaat(paylasAni)} TR`);
-  console.log(`ABD acilis: ${trSaat(acilisAni)} TR`);
-  console.log(`Sonuc     : ${trSaat(sonucAni)} TR`);
+  const plan = gununPlani();
+  console.log(`Oylama    : ${trSaat(plan.paylasAni)} TR`);
+  console.log(`ABD acilis: ${trSaat(plan.acilisAni)} TR`);
+  console.log(`Sonuc     : ${trSaat(plan.sonucAni)} TR`);
   console.log(`Kanallar  : ${hedefler.join(', ')}\n`);
 
   if (dryRun) {
@@ -400,17 +404,110 @@ async function main() {
     return;
   }
 
-  // GitHub'in zamanlayicisi isi cok gec baslatmis olabilir. Acilis gecmisse
-  // oylamanin anlami kalmaz: paylasilir paylasilmaz sonuclanirdi.
-  const paySuresiKaldi = acilisAni.getTime() - Date.now();
-  if (paySuresiKaldi < 5 * 60_000) {
-    console.log(
-      `Atlaniyor: ABD acilisina ${Math.round(paySuresiKaldi / 60000)} dk kaldi, ` +
-        'oylama icin anlamli sure yok. Yarin yeniden denenecek.',
-    );
+  if (loopMode) {
+    await zincirHalkasi(client, botKullanici, hedefler);
     return;
   }
 
+  // Elle tek seferlik calistirma. Acilis gecmisse oylamanin anlami kalmaz:
+  // paylasilir paylasilmaz sonuclanirdi.
+  const paySuresiKaldi = plan.acilisAni.getTime() - Date.now();
+  if (paySuresiKaldi < 5 * 60_000) {
+    console.log(
+      `Atlaniyor: ABD acilisina ${Math.round(paySuresiKaldi / 60000)} dk kaldi, ` +
+        'oylama icin anlamli sure yok.',
+    );
+    return;
+  }
+  await gunlukAkis(client, botKullanici, hedefler, plan);
+}
+
+/**
+ * Verilen gunun (Turkiye takvimiyle) oylama saatleri.
+ *
+ * ABD acilisi, paylasim aninin New York'taki gunune gore hesaplaniyor.
+ * "Simdi"ye gore hesaplansaydi Turkiye'de gece yarisini gectikten sonra New
+ * York hala onceki gunde oldugundan acilis bir gun geriye duserdi. Zincirdeki
+ * halkalar gunun her saatinde calistigi icin bu fark onemli.
+ */
+function gununPlani(referans = new Date()) {
+  const paylasAni = bugunSaat(PAYLAS_S, PAYLAS_D, 'Europe/Istanbul', referans);
+  const acilisAni = bugunSaat(ACILIS_S, ACILIS_D, 'America/New_York', paylasAni);
+  const sonucAni = new Date(acilisAni.getTime() + SONUC_DK * 60_000);
+  return { paylasAni, acilisAni, sonucAni };
+}
+
+function haftaIciMi(an) {
+  const gun = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Istanbul', weekday: 'short' }).format(an);
+  return gun !== 'Sat' && gun !== 'Sun';
+}
+
+/**
+ * Bugunun oylamasi ele alinmis mi: sonuclanmis, kacirildigi kaydedilmis ya
+ * da paylasilmis ama henuz sonuclanmamis (is yarida kesildiyse). Son durumda
+ * ikinci bir oylama acmak yerine elle "npm run poll:settle" bekleniyor.
+ */
+function bugunIslendiMi(bugun) {
+  if (gecmisOku().some((k) => k.tarih === bugun)) return true;
+  const aktif = aktifOku();
+  if (aktif?.paylasildi && trTarih(new Date(aktif.paylasildi)) === bugun) {
+    console.warn('  ! Bugunun oylamasi paylasilmis ama sonuclanmamis. Sonuclandirmak icin: npm run poll:settle');
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Zincirin tek halkasi. Workflow is bitince kendini yeniden tetikliyor.
+ *
+ * NEDEN ZINCIR? Is eskiden hafta ici 09:00 UTC cron'uyla basliyordu. GitHub'in
+ * zamanlayicisi bu cron'u giderek daha gec atesledi: Eylul basinda 13:10 UTC,
+ * 21 Eylul'den itibaren 13:48-18:26 UTC. ABD acilisi 13:30 UTC oldugundan is
+ * her gun "acilis gecmis" diye atlayip BASARILI bitti; oylama 18 Eylul'den
+ * sonra hic paylasilmadi ve hata da gorunmedi. Diger uc akis ayni sorunla
+ * zincire tasinmisti.
+ *
+ * Paylasimdan sonuca ~3.5 saat suruyor ve bu sure tek isin icinde kalmali:
+ * acilis fiyati tam acilis aninda alinmali. Bu yuzden bir halka oylamayi
+ * ancak sonuc saati kendi suresi icindeyse yurutur. Degilse oylamayi tam
+ * kapsayabilecek ilk ana kadar bekleyip cikar; yeni halka tam sureyle baslar.
+ */
+async function zincirHalkasi(client, botKullanici, hedefler) {
+  const bitis = Date.now() + HALKA_DK * 60_000;
+  const simdi = new Date();
+  const bugun = trTarih(simdi);
+  const plan = gununPlani(simdi);
+
+  if (!haftaIciMi(simdi) || bugunIslendiMi(bugun)) {
+    console.log(`Bugun (${bugun}) yapilacak oylama yok.`);
+    await bekle(new Date(bitis), 'Halka sonu');
+    return;
+  }
+
+  // Zincir koptuysa ve acilistan sonra uyandiysak gunu kurtarmak mumkun degil.
+  // Eskiden bu durum sessizce gecildigi icin haftalarca fark edilmedi: artik
+  // gecmise yaziliyor (ayni gun tekrar raporlanmasin) ve calistirma hatali biter.
+  const kalanMs = plan.acilisAni.getTime() - Date.now();
+  if (kalanMs < 5 * 60_000) {
+    kayitEkle({ tarih: bugun, kacirildi: true, uyanis: simdi.toISOString() });
+    throw new Error(
+      `Bugunun oylamasi kacirildi: zincir ABD acilisindan (${trSaat(plan.acilisAni)} TR) ` +
+        `sonra, ${trSaat(simdi)} TR'de uyandi. Zincir bir sure kopmus olmali.`,
+    );
+  }
+
+  if (plan.sonucAni.getTime() <= bitis) {
+    await gunlukAkis(client, botKullanici, hedefler, plan);
+    return;
+  }
+
+  const devir = new Date(Math.min(bitis, plan.sonucAni.getTime() - HALKA_DK * 60_000));
+  console.log(`Oylama bu halkaya sigmiyor; ${trSaat(devir)} TR'de yeni halkaya devredilecek.`);
+  await bekle(devir, 'Devir');
+}
+
+/** Bir gunun oylamasini bastan sona yurutur: paylas, acilisi yakala, sonuclandir. */
+async function gunlukAkis(client, botKullanici, hedefler, { paylasAni, acilisAni, sonucAni }) {
   // 1) Oylamayi paylas
   await bekle(paylasAni, 'Oylama saati');
   const { fiyat: baslangicFiyat, kaynak } = await altinFiyati();

@@ -1,18 +1,29 @@
 name: Gunun Tahmini (oylama) -> Slack
 
 # Tek is, tum gunu yonetir: oylamayi paylasir, ABD acilisinda fiyati yakalar,
-# bir saat sonra sonucu aciklar. Ayri cron'lara bolunmedi cunku GitHub'in
-# zamanlayicisi saatleri tutturmuyor (olculen sapma ~2.5 saat) - oysa acilis
-# fiyatinin tam 16:30'da alinmasi gerekiyor. Is erken baslar, hedef saatleri
-# kendi bekler.
+# bir saat sonra sonucu aciklar. Ayri cron'lara bolunmedi cunku acilis
+# fiyatinin tam acilis aninda alinmasi gerekiyor. Is hedef saatleri kendi bekler.
+#
+# NEDEN CRON DEGIL DE ZINCIR?
+#
+# Is hafta ici 09:00 UTC cron'uyla basliyordu. GitHub'in zamanlayicisi onu
+# giderek daha gec atesledi: Eylul basinda ~13:10 UTC, 21 Eylul 2026'dan sonra
+# 13:48-18:26 UTC. ABD acilisi 13:30 UTC oldugundan is her gun "acilis gecmis"
+# diye atladi ve BASARILI bitti: oylama 18 Eylul'den sonra hic paylasilmadi.
+#
+# Cozum diger uc akistakiyle ayni: is bitiminde workflow kendini yeniden
+# tetikler. Halka mantigi src/poll/index.js icindeki zincirHalkasi()'nda.
 
 on:
   schedule:
-    # Hafta ici 09:00 UTC (12:00 TR). Gec ateslerse script yine de yetisir:
-    # oylama 14:00 TR, acilis 16:30 TR.
-    - cron: '0 9 * * 1-5'
+    # Yalnizca guvenlik agi: zincir bir sekilde kopmussa yeniden baslatir.
+    - cron: '0 */2 * * *'
   workflow_dispatch:
     inputs:
+      loop_minutes:
+        description: 'Bir halkanin surecegi dakika'
+        required: false
+        default: '300'
       dry_run:
         description: 'Slack e gonderme, sadece fiyat ve saatleri yazdir'
         type: boolean
@@ -27,18 +38,21 @@ on:
         required: false
         default: '60'
 
+# Ayni anda tek is calisir. Zamanlanmis tetikleme halka surerken gelirse
+# beklemede kalir ve is bitince zinciri devralir; ikinci bir zincir olusmaz.
 concurrency:
   group: market-poll
   cancel-in-progress: false
 
 permissions:
   contents: write # oylama gecmisini repoya yazmak icin
+  actions: write  # is bitiminde kendini yeniden tetiklemek icin
 
 jobs:
   poll:
     runs-on: ubuntu-latest
-    # Is 09:00'da baslayip 14:30 UTC'de bitebilir: 5.5 saat + pay.
-    timeout-minutes: 350
+    # 300 dakikalik halka + sonuc aciklama + kurulum payi.
+    timeout-minutes: 330
     steps:
       - uses: actions/checkout@v5
 
@@ -51,7 +65,7 @@ jobs:
         run: npm ci
 
       - name: Oylamayi yonet
-        run: node src/poll/index.js ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: node src/poll/index.js --loop ${{ inputs.dry_run && '--dry-run' || '' }}
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           # Tum Slack workspace'leri ve kanallari tek JSON secret'ta.
@@ -71,6 +85,7 @@ jobs:
           POLL_SETTLE_MINUTES: ${{ inputs.settle_minutes || '60' }}
           POLL_FLAT_BAND: ${{ vars.POLL_FLAT_BAND || '0.15' }}
           POLL_SHARP_BAND: ${{ vars.POLL_SHARP_BAND || '0.5' }}
+          LOOP_MINUTES: ${{ inputs.loop_minutes || '300' }}
 
       - name: Oylama gecmisini kaydet
         if: ${{ always() && !inputs.dry_run }}
@@ -85,3 +100,12 @@ jobs:
           git commit -m "chore: gunun tahmini sonucunu kaydet [skip ci]"
           git pull --rebase --autostash origin main
           git push origin HEAD:main
+
+      # Is basarisiz bitse bile zincir devam etmeli; aksi halde tek bir gecici
+      # hata akisi kalici olarak durdururdu. dry_run elle tetiklemede varsayilan
+      # olarak acik, bu yuzden zincir onu acikca kapatarak tetikliyor.
+      - name: Zinciri devam ettir
+        if: ${{ always() && !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run "Gunun Tahmini (oylama) -> Slack" --ref "${{ github.ref_name }}" -f dry_run=false
