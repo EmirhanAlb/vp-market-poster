@@ -1,6 +1,21 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "1d02f2b38c267dba",
+      "ts": 1792026638783,
+      "baslik": "Avustralya beklenmedik şekilde 39.300 iş kaybetti, RBA faiz artırımı beklentileri azaldı"
+    },
+    {
+      "anahtar": "3baade06acb6943e",
+      "ts": 1792025439876,
+      "baslik": "Petrol ABD TÜFE sonrası geriledi; IEA toplantısı odakta"
+    },
+    {
+      "anahtar": "9413632f0221a709",
+      "ts": 1792025439876,
+      "baslik": "ABD hisse senedi vadeli işlemleri yüksek enflasyon sonrası düştü"
+    },
+    {
       "anahtar": "67f0efe8df863e86",
       "ts": 1792008516382,
       "baslik": "Altın madenciliği hisseleri Fed faiz artırımı beklentisiyle düştü"
@@ -174,11 +189,6 @@
       "anahtar": "c0057e96b0f3bd68",
       "ts": 1791442078264,
       "baslik": "Hürmüz gerginliği Fed faiz artışı beklentilerini güçlendirirken Altın toparlandı"
-    },
-    {
-      "anahtar": "397145269be6bb16",
-      "ts": 1791406421657,
-      "baslik": "Son dakika... AK Parti'den istifa etti! Fatma Betül Sayan Kaya ve eşinin savcılık ifadesi ortaya çıktı"
     }
   ]
 }
