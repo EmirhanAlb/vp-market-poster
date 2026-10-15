@@ -86,6 +86,9 @@ jobs:
           # eski deneme kanali C0AHQDASSUR sessizce oylamaya dahil olurdu ve
           # onu duşurmek icin secret'in tamamini yeniden yazmak gerekirdi.
           POLL_CHANNEL_ID: ${{ vars.POLL_CHANNEL_ID || 'C08AJ51934P' }}
+          # Baska workspace'lerdeki oylama kanallari, "slot:kanal" (slot =
+          # SLACK_CONFIG'teki anahtar; token oradan gelir). Virgulle coklanir.
+          POLL_EK_KANALLAR: ${{ vars.POLL_EK_KANALLAR || 'montenegro:C0BNPGR567R' }}
           POLL_POST_TR: ${{ inputs.post_tr || '14:00' }}
           POLL_SETTLE_MINUTES: ${{ inputs.settle_minutes || '60' }}
           POLL_FLAT_BAND: ${{ vars.POLL_FLAT_BAND || '0.15' }}

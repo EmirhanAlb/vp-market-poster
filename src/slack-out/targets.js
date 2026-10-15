@@ -78,6 +78,37 @@ export function hedefler(akis) {
   return sonuc;
 }
 
+/**
+ * "slot:kanal" listesini hedeflere cevirir, ornek: "montenegro:C0BNPGR567R".
+ * Slot, SLACK_CONFIG'teki anahtar; "varsayilan" SLACK_BOT_TOKEN'i gosterir.
+ *
+ * Neden ayri bir yazim: poster ve oylama mevcut kanallarini SLACK_CONFIG'ten
+ * degil kendi degiskenlerinden okuyor (bkz. kanallar(), src/poll/index.js).
+ * Baska bir workspace'teki kanali eklemek icin token'i secret'tan, kanali
+ * workflow dosyasindan almak gerekiyor; secret'i bastan yazmaya gerek kalmiyor.
+ *
+ * Token'i bulunamayan girdi sessizce dusmez: hatalar listesinde doner.
+ * @returns {{ hedefler: Array<{token: string, channel: string, slot: string}>, hatalar: string[] }}
+ */
+export function slotluHedefler(deger) {
+  const yapilandirma = jsonYapilandirma();
+  const sonuc = { hedefler: [], hatalar: [] };
+  for (const girdi of liste(deger)) {
+    const [slot, channel] = girdi.split(':').map((x) => x.trim());
+    if (!slot || !channel) {
+      sonuc.hatalar.push(`"${girdi}": bicim "slot:kanal" olmali`);
+      continue;
+    }
+    const token = slot === 'varsayilan' ? process.env.SLACK_BOT_TOKEN : yapilandirma[slot]?.token;
+    if (!token) {
+      sonuc.hatalar.push(`"${girdi}": SLACK_CONFIG icinde "${slot}" icin token yok`);
+      continue;
+    }
+    sonuc.hedefler.push({ token, channel, slot });
+  }
+  return sonuc;
+}
+
 /** Hedefleri token'a gore gruplar (her token icin tek WebClient yeterli). */
 export function tokenaGoreGrupla(akis) {
   const gruplar = new Map();

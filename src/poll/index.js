@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { WebClient } from '@slack/web-api';
-import { hedefler as slackHedefleri } from '../slack-out/targets.js';
+import { hedefler as slackHedefleri, slotluHedefler } from '../slack-out/targets.js';
 import { altinFiyati, fiyatYaz } from './price.js';
 import { bugunSaat, saatCoz, trSaat, trTarih, bekle } from './time.js';
 import { oylamaKarti, sonucKarti } from './kart.js';
@@ -23,6 +23,14 @@ const settleMode = process.argv.includes('--settle');
 const loopMode = process.argv.includes('--loop');
 /** Bir zincir halkasinin calisma suresi (dakika). */
 const HALKA_DK = Number(process.env.LOOP_MINUTES || 300);
+const HALKA_BITIS = Date.now() + HALKA_DK * 60_000;
+
+/**
+ * Akisi durdurmayan ama gorunmesi gereken sorunlar (bir workspace'te eksik
+ * izin, bir kanala gonderilemeyen mesaj...). Diger kanallar calismaya devam
+ * eder; calistirma sonunda bunlar varsa is hatali biter.
+ */
+const sorunlar = [];
 
 function arg(ad) {
   const i = process.argv.indexOf(ad);
@@ -69,41 +77,42 @@ const SECENEKLER = [
 ];
 
 /**
- * Oylama kanallari.
+ * Oylama hedefleri: [{ token, kanal, slot }].
  *
- * Eskiden yalnizca POLL_CHANNEL_ID okunuyordu. Diger akislar SLACK_CONFIG'e
- * tasindiginda oylama geride kaldi: kanal yalnizca SLACK_CONFIG'te tanimliysa
- * bu fonksiyon bos donuyor ve akis "tanimli degil" diye duruyordu. Artik
- * hedefler ortak cozumleyiciden geliyor (o zaten her iki yazimi da destekler).
+ * POLL_CHANNEL_ID acikca verilmisse SLACK_BOT_TOKEN'in workspace'inde tek
+ * yetkili odur; SLACK_CONFIG'teki "poll" alani dikkate alinmaz. Diger akislar
+ * iki kaynagi BIRLESTIRIR ama oylama icin bu yanlis olurdu: secret'ta kalmis
+ * eski bir kanal sessizce oylamaya dahil olur ve onu dusurmenin tek yolu
+ * secret'i bastan yazmak olurdu (GitHub secret degerlerini geri gostermiyor).
  *
- * Oylama akisi hala tek token'la calisiyor: oylari okumak ve sonucu ayni
- * mesajin altina yazmak icin mesaji atan workspace'in istemcisi gerekiyor.
- * Baska workspace'lerdeki hedefler bu yuzden atlanir - ama sessizce degil.
+ * Baska workspace'lerdeki kanallar POLL_EK_KANALLAR ile eklenir
+ * ("montenegro:C0BNPGR567R"): token SLACK_CONFIG'teki slot'tan, kanal
+ * workflow dosyasindan gelir. Her hedef kendi workspace'inin token'iyla
+ * yurutulur; oylari okumak ve sonucu ayni mesajin altina yazmak icin mesaji
+ * atan workspace'in istemcisi gerekiyor.
  */
 function kanallar() {
-  const token = process.env.SLACK_BOT_TOKEN;
+  const sonuc = [];
+  const ekle = (token, kanal, slot) => {
+    if (sonuc.some((h) => h.token === token && h.kanal === kanal)) return;
+    sonuc.push({ token, kanal, slot });
+  };
 
-  // POLL_CHANNEL_ID acikca verilmisse tek yetkili odur; SLACK_CONFIG'teki
-  // "poll" alani dikkate alinmaz. Diger akislar iki kaynagi BIRLESTIRIR ama
-  // oylama icin bu yanlis olurdu: secret'ta kalmis eski bir kanal sessizce
-  // oylamaya dahil olur ve onu dusurmenin tek yolu secret'i bastan yazmak
-  // olurdu (GitHub secret degerlerini geri gostermiyor).
   const acik = (process.env.POLL_CHANNEL_ID || '')
     .split(',')
     .map((c) => c.trim())
     .filter(Boolean);
-  if (acik.length) return [...new Set(acik)];
-
-  const hepsi = slackHedefleri('poll');
-  const disarida = hepsi.filter((h) => h.token !== token);
-  if (disarida.length) {
-    const slotlar = [...new Set(disarida.map((d) => d.slot))].join(', ');
-    console.warn(
-      `  ! ${disarida.length} oylama kanali baska workspace'te (${slotlar}); ` +
-        'oylama akisi coklu workspace desteklemiyor, bu kanallar atlaniyor.',
-    );
+  if (acik.length) {
+    if (!process.env.SLACK_BOT_TOKEN) sorunlar.push('POLL_CHANNEL_ID verilmis ama SLACK_BOT_TOKEN yok.');
+    else for (const kanal of acik) ekle(process.env.SLACK_BOT_TOKEN, kanal, 'varsayilan');
+  } else {
+    for (const h of slackHedefleri('poll')) ekle(h.token, h.channel, h.slot);
   }
-  return [...new Set(hepsi.filter((h) => h.token === token).map((h) => h.channel))];
+
+  const ek = slotluHedefler(process.env.POLL_EK_KANALLAR);
+  for (const h of ek.hedefler) ekle(h.token, h.channel, h.slot);
+  sorunlar.push(...ek.hatalar.map((h) => `POLL_EK_KANALLAR ${h}`));
+  return sonuc;
 }
 
 /**
@@ -127,6 +136,56 @@ async function scopeler(token) {
     return [];
   }
 }
+
+/**
+ * Oylama iki tepki iznine dayaniyor:
+ *   reactions:write - oy seceneklerinin emojilerini mesaja onceden koymak.
+ *                     Yoksa oylama tiklanacak secenek olmadan paylasilir ve
+ *                     kimse oy veremez. Eksikligi sessiz, cunku kod
+ *                     reactions.add hatasini yutup uyari basiyor.
+ *   reactions:read  - oylari geri okumak. Yoksa sonuc asla aciklanamaz.
+ * Bu izinleri olmayan workspace'e hic paylasilmiyor: sonuclanamayacak ya da
+ * oy alamayacak bir oylamayi kanalda birakmaktansa o kanal atlanir.
+ * files:write yalnizca kartlar icin; yoksa mesajlar gorselsiz gider.
+ */
+const GEREKLI_IZINLER = ['reactions:write', 'reactions:read'];
+
+/** Hedefleri workspace istemcileriyle eslestirir: [{ kanal, slot, client, bot }]. */
+async function istemcileriHazirla(hedefler) {
+  const hazir = [];
+  const tokenlar = new Map();
+  for (const h of hedefler) {
+    if (!tokenlar.has(h.token)) tokenlar.set(h.token, []);
+    tokenlar.get(h.token).push(h);
+  }
+
+  for (const [token, grup] of tokenlar) {
+    const ad = `${grup[0].slot} (${grup.map((h) => h.kanal).join(', ')})`;
+    const izinler = await scopeler(token);
+    const eksikler = izinler.length ? GEREKLI_IZINLER.filter((i) => !izinler.includes(i)) : [];
+    const duzeltme =
+      'api.slack.com/apps > o workspace teki uygulama > OAuth & Permissions > Bot Token Scopes, ' +
+      'ekleyip "Reinstall to Workspace". Token degisirse SLACK_CONFIG secret ini guncelleyin.';
+    if (eksikler.length) {
+      sorunlar.push(`${ad}: Slack uygulamasinda ${eksikler.join(', ')} izni yok, bu kanal atlandi. ${duzeltme}`);
+      continue;
+    }
+    if (izinler.length && !izinler.includes('files:write')) {
+      sorunlar.push(`${ad}: files:write izni yok, kartlar gonderilemiyor (mesajlar gorselsiz). ${duzeltme}`);
+    }
+    try {
+      const client = new WebClient(token);
+      const { user_id: bot } = await client.auth.test();
+      for (const h of grup) hazir.push({ kanal: h.kanal, slot: h.slot, client, bot });
+    } catch (err) {
+      sorunlar.push(`${ad}: token gecersiz (${err?.data?.error || err.message}), bu kanal atlandi.`);
+    }
+  }
+  return hazir;
+}
+
+/** Durum dosyasina yalnizca kanal, ts ve slot yazilir; istemci ya da token asla. */
+const kayitlik = (mesajlar) => mesajlar.map(({ kanal, ts, slot }) => ({ kanal, ts, slot }));
 
 function gecmisOku() {
   try {
@@ -166,16 +225,25 @@ async function gorselYukle(client, dosyaYolu, baslik) {
 }
 
 /**
- * Karti uretir ve yukler. Kart suslemedir: herhangi bir adim basarisiz olursa
- * null doner ve mesaj gorselsiz gider, oylama asla bu yuzden durmaz.
+ * Kart suslemedir: uretim ya da yukleme basarisiz olursa null doner ve mesaj
+ * gorselsiz gider, oylama asla bu yuzden durmaz.
  */
-async function kartHazirla(client, uret, dosyaAdi, alt) {
+async function kartUret(uret, dosyaAdi) {
   try {
-    const yol = await uret(path.join(rootDir, 'out', 'kart', dosyaAdi));
-    if (!client) return { yol };
-    return { id: await gorselYukle(client, yol, alt), alt, yol };
+    return await uret(path.join(rootDir, 'out', 'kart', dosyaAdi));
   } catch (err) {
-    console.warn(`  ! kart hazirlanamadi (${err?.data?.error || err.message}); mesaj gorselsiz gidecek`);
+    console.warn(`  ! kart uretilemedi (${err.message}); mesaj gorselsiz gidecek`);
+    return null;
+  }
+}
+
+/** Dosya kimlikleri workspace'e ozel: kart her workspace'e ayri yuklenir. */
+async function kartYukle(client, yol, alt) {
+  if (!yol) return null;
+  try {
+    return { id: await gorselYukle(client, yol, alt), alt };
+  } catch (err) {
+    console.warn(`  ! kart yuklenemedi (${err?.data?.error || err.message}); mesaj gorselsiz gidecek`);
     return null;
   }
 }
@@ -214,7 +282,9 @@ function sonrakiOylamaGunu(an = new Date()) {
   for (let g = 1; g <= 7; g++) {
     const aday = new Date(an.getTime() + g * 86_400_000);
     if (!haftaIciMi(aday)) continue;
-    return g === 1 ? 'Yarın' : new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', weekday: 'long' }).format(aday);
+    return g === 1
+      ? 'Yarın'
+      : new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', weekday: 'long' }).format(aday);
   }
   return 'Yarın';
 }
@@ -223,7 +293,7 @@ const PAYLAS_METIN = `${String(PAYLAS_S).padStart(2, '0')}:${String(PAYLAS_D).pa
 
 // --- 1) OYLAMAYI PAYLAS ----------------------------------------------------
 
-async function oylamaPaylas(client, kanal, acilisAni, sonucAni, baslangicFiyat, kart) {
+async function oylamaPaylas({ client, kanal }, acilisAni, sonucAni, baslangicFiyat, kart) {
   const metinBloklari = [
     {
       type: 'section',
@@ -291,7 +361,7 @@ async function oylamaPaylas(client, kanal, acilisAni, sonucAni, baslangicFiyat, 
  * emoji tepkileriyle "tek oy" teknik olarak zorlanamiyor, bu yuzden kural
  * sayim aninda uygulaniyor ve sonuc mesajinda belirtiliyor.
  */
-async function oylariOku(client, kanal, ts, botKullanici) {
+async function oylariOku({ client, kanal, bot: botKullanici }, ts) {
   const res = await client.reactions.get({ channel: kanal, timestamp: ts, full: true });
   if (!res.ok) throw new Error(JSON.stringify(res));
 
@@ -324,7 +394,7 @@ function yonBelirle(degisimYuzde) {
   return degisimYuzde > 0 ? 'yukari' : 'asagi';
 }
 
-async function sonucPaylas(client, kanal, ts, veri) {
+async function sonucPaylas({ client, kanal }, ts, veri) {
   const { acilisFiyat, kapanisFiyat, degisim, yon, gecerli, gecersiz } = veri;
   const secenek = SECENEKLER.find((s) => s.yon === yon);
   const sert = Math.abs(degisim) >= SERT_ESIK;
@@ -386,8 +456,7 @@ async function sonucPaylas(client, kanal, ts, veri) {
   // Kutlama karti: dogru bilen varsa konfetili tebrik, yoksa "kimse bilemedi".
   // Kazanan sayisi kanala gore degistigi icin kart her kanal icin ayri.
   const tur = kazananlar.length ? 'kazanan' : gecerli.size > 0 ? 'kimse' : 'oysuz';
-  const kart = await kartHazirla(
-    client,
+  const kartYolu = await kartUret(
     (yol) =>
       sonucKarti(
         {
@@ -406,8 +475,8 @@ async function sonucPaylas(client, kanal, ts, veri) {
         yol,
       ),
     `sonuc-${kanal}.gif`,
-    tur === 'kazanan' ? 'Tebrikler kartı' : 'Günün Tahmini sonuç kartı',
   );
+  const kart = await kartYukle(client, kartYolu, tur === 'kazanan' ? 'Tebrikler kartı' : 'Günün Tahmini sonuç kartı');
 
   const res = await kartliGonder(
     client,
@@ -431,7 +500,7 @@ async function sonucPaylas(client, kanal, ts, veri) {
 // --- ANA AKIS --------------------------------------------------------------
 
 /** Bir oylamayi sonuclandirir: oylari okur, sonucu paylasir, gecmise yazar. */
-async function sonuclandir(client, botKullanici, mesajlar, acilisFiyat, kapanisFiyat) {
+async function sonuclandir(mesajlar, acilisFiyat, kapanisFiyat) {
   const degisim = ((kapanisFiyat - acilisFiyat) / acilisFiyat) * 100;
   const yon = yonBelirle(degisim);
   console.log(
@@ -439,10 +508,14 @@ async function sonuclandir(client, botKullanici, mesajlar, acilisFiyat, kapanisF
       `degisim ${degisim.toFixed(2)}% -> ${yon}`,
   );
 
-  for (const { kanal, ts } of mesajlar) {
+  // Bir kanaldaki hata digerlerinin sonucunu engellemez. Sonuclanamayanlar
+  // durum dosyasinda kalir ki "npm run poll:settle" ile tamamlanabilsin.
+  const kalan = [];
+  for (const mesaj of mesajlar) {
+    const { kanal, ts } = mesaj;
     try {
-      const { gecerli, gecersiz } = await oylariOku(client, kanal, ts, botKullanici);
-      await sonucPaylas(client, kanal, ts, { acilisFiyat, kapanisFiyat, degisim, yon, gecerli, gecersiz });
+      const { gecerli, gecersiz } = await oylariOku(mesaj, ts);
+      await sonucPaylas(mesaj, ts, { acilisFiyat, kapanisFiyat, degisim, yon, gecerli, gecersiz });
       kayitEkle({
         tarih: trTarih(new Date()),
         kanal,
@@ -456,78 +529,78 @@ async function sonuclandir(client, botKullanici, mesajlar, acilisFiyat, kapanisF
         kazananlar: [...gecerli.entries()].filter(([, y]) => y === yon).map(([k]) => k),
       });
     } catch (err) {
-      console.error(`  ${kanal}: sonuc paylasilamadi -> ${err?.data?.error || err.message}`);
-      throw err;
+      const hata = err?.data?.error || err.message;
+      console.error(`  ${kanal}: sonuc paylasilamadi -> ${hata}`);
+      sorunlar.push(`${kanal} (${mesaj.slot}): sonuc paylasilamadi (${hata}). Tamamlamak icin: npm run poll:settle`);
+      kalan.push(mesaj);
     }
   }
-  aktifSil();
+  if (kalan.length) aktifYaz({ ...aktifOku(), mesajlar: kayitlik(kalan) });
+  else aktifSil();
 }
 
 async function main() {
-  const token = process.env.SLACK_BOT_TOKEN;
-  const hedefler = kanallar();
-  if (!token) throw new Error('SLACK_BOT_TOKEN tanimli degil.');
-  if (hedefler.length === 0) {
-    throw new Error('Oylama kanali tanimli degil (SLACK_CONFIG icinde "poll" ya da POLL_CHANNEL_ID).');
+  await calis();
+  if (sorunlar.length) {
+    throw new Error(`${sorunlar.length} sorun var:\n  - ${sorunlar.join('\n  - ')}`);
   }
+}
 
-  // Oylama iki tepki iznine dayaniyor:
-  //   reactions:write - oy seceneklerinin emojilerini mesaja onceden koymak.
-  //                     Yoksa oylama tikanacak secenek olmadan paylasilir ve
-  //                     kimse oy veremez. Eksikligi sessiz, cunku kod
-  //                     reactions.add hatasini yutup uyari basiyor.
-  //   reactions:read  - oylari geri okumak. Yoksa sonuc asla aciklanamaz.
-  // Ikisi de burada kontrol ediliyor: sonuclanamayacak ya da oy alamayacak
-  // bir oylamayi kanalda birakmaktansa hicbir sey paylasmadan duruyoruz.
-  const GEREKLI_IZINLER = ['reactions:write', 'reactions:read'];
-  const izinler = await scopeler(token);
-  const eksikler = izinler.length ? GEREKLI_IZINLER.filter((i) => !izinler.includes(i)) : [];
-  if (eksikler.length) {
-    throw new Error(
-      `Slack uygulamasinda su izin(ler) yok: ${eksikler.join(', ')}. ` +
-        `Mevcut izinler: ${izinler.join(', ')}. ` +
-        'Duzeltme: api.slack.com/apps > uygulama > OAuth & Permissions > Bot Token Scopes ' +
-        `altina ${eksikler.join(' ve ')} ekleyin, "Reinstall to Workspace" yapin. Token degisirse ` +
-        'SLACK_BOT_TOKEN ve SLACK_CONFIG secret larini guncelleyin.',
-    );
-  }
-
-  const client = new WebClient(token);
-  const kimlik = await client.auth.test();
-  const botKullanici = kimlik.user_id;
-
-  // --settle: onceden paylasilmis bir oylamayi simdi sonuclandir.
+async function calis() {
+  // --settle: onceden paylasilmis bir oylamayi simdi sonuclandir. Mesajlar
+  // durum dosyasindan (ya da --ts/--kanal/--slot ile elle) gelir; token,
+  // kayitli slot adindan yeniden cozulur.
   if (settleMode) {
     const aktif = aktifOku();
-    const ts = arg('--ts') || aktif?.mesajlar?.[0]?.ts;
-    const kanal = arg('--kanal') || aktif?.mesajlar?.[0]?.kanal || hedefler[0];
+    const kaynak = arg('--ts')
+      ? [{ ts: arg('--ts'), kanal: arg('--kanal') || kanallar()[0]?.kanal, slot: arg('--slot') || 'varsayilan' }]
+      : aktif?.mesajlar || [];
     const acilisFiyat = Number(arg('--acilis') || aktif?.acilisFiyat || aktif?.baslangicFiyat);
 
-    if (!ts) throw new Error('Sonuclandirilacak oylama yok. --ts <zaman damgasi> verin.');
+    if (!kaynak.length) throw new Error('Sonuclandirilacak oylama yok. --ts <zaman damgasi> verin.');
     if (!Number.isFinite(acilisFiyat)) throw new Error('Acilis fiyati bilinmiyor. --acilis <fiyat> verin.');
 
+    const cozum = slotluHedefler(kaynak.map((m) => `${m.slot || 'varsayilan'}:${m.kanal}`).join(','));
+    sorunlar.push(...cozum.hatalar);
+    const hazir = await istemcileriHazirla(
+      cozum.hedefler.map((h) => ({ token: h.token, kanal: h.channel, slot: h.slot })),
+    );
+    const mesajlar = kaynak.flatMap((m) => {
+      const h = hazir.find((x) => x.kanal === m.kanal && x.slot === (m.slot || 'varsayilan'));
+      return h ? [{ ...h, ts: m.ts }] : [];
+    });
+    if (!mesajlar.length) throw new Error('Sonuclandirilacak oylamanin hicbir kanalina erisilemiyor.');
+
     const { fiyat: kapanisFiyat } = await altinFiyati();
-    await sonuclandir(client, botKullanici, [{ kanal, ts }], acilisFiyat, kapanisFiyat);
+    await sonuclandir(mesajlar, acilisFiyat, kapanisFiyat);
     return;
+  }
+
+  const hedefler = await istemcileriHazirla(kanallar());
+  if (hedefler.length === 0) {
+    throw new Error(
+      'Kullanilabilir oylama kanali yok (POLL_CHANNEL_ID, SLACK_CONFIG "poll" ya da POLL_EK_KANALLAR).' +
+        (sorunlar.length ? `\n  - ${sorunlar.join('\n  - ')}` : ''),
+    );
   }
 
   const plan = gununPlani();
   console.log(`Oylama    : ${trSaat(plan.paylasAni)} TR`);
   console.log(`ABD acilis: ${trSaat(plan.acilisAni)} TR`);
   console.log(`Sonuc     : ${trSaat(plan.sonucAni)} TR`);
-  console.log(`Kanallar  : ${hedefler.join(', ')}\n`);
+  console.log(`Kanallar  : ${hedefler.map((h) => `${h.kanal} (${h.slot})`).join(', ')}\n`);
 
   if (dryRun) {
     const { fiyat, kaynak } = await altinFiyati();
     console.log(`--dry-run: guncel altin $${fiyatYaz(fiyat)} (${kaynak}). Gonderim yapilmadi.`);
     // Kartin bu makinede uretilebildigini de dogrula (Chromium, yazi tipleri).
-    const kart = await kartHazirla(null, (yol) => oylamaKarti(oylamaKartVerisi(fiyat, plan), yol), 'oylama.png');
-    if (kart) console.log(`--dry-run: oylama karti uretildi -> ${kart.yol}`);
+    const kartYolu = await kartUret((yol) => oylamaKarti(oylamaKartVerisi(fiyat, plan), yol), 'oylama.png');
+    if (kartYolu) console.log(`--dry-run: oylama karti uretildi -> ${kartYolu}`);
     return;
   }
 
   if (loopMode) {
-    await zincirHalkasi(client, botKullanici, hedefler);
+    await zincirHalkasi(hedefler);
     return;
   }
 
@@ -536,12 +609,11 @@ async function main() {
   const paySuresiKaldi = plan.acilisAni.getTime() - Date.now();
   if (paySuresiKaldi < 5 * 60_000) {
     console.log(
-      `Atlaniyor: ABD acilisina ${Math.round(paySuresiKaldi / 60000)} dk kaldi, ` +
-        'oylama icin anlamli sure yok.',
+      `Atlaniyor: ABD acilisina ${Math.round(paySuresiKaldi / 60000)} dk kaldi, ` + 'oylama icin anlamli sure yok.',
     );
     return;
   }
-  await gunlukAkis(client, botKullanici, hedefler, plan);
+  await gunlukAkis(hedefler, plan);
 }
 
 /**
@@ -594,8 +666,8 @@ function bugunIslendiMi(bugun) {
  * ancak sonuc saati kendi suresi icindeyse yurutur. Degilse oylamayi tam
  * kapsayabilecek ilk ana kadar bekleyip cikar; yeni halka tam sureyle baslar.
  */
-async function zincirHalkasi(client, botKullanici, hedefler) {
-  const bitis = Date.now() + HALKA_DK * 60_000;
+async function zincirHalkasi(hedefler) {
+  const bitis = HALKA_BITIS;
   const simdi = new Date();
   const bugun = trTarih(simdi);
   const plan = gununPlani(simdi);
@@ -619,7 +691,7 @@ async function zincirHalkasi(client, botKullanici, hedefler) {
   }
 
   if (plan.sonucAni.getTime() <= bitis) {
-    await gunlukAkis(client, botKullanici, hedefler, plan);
+    await gunlukAkis(hedefler, plan);
     return;
   }
 
@@ -629,48 +701,56 @@ async function zincirHalkasi(client, botKullanici, hedefler) {
 }
 
 /** Bir gunun oylamasini bastan sona yurutur: paylas, acilisi yakala, sonuclandir. */
-async function gunlukAkis(client, botKullanici, hedefler, { paylasAni, acilisAni, sonucAni }) {
+async function gunlukAkis(hedefler, { paylasAni, acilisAni, sonucAni }) {
   // 1) Oylamayi paylas
   await bekle(paylasAni, 'Oylama saati');
   const { fiyat: baslangicFiyat, kaynak } = await altinFiyati();
   console.log(`Baslangic fiyati: $${fiyatYaz(baslangicFiyat)} (${kaynak})`);
 
-  const kart = await kartHazirla(
-    client,
+  const kartYolu = await kartUret(
     (yol) => oylamaKarti(oylamaKartVerisi(baslangicFiyat, { paylasAni, acilisAni, sonucAni }), yol),
     'oylama.png',
-    'Günün Tahmini oylama kartı',
   );
 
+  const kartlar = new Map(); // istemci -> o workspace'e yuklenmis kart
   const mesajlar = [];
-  for (const kanal of hedefler) {
+  for (const hedef of hedefler) {
     try {
-      mesajlar.push({ kanal, ts: await oylamaPaylas(client, kanal, acilisAni, sonucAni, baslangicFiyat, kart) });
+      if (!kartlar.has(hedef.client)) {
+        kartlar.set(hedef.client, await kartYukle(hedef.client, kartYolu, 'Günün Tahmini oylama kartı'));
+      }
+      const ts = await oylamaPaylas(hedef, acilisAni, sonucAni, baslangicFiyat, kartlar.get(hedef.client));
+      mesajlar.push({ ...hedef, ts });
     } catch (err) {
-      console.error(`  ${kanal}: oylama paylasilamadi -> ${err?.data?.error || err.message}`);
+      const hata = err?.data?.error || err.message;
+      console.error(`  ${hedef.kanal}: oylama paylasilamadi -> ${hata}`);
+      sorunlar.push(`${hedef.kanal} (${hedef.slot}): oylama paylasilamadi (${hata})`);
     }
   }
   if (mesajlar.length === 0) throw new Error('Hicbir kanala oylama paylasilamadi.');
 
   // Durumu diske yaz: is bu noktadan sonra coker veya kesilirse oylama
   // "--settle" ile sonradan sonuclandirilabilsin.
-  aktifYaz({ mesajlar, baslangicFiyat, paylasildi: new Date().toISOString() });
+  aktifYaz({ mesajlar: kayitlik(mesajlar), baslangicFiyat, paylasildi: new Date().toISOString() });
 
   // 2) Acilis fiyatini yakala
   await bekle(acilisAni, 'ABD acilisi');
   const { fiyat: acilisFiyat } = await altinFiyati();
   console.log(`Acilis fiyati: $${fiyatYaz(acilisFiyat)}`);
-  aktifYaz({ mesajlar, baslangicFiyat, acilisFiyat, paylasildi: new Date().toISOString() });
+  aktifYaz({ mesajlar: kayitlik(mesajlar), baslangicFiyat, acilisFiyat, paylasildi: new Date().toISOString() });
 
   // 3) Bir saat sonra sonucu hesapla ve acikla
   await bekle(sonucAni, 'Sonuc saati');
   const { fiyat: kapanisFiyat } = await altinFiyati();
-  await sonuclandir(client, botKullanici, mesajlar, acilisFiyat, kapanisFiyat);
+  await sonuclandir(mesajlar, acilisFiyat, kapanisFiyat);
 }
 
 main()
   .then(() => process.exit(0))
-  .catch((err) => {
+  .catch(async (err) => {
     console.error('HATA:', err?.message || err);
+    // Zincir modunda hemen cikmak, workflow'un birkac dakikada bir kendini
+    // yeniden baslatip ayni hatayi tekrarlamasi demek. Halka suresi doldurulur.
+    if (loopMode && !dryRun) await bekle(new Date(HALKA_BITIS), 'Hata sonrasi halka sonu');
     process.exit(1);
   });

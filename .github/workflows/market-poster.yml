@@ -70,6 +70,9 @@ jobs:
           # Yeni kanal eklemek icin yalnizca bu secret guncellenir.
           TELEGRAM_CONFIG: ${{ secrets.TELEGRAM_CONFIG }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          # Baska workspace'lerdeki poster kanallari, "slot:kanal" (slot =
+          # SLACK_CONFIG'teki anahtar; token oradan gelir). Virgulle coklanir.
+          POSTER_EK_KANALLAR: ${{ vars.POSTER_EK_KANALLAR || 'montenegro:C0BNPGR567R' }}
           POSTER_SAATLERI: ${{ vars.POSTER_SAATLERI || '11:00,14:00,16:00,16:50,17:00,18:00' }}
           # Sayfa acildiktan sonra grafikler icin en fazla kac saniye beklensin.
           GRAFIK_BEKLEME_SN: ${{ vars.POSTER_GRAFIK_BEKLEME_SN || '50' }}

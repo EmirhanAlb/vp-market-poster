@@ -5,6 +5,7 @@ import { capturePoster } from './capture.js';
 import { uploadPosterToSlack } from './slack.js';
 import { posterGonder } from './telegram-out/index.js';
 import { bugunSaat, saatCoz } from './poll/time.js';
+import { slotluHedefler } from './slack-out/targets.js';
 
 // Lokal calistirmada .env dosyasini oku (GitHub Actions'ta secrets zaten env olarak gelir).
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -48,26 +49,45 @@ async function birTur() {
     return;
   }
 
-  const token = process.env.SLACK_BOT_TOKEN;
-  // Birden fazla kanal icin virgulle ayrilmis liste verilebilir: "C123,C456"
-  const channels = (process.env.SLACK_CHANNEL_ID || '')
+  // Token workspace'e bagli: kanallar token'a gore gruplanip her grup kendi
+  // token'iyla yukleniyor.
+  //   SLACK_CHANNEL_ID    - SLACK_BOT_TOKEN'in workspace'indeki kanallar ("C123,C456")
+  //   POSTER_EK_KANALLAR  - baska workspace'lerdeki kanallar ("montenegro:C0BNPGR567R")
+  const gruplar = new Map();
+  const ekle = (token, channel) => {
+    if (!gruplar.has(token)) gruplar.set(token, new Set());
+    gruplar.get(token).add(channel);
+  };
+  const varsayilan = (process.env.SLACK_CHANNEL_ID || '')
     .split(',')
     .map((c) => c.trim())
     .filter(Boolean);
+  if (process.env.SLACK_BOT_TOKEN) for (const c of varsayilan) ekle(process.env.SLACK_BOT_TOKEN, c);
+  const ek = slotluHedefler(process.env.POSTER_EK_KANALLAR);
+  for (const h of ek.hedefler) ekle(h.token, h.channel);
 
-  if (!token || channels.length === 0) {
-    throw new Error('SLACK_BOT_TOKEN ve SLACK_CHANNEL_ID tanimli degil. .env dosyasina veya GitHub secrets\'a ekleyin.');
+  if (gruplar.size === 0) {
+    throw new Error(
+      'Poster kanali tanimli degil: SLACK_BOT_TOKEN + SLACK_CHANNEL_ID ya da POSTER_EK_KANALLAR gerekli.',
+    );
   }
 
   const warn = result.live ? '' : '\n_(Not: fiyatlar canli akisa gecmeden yakalandi.)_';
-  console.log(`Slack'e gonderiliyor (${channels.length} kanal)...`);
-  const results = await uploadPosterToSlack({
-    token,
-    channels,
-    filePath: outPath,
-    title: `Vestaprime — Canli Piyasalar ${human}`,
-    comment: `:chart_with_upwards_trend: *Canli Piyasalar* — ${human}\n<https://vestaprimes.com/en/market-poster|vestaprimes.com>${warn}`,
-  });
+  const toplam = [...gruplar.values()].reduce((n, k) => n + k.size, 0);
+  console.log(`Slack'e gonderiliyor (${toplam} kanal, ${gruplar.size} workspace)...`);
+  const results = [];
+  for (const [token, channels] of gruplar) {
+    results.push(
+      ...(await uploadPosterToSlack({
+        token,
+        channels: [...channels],
+        filePath: outPath,
+        title: `Vestaprime — Canli Piyasalar ${human}`,
+        comment: `:chart_with_upwards_trend: *Canli Piyasalar* — ${human}\n<https://vestaprimes.com/en/market-poster|vestaprimes.com>${warn}`,
+      })),
+    );
+  }
+  for (const hata of ek.hatalar) results.push({ channel: 'POSTER_EK_KANALLAR', ok: false, error: hata });
 
   const failed = results.filter((r) => !r.ok);
   console.log(`Ozet: ${results.length - failed.length}/${results.length} kanal basarili`);
@@ -142,7 +162,9 @@ const saatYaz = (an) =>
 
 async function dongu() {
   const bitis = Date.now() + HALKA_DK * 60_000;
-  console.log(`Gonderim saatleri (TR): ${SAATLER.map(([s, d]) => `${String(s).padStart(2, '0')}:${String(d).padStart(2, '0')}`).join(', ')}`);
+  console.log(
+    `Gonderim saatleri (TR): ${SAATLER.map(([s, d]) => `${String(s).padStart(2, '0')}:${String(d).padStart(2, '0')}`).join(', ')}`,
+  );
   console.log(`Halka sonu: ${saatYaz(new Date(bitis))}\n`);
 
   let tur = 0;
