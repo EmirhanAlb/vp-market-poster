@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "6aa9b7ccc1e54324",
+      "ts": 1792068914008,
+      "baslik": "ABD'de üretici enflasyonu eylülde beklentilerin üzerinde arttı"
+    },
+    {
+      "anahtar": "5dd6d1d1d32bfe53",
+      "ts": 1792068314284,
+      "baslik": "Piyasaların gözü bu verideydi: ABD üretici enflasyonu sert yükseldi"
+    },
+    {
       "anahtar": "0c927ad55d3c45d2",
       "ts": 1792065298416,
       "baslik": "SON DAKİKA | Merkez Bankası rezervleri 171,6 milyar dolara yükseldi"
@@ -204,16 +214,6 @@
       "anahtar": "9340a48bcf44e2c2",
       "ts": 1791481322103,
       "baslik": "ABD İran’a yeni yaptırımlar açıkladı, petrol taşıyan gemiler hedefte"
-    },
-    {
-      "anahtar": "cb334f41ec45442f",
-      "ts": 1791463181714,
-      "baslik": "Meksika’da enflasyon Eylül’de yüzde 3,45’e yükseldi"
-    },
-    {
-      "anahtar": "f539332019f40aa0",
-      "ts": 1791460784603,
-      "baslik": "SON DAKİKA | Merkez Bankası güncel rezerv verilerini açıkladı"
     }
   ]
 }
