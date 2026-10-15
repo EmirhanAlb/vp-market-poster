@@ -16,6 +16,14 @@ const FIYAT = '.vpmp [class*="__price"]';
 const BEKLEYEN_FIYAT = '.vpmp [class*="__price--pending"]';
 const LIVE_TIMEOUT_MS = Number(process.env.LIVE_TIMEOUT_MS || 60_000);
 
+// Kartlardaki mini grafikler fiyatlardan cok sonra geliyor: DXY ve Brent
+// verisi Yahoo'dan iki ucretsiz CORS vekili uzerinden cekiliyor ve ilk ikisi
+// 10 ve 18 saniyede zaman asimina dusuyor; tarayicida ~50 sn suruyor. Grafik
+// gelince kartin SVG'sine path ekleniyor, gelmeden once yalnizca kesikli cizgi
+// var. Sayfa acildiktan sonra en fazla bu kadar bekleniyor; tum grafikler daha
+// erken gelirse beklemeden cekiliyor.
+const GRAFIK_BEKLEME_MS = Number(process.env.GRAFIK_BEKLEME_SN || 50) * 1000;
+
 /**
  * market-poster sayfasini acar, fiyatlar yuklenene kadar bekler ve
  * poster kartini 1080x1350 PNG olarak diske yazar.
@@ -44,6 +52,7 @@ export async function capturePoster(outPath) {
 
     await page.goto(POSTER_URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
     await page.waitForSelector('.vpmp', { timeout: 60_000 });
+    const acilis = Date.now();
 
     // Fiyatlarin gelmesini bekle. Gelmezse yine de poster'i cekiyoruz ama
     // "live" olmadigini raporluyoruz ki Slack mesajinda belli olsun.
@@ -72,6 +81,30 @@ export async function capturePoster(outPath) {
           (toplam === 0 ? ' Fiyat alani bulunamadi: poster tasarimi sinif adlarini degistirmis olabilir.' : ''),
       );
     }
+
+    // Grafikler susleme: gelmeyenler olursa poster yine gider, yalnizca loglanir.
+    const grafikDurumu = () =>
+      page.evaluate(() => {
+        const svgler = Array.from(document.querySelectorAll('.vpmp-card__chart'));
+        return [svgler.filter((s) => s.querySelector('path')).length, svgler.length];
+      });
+    const grafikKalan = GRAFIK_BEKLEME_MS - (Date.now() - acilis);
+    if (grafikKalan > 0) {
+      await page
+        .waitForFunction(
+          () => {
+            const svgler = document.querySelectorAll('.vpmp-card__chart');
+            return svgler.length > 0 && Array.from(svgler).every((s) => s.querySelector('path'));
+          },
+          null,
+          { timeout: grafikKalan, polling: 1000 },
+        )
+        .catch(() => {});
+    }
+    const [grafik, kart] = await grafikDurumu();
+    console.log(`Grafikler: ${grafik}/${kart} (${((Date.now() - acilis) / 1000).toFixed(0)} sn sonra)`);
+    // Grafik cizim animasyonunun bitmesi icin.
+    if (grafik > 0) await page.waitForTimeout(1500);
 
     // Sayfa karti ekrana sigdirmak icin CSS transform ile kucultuyor (--s degiskeni).
     // Birebir 1080x1350 cekmek icin olcegi 1'e sabitliyoruz.

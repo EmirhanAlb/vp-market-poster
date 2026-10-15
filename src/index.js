@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { capturePoster } from './capture.js';
 import { uploadPosterToSlack } from './slack.js';
 import { posterGonder } from './telegram-out/index.js';
+import { bugunSaat, saatCoz } from './poll/time.js';
 
 // Lokal calistirmada .env dosyasini oku (GitHub Actions'ta secrets zaten env olarak gelir).
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -85,7 +86,35 @@ async function birTur() {
 }
 
 /**
- * Dongu modu.
+ * Gonderim saatleri (Turkiye saati). Poster yalnizca bu saatlerde gider,
+ * aradaki saatlerde hicbir sey gonderilmez. Workflow'da POSTER_SAATLERI
+ * repo degiskeniyle degistirilebilir: "11:00,14:00,16:00".
+ */
+const SAATLER = (process.env.POSTER_SAATLERI || '11:00,14:00,16:00,16:50,17:00,18:00')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean)
+  .map((s) => {
+    const [saat, dakika] = saatCoz(s, []);
+    if (saat === undefined || saat > 23 || dakika > 59) throw new Error(`POSTER_SAATLERI icinde gecersiz saat: "${s}"`);
+    return [saat, dakika];
+  })
+  .sort((a, b) => a[0] * 60 + a[1] - (b[0] * 60 + b[1]));
+
+/** Simdiden sonraki ilk gonderim ani (bugun ya da yarin). */
+function sonrakiGonderim(simdi = new Date()) {
+  for (const gun of [0, 1]) {
+    const referans = new Date(simdi.getTime() + gun * 86_400_000);
+    for (const [saat, dakika] of SAATLER) {
+      const an = bugunSaat(saat, dakika, TZ, referans);
+      if (an.getTime() > simdi.getTime()) return an;
+    }
+  }
+  throw new Error('Gonderim saati listesi bos.');
+}
+
+/**
+ * Dongu modu: zincirin tek halkasi.
  *
  * Saatlik cron ayarliydi ama GitHub'in zamanlayicisi bu repoda onu
  * calistirmiyor: 27-31 Agustos 2026 arasinda gunde 24 yerine 1-6 calistirma
@@ -93,21 +122,41 @@ async function birTur() {
  * FinancialJuice akislarindaki cozumun ayni: tek uzun is icinde kendimiz
  * bekliyoruz, is bitince workflow kendini yeniden tetikliyor.
  *
+ * Halka sinirinda gonderim kacmasin diye: halka, sonraki gonderim kendi
+ * suresinin TASMA_DK fazlasina kadar ise onu da kendisi yapar; yalnizca
+ * sonraki gonderim bundan da uzaktaysa cikar. Yeni halkanin kurulumu (~4 dk)
+ * boylece hicbir gonderim saatine denk gelmiyor.
+ *
+ * Kacan saat sonradan telafi edilmiyor: zincir koptuysa ve gec uyandiysa o
+ * saat atlanir. Gec bir poster, ust uste iki poster gondermekten iyidir.
+ *
  * Tarayici her turda capture.js icindeki finally blogunda kapaniyor, bu
  * yuzden uzun dongude surec sismiyor.
  */
-const ARALIK_SN = Number(process.env.LOOP_SECONDS || 3600);
-const SURE_DK = Number(process.env.LOOP_MINUTES || 300);
+const HALKA_DK = Number(process.env.LOOP_MINUTES || 300);
+const TASMA_DK = 15;
+
+const uyu = (ms) => new Promise((r) => setTimeout(r, Math.max(0, ms)));
+const saatYaz = (an) =>
+  new Intl.DateTimeFormat('tr-TR', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false }).format(an);
 
 async function dongu() {
-  const bitis = Date.now() + SURE_DK * 60_000;
-  let tur = 0;
-  console.log(`Dongu modu: her ${ARALIK_SN} sn, ${SURE_DK} dk boyunca.\n`);
+  const bitis = Date.now() + HALKA_DK * 60_000;
+  console.log(`Gonderim saatleri (TR): ${SAATLER.map(([s, d]) => `${String(s).padStart(2, '0')}:${String(d).padStart(2, '0')}`).join(', ')}`);
+  console.log(`Halka sonu: ${saatYaz(new Date(bitis))}\n`);
 
-  while (Date.now() < bitis) {
+  let tur = 0;
+  for (;;) {
+    const hedef = sonrakiGonderim();
+    if (hedef.getTime() > bitis + TASMA_DK * 60_000) {
+      console.log(`Siradaki gonderim ${saatYaz(hedef)}; sonraki halkaya birakiliyor.`);
+      await uyu(bitis - Date.now());
+      break;
+    }
+    console.log(`Siradaki gonderim ${saatYaz(hedef)} (${Math.round((hedef - Date.now()) / 60000)} dk sonra)`);
+    await uyu(hedef - Date.now());
     tur += 1;
-    const basla = Date.now();
-    console.log(`--- tur ${tur} | ${new Date().toISOString().slice(11, 19)} UTC ---`);
+    console.log(`--- ${saatYaz(new Date())} gonderimi ---`);
     try {
       await birTur();
     } catch (err) {
@@ -115,11 +164,8 @@ async function dongu() {
       // yuklenmeyebilir ya da Slack anlik hata dondurebilir.
       console.error('  tur hatasi:', err?.message || err);
     }
-    const kalan = ARALIK_SN * 1000 - (Date.now() - basla);
-    if (kalan <= 0 || Date.now() + kalan >= bitis) break;
-    await new Promise((r) => setTimeout(r, kalan));
   }
-  console.log(`\nDongu tamamlandi: ${tur} tur.`);
+  console.log(`\nHalka tamamlandi: ${tur} gonderim.`);
 }
 
 const calistir = process.argv.includes('--loop') ? dongu : birTur;

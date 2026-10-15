@@ -5,7 +5,7 @@ ve aynı bot token'ını kullanır, ancak ayrı workflow'lar olarak çalışır.
 
 | Otomasyon | Ne yapar | Sıklık | Kanal secret'ı |
 |---|---|---|---|
-| **Market Poster** | Canlı piyasa posterini yakalar, PNG olarak gönderir | Saat başı | `SLACK_CHANNEL_ID` |
+| **Market Poster** | Canlı piyasa posterini yakalar, PNG olarak gönderir | TR 11:00, 14:00, 16:00, 16:50, 17:00, 18:00 | `SLACK_CHANNEL_ID` |
 | **Son Dakika** | Önemli global finansal haberleri filtreleyip gönderir | 10 dk (ABD seansı) / 30 dk | `NEWS_CHANNEL_ID` |
 | **FinancialJuice** | Telegram ham piyasa akışını Türkçeye çevirip aktarır | 5 dakikada bir | `TELEGRAM_CHANNEL_ID` |
 
@@ -17,7 +17,7 @@ ve aynı bot token'ını kullanır, ancak ayrı workflow'lar olarak çalışır.
 otomatik olarak yakalayıp Slack kanalına gönderir. Elle "Download PNG" tıklamaya gerek kalmaz.
 
 **Çıktı:** 1080×1350 PNG (sayfadaki indirme butonuyla birebir aynı ölçü).
-**Zamanlama:** GitHub Actions, her saat başı.
+**Zamanlama:** Her gün TR 11:00, 14:00, 16:00, 16:50, 17:00 ve 18:00 — başka hiçbir saatte gönderilmez.
 
 ---
 
@@ -27,7 +27,9 @@ Poster sunucuda duran hazır bir dosya değil — sayfa açıldığında tarayı
 (fiyatlar Binance / CoinGecko / open.er-api'den geliyor). Bu yüzden otomasyon gerçek bir tarayıcı çalıştırıyor:
 
 1. Headless Chromium ile `/en/market-poster` sayfası açılır.
-2. Fiyatlar gelip durum rozeti **LIVE** olana kadar beklenir (fiyat satırlarındaki `·····` kaybolana kadar).
+2. Fiyatlar gelip durum rozeti **LIVE** olana kadar beklenir (fiyat alanlarındaki `·····` kaybolana kadar).
+   Ardından kartlardaki mini grafikler beklenir: sayfa açıldıktan sonra en fazla 50 sn, altı grafik
+   daha erken gelirse hemen çekilir. Grafikler gelmezse poster yine gider.
 3. Sayfanın kartı ekrana sığdırmak için uyguladığı küçültme (`--s` CSS değişkeni) iptal edilir, kart tam 1080×1350 boyutunda ekran görüntüsü olarak alınır.
 4. PNG, Slack Web API ile kanala dosya olarak yüklenir.
 
@@ -36,7 +38,7 @@ src/capture.js       → Playwright ile poster yakalama
 src/slack.js         → Slack'e dosya yükleme (kanal başına ayrı yükleme)
 src/index.js         → akışı yöneten giriş noktası
 scripts/make-icons.mjs → Slack app ikonu varyantlarını üretir (assets/ altına)
-.github/workflows/market-poster.yml → saatlik zamanlama
+.github/workflows/market-poster.yml → gönderim saatlerini bekleyen, kendini yeniden tetikleyen iş
 ```
 
 ---
@@ -93,7 +95,7 @@ gönderim yine de yapılır, ancak çalıştırma hatalı olarak işaretlenir).
 ### 4. Test et
 
 Repo → **Actions** sekmesi → **Market Poster -> Slack** → **Run workflow**.
-Bir dakika içinde poster Slack kanalına düşmeli. Bundan sonrası otomatik: her saat başı çalışır.
+İş bir sonraki gönderim saatini bekler (anında poster göndermez). Bundan sonrası otomatik.
 
 ---
 
@@ -117,17 +119,14 @@ npm start
 
 ### Gönderim sıklığı
 
-[.github/workflows/market-poster.yml](.github/workflows/market-poster.yml) içindeki `cron` satırı.
-**Saatler UTC** — Türkiye UTC+3, yani TR saatinden 3 çıkar.
+Gönderim saatleri **Türkiye saatiyle** `POSTER_SAATLERI` repo değişkeninden okunur; koda dokunmaya
+gerek yok: GitHub repo → **Settings → Secrets and variables → Actions → Variables → New repository
+variable** → ad `POSTER_SAATLERI`, değer örneğin `11:00,14:00,16:00`. Değişken yoksa varsayılan
+`11:00,14:00,16:00,16:50,17:00,18:00` kullanılır. Yeni değer bir sonraki halkada (en geç ~5 saat) devreye girer.
 
-| İstenen | cron |
-|---|---|
-| Her saat başı (şu anki ayar) | `'0 * * * *'` |
-| Hafta içi TR 09:00–23:00 arası saatlik | `'0 6-20 * * 1-5'` |
-| Her gün TR 09:00 ve 18:00 | `'0 6,15 * * *'` |
-
-> GitHub'ın zamanlayıcısı yoğun saatlerde 5–20 dakika gecikebilir; bu normaldir ve poster üzerindeki
-> "Updated HH:MM" damgası her zaman gerçek yakalama saatini gösterir.
+Neden cron değil: GitHub'ın zamanlayıcısı bu repoda cron'ları saatlerce geç çalıştırıyor ya da hiç
+çalıştırmıyor. İş bu yüzden saatleri kendisi bekliyor ve ~5 saatte bir kendini yeniden tetikliyor.
+Yakalama ~1 dk sürdüğü için mesaj hedef saatten yaklaşık bir dakika sonra düşer.
 
 ### Diğer
 
@@ -137,6 +136,8 @@ npm start
 - `POSTER_URL` — farklı bir dil/sayfa kullanmak için (varsayılan `https://vestaprimes.com/en/market-poster`)
 - `TZ_NAME` — saat damgası ve dosya adı için zaman dilimi (varsayılan `Europe/Istanbul`)
 - `LIVE_TIMEOUT_MS` — fiyatların gelmesi için beklenecek süre (varsayılan 60000)
+- `GRAFIK_BEKLEME_SN` — sayfa açıldıktan sonra grafikler için en fazla kaç saniye beklenecek (varsayılan 50;
+  workflow'da `POSTER_GRAFIK_BEKLEME_SN` repo değişkeniyle değiştirilir)
 
 Poster canlı fiyatlara geçemeden yakalanırsa iş yine de tamamlanır, ancak Slack mesajının altına
 "fiyatlar canlı akışa geçmeden yakalandı" notu düşülür.

@@ -5,11 +5,14 @@ name: Market Poster -> Slack
 # Saatlik cron ayarliydi ama GitHub'in zamanlayicisi bu repoda onu
 # calistirmiyor: 27-31 Agustos 2026 arasinda gunde 24 yerine 1-6 calistirma
 # gerceklesti, aralarda 10 saati asan bosluklar oldu. Son Dakika ve
-# FinancialJuice akislarindaki cozumun ayni: tek uzun is icinde saatte bir
-# poster uretmek, is bitiminde workflow'un kendini yeniden tetiklemesi.
+# FinancialJuice akislarindaki cozumun ayni: tek uzun is icinde gonderim
+# saatlerini kendimiz beklemek, is bitiminde workflow'un kendini yeniden
+# tetiklemesi.
 #
-# Yan fayda: Chromium ve font kurulumu (~2-3 dk) her poster icin degil,
-# 5 saatte bir odenir.
+# GONDERIM SAATLERI (TR): 11:00, 14:00, 16:00, 16:50, 17:00, 18:00 - baska
+# hicbir saatte gonderilmez. Degistirmek icin koda dokunmaya gerek yok:
+# Settings > Secrets and variables > Actions > Variables > POSTER_SAATLERI
+# (ornek deger: 11:00,14:00,16:00).
 
 on:
   schedule:
@@ -18,7 +21,7 @@ on:
   workflow_dispatch:
     inputs:
       loop_minutes:
-        description: 'Dongunun surecegi dakika (0 = tek tur)'
+        description: 'Bir halkanin surecegi dakika'
         required: false
         default: '300'
 
@@ -35,8 +38,9 @@ permissions:
 jobs:
   post:
     runs-on: ubuntu-latest
-    # 300 dakikalik dongu + kurulum payi.
-    timeout-minutes: 320
+    # 300 dakikalik halka + halka sonuna 15 dk kadar tasan son gonderim
+    # (bkz. dongu(), src/index.js) + kurulum payi.
+    timeout-minutes: 340
     steps:
       - uses: actions/checkout@v5
 
@@ -56,7 +60,7 @@ jobs:
       - name: Chromium'u kur
         run: npx playwright install --with-deps chromium
 
-      - name: Poster'i yakala ve Slack'e gonder (dongu)
+      - name: Poster'i gonderim saatlerinde yakala ve Slack'e gonder
         run: node src/index.js --loop
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -66,7 +70,9 @@ jobs:
           # Yeni kanal eklemek icin yalnizca bu secret guncellenir.
           TELEGRAM_CONFIG: ${{ secrets.TELEGRAM_CONFIG }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
-          LOOP_SECONDS: ${{ vars.POSTER_LOOP_SECONDS || '3600' }}
+          POSTER_SAATLERI: ${{ vars.POSTER_SAATLERI || '11:00,14:00,16:00,16:50,17:00,18:00' }}
+          # Sayfa acildiktan sonra grafikler icin en fazla kac saniye beklensin.
+          GRAFIK_BEKLEME_SN: ${{ vars.POSTER_GRAFIK_BEKLEME_SN || '50' }}
           LOOP_MINUTES: ${{ inputs.loop_minutes || '300' }}
 
       - name: Hata durumunda ciktiyi sakla
