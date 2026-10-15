@@ -5,6 +5,7 @@ import { WebClient } from '@slack/web-api';
 import { hedefler as slackHedefleri } from '../slack-out/targets.js';
 import { altinFiyati, fiyatYaz } from './price.js';
 import { bugunSaat, saatCoz, trSaat, trTarih, bekle } from './time.js';
+import { oylamaKarti, sonucKarti } from './kart.js';
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const envFile = path.join(rootDir, '.env');
@@ -142,10 +143,88 @@ function kayitEkle(kayit) {
   fs.writeFileSync(KAYIT_DOSYASI, `${JSON.stringify({ oylamalar: gecmis.slice(-120) }, null, 2)}\n`);
 }
 
+// --- KART GORSELLERI --------------------------------------------------------
+
+/**
+ * Dosyayi kanala paylasmadan Slack'e yukler ve kimligini dondurur.
+ *
+ * files.uploadV2 yerine adimlar elle: dosya kimligi ilk adimda geliyor ve
+ * kanala paylasilmamis dosya mesaj blogunda (slack_file) kullanilabiliyor.
+ * Boylece kart mesajin icinde gorunuyor, ts dogrudan chat.postMessage'tan
+ * geliyor ve oy tepkileri ile sonuc zinciri ayni mesaja baglaniyor.
+ */
+async function gorselYukle(client, dosyaYolu, baslik) {
+  const veri = fs.readFileSync(dosyaYolu);
+  const { upload_url: adres, file_id: id } = await client.files.getUploadURLExternal({
+    filename: path.basename(dosyaYolu),
+    length: veri.length,
+  });
+  const yanit = await fetch(adres, { method: 'POST', body: veri });
+  if (!yanit.ok) throw new Error(`yukleme HTTP ${yanit.status}`);
+  await client.files.completeUploadExternal({ files: [{ id, title: baslik }] });
+  return id;
+}
+
+/**
+ * Karti uretir ve yukler. Kart suslemedir: herhangi bir adim basarisiz olursa
+ * null doner ve mesaj gorselsiz gider, oylama asla bu yuzden durmaz.
+ */
+async function kartHazirla(client, uret, dosyaAdi, alt) {
+  try {
+    const yol = await uret(path.join(rootDir, 'out', 'kart', dosyaAdi));
+    if (!client) return { yol };
+    return { id: await gorselYukle(client, yol, alt), alt, yol };
+  } catch (err) {
+    console.warn(`  ! kart hazirlanamadi (${err?.data?.error || err.message}); mesaj gorselsiz gidecek`);
+    return null;
+  }
+}
+
+/**
+ * Mesaji en uste kart gorseli koyarak gonderir; olmazsa gorselsiz gonderir.
+ * Yeni yuklenen dosya Slack'te islenene kadar birkac saniye blokta
+ * kullanilamiyor (invalid_blocks); bu yuzden artan araliklarla yeniden deneniyor.
+ */
+async function kartliGonder(client, mesaj, kart, kartliBloklar = mesaj.blocks) {
+  if (kart?.id) {
+    const blocks = [{ type: 'image', slack_file: { id: kart.id }, alt_text: kart.alt }, ...kartliBloklar];
+    for (let deneme = 1; deneme <= 5; deneme++) {
+      try {
+        const res = await client.chat.postMessage({ ...mesaj, blocks });
+        return Object.assign(res, { kartli: true });
+      } catch (err) {
+        const hata = err?.data?.error || err.message;
+        if (hata !== 'invalid_blocks' || deneme === 5) {
+          console.warn(`  ! kart mesaja eklenemedi (${hata}); gorselsiz gonderiliyor`);
+          break;
+        }
+        await new Promise((r) => setTimeout(r, 1500 * deneme));
+      }
+    }
+  }
+  return client.chat.postMessage(mesaj);
+}
+
+function oylamaKartVerisi(fiyat, { paylasAni, acilisAni, sonucAni }) {
+  return { tarih: new Date(), fiyat, paylasAni, acilisAni, sonucAni, bant: DURAGAN_BANDI };
+}
+
+/** Bir sonraki oylama gunu: "Yarın" ya da gun adi (Cuma'dan sonra "Pazartesi"). */
+function sonrakiOylamaGunu(an = new Date()) {
+  for (let g = 1; g <= 7; g++) {
+    const aday = new Date(an.getTime() + g * 86_400_000);
+    if (!haftaIciMi(aday)) continue;
+    return g === 1 ? 'Yarın' : new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', weekday: 'long' }).format(aday);
+  }
+  return 'Yarın';
+}
+
+const PAYLAS_METIN = `${String(PAYLAS_S).padStart(2, '0')}:${String(PAYLAS_D).padStart(2, '0')}`;
+
 // --- 1) OYLAMAYI PAYLAS ----------------------------------------------------
 
-async function oylamaPaylas(client, kanal, acilisAni, sonucAni, baslangicFiyat) {
-  const bloklar = [
+async function oylamaPaylas(client, kanal, acilisAni, sonucAni, baslangicFiyat, kart) {
+  const metinBloklari = [
     {
       type: 'section',
       text: {
@@ -163,26 +242,33 @@ async function oylamaPaylas(client, kanal, acilisAni, sonucAni, baslangicFiyat) 
         text: SECENEKLER.map((s) => `${s.gorsel}  *${s.etiket}*`).join('\n'),
       },
     },
-    {
-      type: 'context',
-      elements: [
-        {
-          type: 'mrkdwn',
-          text:
-            `Şu anki fiyat: *$${fiyatYaz(baslangicFiyat)}*  ·  ` +
-            `Sonuç *${trSaat(sonucAni)}*'da açıklanır  ·  ` +
-            `Tek seçenek işaretleyin — birden fazlası geçersiz sayılır`,
-        },
-      ],
-    },
   ];
+  const baglam = {
+    type: 'context',
+    elements: [
+      {
+        type: 'mrkdwn',
+        text:
+          `Şu anki fiyat: *$${fiyatYaz(baslangicFiyat)}*  ·  ` +
+          `Sonuç *${trSaat(sonucAni)}*'da açıklanır  ·  ` +
+          `Tek seçenek işaretleyin — birden fazlası geçersiz sayılır`,
+      },
+    ],
+  };
 
-  const res = await client.chat.postMessage({
-    channel: kanal,
-    text: `GÜNÜN TAHMİNİ — Altın açılıştan sonra nasıl seyreder?`,
-    blocks: bloklar,
-    unfurl_links: false,
-  });
+  // Kart varsa baslik, soru ve secenekler zaten gorselde: metin tekrarlanmiyor.
+  // Kart eklenemezse mesaj eskisi gibi tam metinle gider.
+  const res = await kartliGonder(
+    client,
+    {
+      channel: kanal,
+      text: `GÜNÜN TAHMİNİ — Altın açılıştan sonra nasıl seyreder?`,
+      blocks: [...metinBloklari, baglam],
+      unfurl_links: false,
+    },
+    kart,
+    [baglam],
+  );
   if (!res.ok) throw new Error(JSON.stringify(res));
 
   // Secenek emojilerini onceden koyuyoruz ki tek tikla oy verilebilsin.
@@ -194,7 +280,7 @@ async function oylamaPaylas(client, kanal, acilisAni, sonucAni, baslangicFiyat) 
     }
   }
 
-  console.log(`  ${kanal}: oylama paylasildi (ts ${res.ts})`);
+  console.log(`  ${kanal}: oylama paylasildi (ts ${res.ts}${res.kartli ? ', kartli' : ''})`);
   return res.ts;
 }
 
@@ -279,7 +365,7 @@ async function sonucPaylas(client, kanal, ts, veri) {
   } else if (gecerli.size > 0) {
     bloklar.push({
       type: 'section',
-      text: { type: 'mrkdwn', text: ':see_no_evil: Bu kez kimse tutturamadı. Yarın yeniden!' },
+      text: { type: 'mrkdwn', text: `:see_no_evil: Bu kez kimse tutturamadı. ${sonrakiOylamaGunu()} yeniden!` },
     });
   } else {
     bloklar.push({ type: 'section', text: { type: 'mrkdwn', text: '_Bu oylamaya geçerli oy verilmedi._' } });
@@ -297,16 +383,49 @@ async function sonucPaylas(client, kanal, ts, veri) {
     });
   }
 
-  const res = await client.chat.postMessage({
-    channel: kanal,
-    thread_ts: ts,
-    reply_broadcast: true, // sonuc kanalda da gorunsun
-    text: `SONUÇ — Altın ${isaret}${degisim.toFixed(2)}%`,
-    blocks: bloklar,
-    unfurl_links: false,
-  });
+  // Kutlama karti: dogru bilen varsa konfetili tebrik, yoksa "kimse bilemedi".
+  // Kazanan sayisi kanala gore degistigi icin kart her kanal icin ayri.
+  const tur = kazananlar.length ? 'kazanan' : gecerli.size > 0 ? 'kimse' : 'oysuz';
+  const kart = await kartHazirla(
+    client,
+    (yol) =>
+      sonucKarti(
+        {
+          tur,
+          tarih: new Date(),
+          yon,
+          degisim,
+          acilisFiyat,
+          kapanisFiyat,
+          kazananSayisi: kazananlar.length,
+          oySayisi: gecerli.size,
+          sert,
+          sonrakiGun: sonrakiOylamaGunu(),
+          sonrakiSaat: PAYLAS_METIN,
+        },
+        yol,
+      ),
+    `sonuc-${kanal}.gif`,
+    tur === 'kazanan' ? 'Tebrikler kartı' : 'Günün Tahmini sonuç kartı',
+  );
+
+  const res = await kartliGonder(
+    client,
+    {
+      channel: kanal,
+      thread_ts: ts,
+      reply_broadcast: true, // sonuc kanalda da gorunsun
+      text: `SONUÇ — Altın ${isaret}${degisim.toFixed(2)}%`,
+      blocks: bloklar,
+      unfurl_links: false,
+    },
+    kart,
+  );
   if (!res.ok) throw new Error(JSON.stringify(res));
-  console.log(`  ${kanal}: sonuc paylasildi (${kazananlar.length} kazanan, ${gecersiz.length} gecersiz)`);
+  console.log(
+    `  ${kanal}: sonuc paylasildi (${kazananlar.length} kazanan, ${gecersiz.length} gecersiz` +
+      `${res.kartli ? ', kartli' : ''})`,
+  );
 }
 
 // --- ANA AKIS --------------------------------------------------------------
@@ -401,6 +520,9 @@ async function main() {
   if (dryRun) {
     const { fiyat, kaynak } = await altinFiyati();
     console.log(`--dry-run: guncel altin $${fiyatYaz(fiyat)} (${kaynak}). Gonderim yapilmadi.`);
+    // Kartin bu makinede uretilebildigini de dogrula (Chromium, yazi tipleri).
+    const kart = await kartHazirla(null, (yol) => oylamaKarti(oylamaKartVerisi(fiyat, plan), yol), 'oylama.png');
+    if (kart) console.log(`--dry-run: oylama karti uretildi -> ${kart.yol}`);
     return;
   }
 
@@ -513,10 +635,17 @@ async function gunlukAkis(client, botKullanici, hedefler, { paylasAni, acilisAni
   const { fiyat: baslangicFiyat, kaynak } = await altinFiyati();
   console.log(`Baslangic fiyati: $${fiyatYaz(baslangicFiyat)} (${kaynak})`);
 
+  const kart = await kartHazirla(
+    client,
+    (yol) => oylamaKarti(oylamaKartVerisi(baslangicFiyat, { paylasAni, acilisAni, sonucAni }), yol),
+    'oylama.png',
+    'Günün Tahmini oylama kartı',
+  );
+
   const mesajlar = [];
   for (const kanal of hedefler) {
     try {
-      mesajlar.push({ kanal, ts: await oylamaPaylas(client, kanal, acilisAni, sonucAni, baslangicFiyat) });
+      mesajlar.push({ kanal, ts: await oylamaPaylas(client, kanal, acilisAni, sonucAni, baslangicFiyat, kart) });
     } catch (err) {
       console.error(`  ${kanal}: oylama paylasilamadi -> ${err?.data?.error || err.message}`);
     }

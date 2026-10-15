@@ -64,6 +64,11 @@ jobs:
       - name: Bagimliliklari kur
         run: npm ci
 
+      # Oylama ve sonuc kartlari HTML'den Chromium ile ciziliyor. Yazi tipi
+      # (Inter) pakette geldigi icin ayrica font kurulumu gerekmiyor.
+      - name: Chromium'u kur (kartlar icin)
+        run: npx playwright install --with-deps chromium
+
       - name: Oylamayi yonet
         run: node src/poll/index.js --loop ${{ inputs.dry_run && '--dry-run' || '' }}
         env:
