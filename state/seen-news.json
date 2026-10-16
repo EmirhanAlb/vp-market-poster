@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "ccc5c3daefbaee43",
+      "ts": 1792177636419,
+      "baslik": "ABD bütçe açığı 2026 mali yılında 1,99 trilyon dolara yükseldi"
+    },
+    {
       "anahtar": "e1803e7c2e286c62",
       "ts": 1792151055343,
       "baslik": "Enflasyon beklentisi yükseldi: TCMB anketinde yıl sonu tahmini yüzde 29,63"
@@ -214,11 +219,6 @@
       "anahtar": "7c6149cd20e93d3f",
       "ts": 1791580427370,
       "baslik": "TCMB, Parakolay'un faaliyet iznini iptal etti"
-    },
-    {
-      "anahtar": "20c8e2d58c3bdf0b",
-      "ts": 1791557486924,
-      "baslik": "ABD’de tüketici güveni Ekim’de geriledi, UMich anketi"
     }
   ]
 }
