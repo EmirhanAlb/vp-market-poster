@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "78e78e988393152f",
+      "ts": 1792394983541,
+      "baslik": "TCMB açıkladı: Türkiye’nin kısa vadeli dış borcu yükseldi"
+    },
+    {
       "anahtar": "f83e6b14a98247d7",
       "ts": 1792393154958,
       "baslik": "Fed’den sürpriz hamle beklentisi: İki senaryo masada"
@@ -229,11 +234,6 @@
       "anahtar": "931f8b5735e62cda",
       "ts": 1791796522283,
       "baslik": "Sterlin bugün: Pound yükseldi, euro geriledi, Fed beklentileri dolara destek verdi"
-    },
-    {
-      "anahtar": "f39bfb67f8a7159d",
-      "ts": 1791789882970,
-      "baslik": "Ticaret ve perakende satış hacmi ağustosta yıllık bazda arttı"
     }
   ]
 }
