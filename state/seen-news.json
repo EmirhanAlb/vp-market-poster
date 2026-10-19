@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "f83e6b14a98247d7",
+      "ts": 1792393154958,
+      "baslik": "Fed’den sürpriz hamle beklentisi: İki senaryo masada"
+    },
+    {
       "anahtar": "9d2cb09cc7baa77b",
       "ts": 1792381084419,
       "baslik": "Ekim’de %10 yükseldi: Yapay zeka seçimi hisse Asya’nın 2 trilyon dolarlık çip çöküşüne direndi"
@@ -229,11 +234,6 @@
       "anahtar": "f39bfb67f8a7159d",
       "ts": 1791789882970,
       "baslik": "Ticaret ve perakende satış hacmi ağustosta yıllık bazda arttı"
-    },
-    {
-      "anahtar": "87313e1c9d4b039c",
-      "ts": 1791780835037,
-      "baslik": "Hindistan rupisi merkez bankası destekleriyle sert yükseldi"
     }
   ]
 }
