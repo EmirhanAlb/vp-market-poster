@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "3811c8ac5241e0ed",
+      "ts": 1792377463865,
+      "baslik": "Çin’de sanayi üretimi ve Retail satışlar tahminleri aştı"
+    },
+    {
       "anahtar": "5fc6ee8582e8ce17",
       "ts": 1792373233487,
       "baslik": "Warsh’ın açıklamaları Fed faiz artışı beklentilerini azalttı, altın yükseldi"
@@ -224,11 +229,6 @@
       "anahtar": "87313e1c9d4b039c",
       "ts": 1791780835037,
       "baslik": "Hindistan rupisi merkez bankası destekleriyle sert yükseldi"
-    },
-    {
-      "anahtar": "531ae7405d9e7376",
-      "ts": 1791768756472,
-      "baslik": "Altın 4.200 dolar yakınında yükseldi, enerji ateşkesi tartışılıyor"
     }
   ]
 }
