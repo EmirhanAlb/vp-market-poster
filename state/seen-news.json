@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "5bce2bcf754e5d6d",
+      "ts": 1792484377025,
+      "baslik": "Polonya’nın sanayi üretimi Eylül’de %4,6 arttı"
+    },
+    {
       "anahtar": "a7568b864bb9966e",
       "ts": 1792476518507,
       "baslik": "Saldırılar petrolü yükseltti"
@@ -229,16 +234,6 @@
       "anahtar": "21b3b915dbc69b24",
       "ts": 1791884051932,
       "baslik": "Buğday fiyatlarında sert düşüş: Eylül ayında yüzde 12,7 geriledi"
-    },
-    {
-      "anahtar": "71a24b09d608cccc",
-      "ts": 1791873783631,
-      "baslik": "Filipinler merkez bankası 2026 cari açık tahminini açıkladı"
-    },
-    {
-      "anahtar": "4f9a02394fad3869",
-      "ts": 1791873783631,
-      "baslik": "Romanya’da enflasyon Eylül’de %6,61’e yükseldi"
     }
   ]
 }
