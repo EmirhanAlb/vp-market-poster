@@ -406,52 +406,23 @@ async function sonucPaylas({ client, kanal }, ts, veri) {
   }).join('   ·   ');
 
   const isaret = degisim > 0 ? '+' : '';
-  const bloklar = [
-    {
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text:
-          `${sert ? ':rotating_light:' : ':checkered_flag:'} *SONUÇ — Altın (XAU/USD)*\n\n` +
-          `Açılış: *$${fiyatYaz(acilisFiyat)}*  →  1 saat sonra: *$${fiyatYaz(kapanisFiyat)}*\n` +
-          `Değişim: *${isaret}${degisim.toFixed(2)}%* → ${secenek.gorsel} *${secenek.etiket}*` +
-          (sert ? '  _(sert hareket)_' : ''),
-      },
-    },
-    { type: 'section', text: { type: 'mrkdwn', text: `Oy dağılımı:  ${dagilim}` } },
-  ];
-
-  if (kazananlar.length) {
-    const etiketler = kazananlar.map((k) => `<@${k}>`).join(' ');
-    bloklar.push({
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: sert
-          ? `:trophy: *Sert hareketi bilenler!* ${etiketler}\nTebrikler, yönü tam isabet okudunuz.`
-          : `:tada: *Doğru bilenler:* ${etiketler}\nTebrikler!`,
-      },
-    });
-  } else if (gecerli.size > 0) {
-    bloklar.push({
-      type: 'section',
-      text: { type: 'mrkdwn', text: `:see_no_evil: Bu kez kimse tutturamadı. ${sonrakiOylamaGunu()} yeniden!` },
-    });
-  } else {
-    bloklar.push({ type: 'section', text: { type: 'mrkdwn', text: '_Bu oylamaya geçerli oy verilmedi._' } });
-  }
-
-  if (gecersiz.length) {
-    bloklar.push({
-      type: 'context',
-      elements: [
-        {
-          type: 'mrkdwn',
-          text: `:warning: ${gecersiz.length} kişi birden fazla seçenek işaretlediği için geçersiz sayıldı.`,
-        },
-      ],
-    });
-  }
+  const ozet =
+    `${sert ? ':rotating_light:' : ':checkered_flag:'} *SONUÇ — Altın (XAU/USD)*\n\n` +
+    `Açılış: *$${fiyatYaz(acilisFiyat)}*  →  1 saat sonra: *$${fiyatYaz(kapanisFiyat)}*\n` +
+    `Değişim: *${isaret}${degisim.toFixed(2)}%* → ${secenek.gorsel} *${secenek.etiket}*` +
+    (sert ? '  _(sert hareket)_' : '');
+  const dagilimMetni = `Oy dağılımı:  ${dagilim}`;
+  const etiketler = kazananlar.map((k) => `<@${k}>`).join(' ');
+  const kazananMetni = kazananlar.length
+    ? sert
+      ? `:trophy: *Sert hareketi bilenler!* ${etiketler}\nTebrikler, yönü tam isabet okudunuz.`
+      : `:tada: *Doğru bilenler:* ${etiketler}\nTebrikler!`
+    : gecerli.size > 0
+      ? `:see_no_evil: Bu kez kimse tutturamadı. ${sonrakiOylamaGunu()} yeniden!`
+      : '_Bu oylamaya geçerli oy verilmedi._';
+  const gecersizMetni = gecersiz.length
+    ? `:warning: ${gecersiz.length} kişi birden fazla seçenek işaretlediği için geçersiz sayıldı.`
+    : null;
 
   // Kutlama karti: dogru bilen varsa konfetili tebrik, yoksa "kimse bilemedi".
   // Kazanan sayisi kanala gore degistigi icin kart her kanal icin ayri.
@@ -476,25 +447,55 @@ async function sonucPaylas({ client, kanal }, ts, veri) {
       ),
     `sonuc-${kanal}.gif`,
   );
-  const kart = await kartYukle(client, kartYolu, tur === 'kazanan' ? 'Tebrikler kartı' : 'Günün Tahmini sonuç kartı');
 
-  const res = await kartliGonder(
-    client,
-    {
-      channel: kanal,
-      thread_ts: ts,
-      reply_broadcast: true, // sonuc kanalda da gorunsun
-      text: `SONUÇ — Altın ${isaret}${degisim.toFixed(2)}%`,
-      blocks: bloklar,
-      unfurl_links: false,
-    },
-    kart,
-  );
+  // Kart kanala GIF DOSYASI olarak yukleniyor, mesaj blogu olarak degil: Slack
+  // mesaja gomulu (slack_file) GIF'in yalnizca ilk karesini gosteriyor, yuklenen
+  // GIF dosyasini ise sohbette kendiliginden oynatiyor (20.10.2026'da deneme
+  // kanalinda iki yol yan yana denendi). Bedeli: dosya yuklemede "kanala da
+  // gonder" yok. Sonuc bu yuzden oylamanin konusuna degil kanala ayri mesaj
+  // olarak gidiyor ve oylama mesajina baglanti veriyor.
+  if (kartYolu) {
+    try {
+      let baglanti = '';
+      try {
+        const { permalink } = await client.chat.getPermalink({ channel: kanal, message_ts: ts });
+        baglanti = `<${permalink}|Oylamaya git>`;
+      } catch {
+        /* baglanti suslemedir */
+      }
+      await client.files.uploadV2({
+        channel_id: kanal,
+        file: fs.readFileSync(kartYolu),
+        filename: 'gunun-tahmini-sonuc.gif',
+        title: tur === 'kazanan' ? 'Tebrikler!' : 'Günün Tahmini — Sonuç',
+        initial_comment: [ozet, dagilimMetni, kazananMetni, gecersizMetni, baglanti].filter(Boolean).join('\n\n'),
+      });
+      console.log(
+        `  ${kanal}: sonuc paylasildi (${kazananlar.length} kazanan, ${gecersiz.length} gecersiz, GIF dosyasi)`,
+      );
+      return;
+    } catch (err) {
+      console.warn(
+        `  ! ${kanal}: sonuc karti yuklenemedi (${err?.data?.error || err.message}); ` +
+          'sonuc metin olarak oylamanin altina gidiyor',
+      );
+    }
+  }
+
+  const bolum = (text) => ({ type: 'section', text: { type: 'mrkdwn', text } });
+  const bloklar = [bolum(ozet), bolum(dagilimMetni), bolum(kazananMetni)];
+  if (gecersizMetni) bloklar.push({ type: 'context', elements: [{ type: 'mrkdwn', text: gecersizMetni }] });
+
+  const res = await client.chat.postMessage({
+    channel: kanal,
+    thread_ts: ts,
+    reply_broadcast: true, // sonuc kanalda da gorunsun
+    text: `SONUÇ — Altın ${isaret}${degisim.toFixed(2)}%`,
+    blocks: bloklar,
+    unfurl_links: false,
+  });
   if (!res.ok) throw new Error(JSON.stringify(res));
-  console.log(
-    `  ${kanal}: sonuc paylasildi (${kazananlar.length} kazanan, ${gecersiz.length} gecersiz` +
-      `${res.kartli ? ', kartli' : ''})`,
-  );
+  console.log(`  ${kanal}: sonuc paylasildi (${kazananlar.length} kazanan, ${gecersiz.length} gecersiz, metin)`);
 }
 
 // --- ANA AKIS --------------------------------------------------------------

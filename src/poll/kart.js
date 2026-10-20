@@ -9,8 +9,9 @@ const { GIFEncoder, quantize, applyPalette } = gifenc;
 
 /** GIF kare hizi. 25 fps akici gorunuyor; daha fazlasi dosyayi buyutuyor. */
 const FPS = 25;
-/** Animasyon bittikten sonra son karenin ekranda kalma suresi (ms). */
-const SON_KARE_MS = 3000;
+/** Animasyon bittikten sonra son karenin ekranda kalma suresi (ms). Son kare
+ * ilk kareyle ayni oldugu icin dongu basa sarilirken sicrama olmuyor. */
+const SON_KARE_MS = 2500;
 /** Palet 255 renk; 256. indeks "degismedi" anlamina gelen saydam renk. */
 const SAYDAM = 255;
 

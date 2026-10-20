@@ -297,10 +297,16 @@ export function sonucHtml(v) {
     .kart { width: ${W}px; height: ${H}px; --p: ${y.parilti}; --m: ${y.metin}; }
     .yer-isigi { position: absolute; left: 50%; bottom: -260px; width: 900px; height: 480px; transform: translateX(-50%); z-index: -1;
       background: radial-gradient(closest-side, rgb(var(--p) / .38), rgb(var(--p) / .12) 55%, rgb(var(--p) / 0)); }
-    .cizgi { position: absolute; inset: 0; z-index: -1; animation: ac 1400ms cubic-bezier(.45,.05,.3,1) 150ms both; }
-    @keyframes ac { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
-    .uc { transform-box: fill-box; transform-origin: center; animation: belir 300ms ease-out 1450ms both; }
-    @keyframes belir { from { opacity: 0; transform: scale(.2); } to { opacity: 1; transform: scale(1); } }
+    /* ILK KARE = SON KARE = EKSIKSIZ KART. Slack, mesaja gomulu GIF'in yalnizca
+       ilk karesini gosteriyor (oynatmak icin tiklamak gerekiyor); kart orada da
+       tam okunmali. Bu yuzden hicbir icerik bos sahneden dogmuyor: hareketler
+       (halka, isik, nabiz, parilti, konfeti) hazir kartin ustunde oynayip ayni
+       kareye donuyor. Dongu de boylece kesintisiz. */
+    .cizgi { position: absolute; inset: 0; z-index: -1; }
+    .kuyruk { stroke-dasharray: 140 1000; animation: kuyruk 1500ms cubic-bezier(.45,.05,.3,1) 200ms both; }
+    @keyframes kuyruk { from { stroke-dashoffset: 140; } to { stroke-dashoffset: -1000; } }
+    .uc-nabiz { transform-box: fill-box; transform-origin: center; animation: nabiz 900ms ease-out 1550ms both; }
+    @keyframes nabiz { 0% { opacity: 0; transform: scale(1); } 12% { opacity: .9; } 100% { opacity: 0; transform: scale(3.4); } }
     .ust { position: absolute; top: 26px; left: 32px; right: 32px; display: flex; justify-content: space-between; align-items: center;
       font-size: 15px; font-weight: 700; letter-spacing: .16em; color: rgba(255,255,255,.72); }
     .ust .etiket { display: flex; align-items: center; gap: 10px; }
@@ -308,29 +314,33 @@ export function sonucHtml(v) {
     .ust .tarih { font-weight: 400; font-style: italic; letter-spacing: .02em; font-size: 16px; color: rgba(255,255,255,.62); }
     .merkez { position: absolute; left: 0; right: 0; top: 74px; display: flex; flex-direction: column; align-items: center; text-align: center; }
     .marka { position: relative; width: 96px; height: 75px; display: grid; place-items: center;
-      animation: marka 650ms cubic-bezier(.34,1.56,.64,1) 0ms both; }
-    @keyframes marka { from { opacity: 0; transform: scale(.35) rotate(-8deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+      animation: marka 700ms ease-in-out 120ms both; }
+    @keyframes marka { 0%, 100% { transform: none; } 40% { transform: scale(1.2) rotate(-6deg); } 70% { transform: scale(.96) rotate(2deg); } }
     .marka img { width: 96px; position: relative; filter: drop-shadow(0 0 18px rgba(255,154,82,.45)); }
     .halka { position: absolute; left: 50%; top: 50%; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%;
-      border: 3px solid rgb(var(--p) / .9); animation: halka 900ms ease-out 180ms both; }
-    @keyframes halka { from { opacity: .9; transform: scale(.4); } to { opacity: 0; transform: scale(2.4); } }
+      border: 3px solid rgb(var(--p) / .9); animation: halka 950ms ease-out 200ms both; }
+    @keyframes halka { 0% { opacity: 0; transform: scale(.4); } 10% { opacity: .9; } 100% { opacity: 0; transform: scale(2.4); } }
     .baslik { margin-top: 26px; font-size: ${v.tur === 'kimse' || v.tur === 'oysuz' ? 66 : 78}px; text-shadow: 0 6px 30px rgba(0,0,0,.45);
-      animation: yuksel 500ms cubic-bezier(.2,.9,.3,1) 380ms both${v.tur === 'kimse' ? ', salla 520ms ease-in-out 950ms both' : ''}; }
-    @keyframes yuksel { from { opacity: 0; transform: translateY(26px) scale(.96); } to { opacity: 1; transform: none; } }
+      animation: ${{ kazanan: 'zipla 650ms ease-in-out 380ms both', kimse: 'salla 560ms ease-in-out 420ms both', oysuz: 'none' }[v.tur]}; }
+    @keyframes zipla { 0%, 100% { transform: none; } 45% { transform: scale(1.08); } }
     @keyframes salla { 0%,100% { translate: 0 0; } 20% { translate: -9px 0; } 40% { translate: 8px 0; } 60% { translate: -5px 0; } 80% { translate: 3px 0; } }
-    .alt { margin-top: 16px; font-size: 21px; font-weight: 500; color: rgba(255,255,255,.78); animation: yuksel 450ms ease-out 700ms both; }
+    .alt { margin-top: 16px; font-size: 21px; font-weight: 500; color: rgba(255,255,255,.78); }
     .alt b { color: #fff; font-weight: 700; }
     .sonuc { margin-top: 26px; display: flex; align-items: center; gap: 14px; padding: 10px 22px 10px 12px; border-radius: 999px;
       background: rgba(20,15,12,.72); border: 1px solid rgb(var(--p) / .55);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 0 34px -6px rgb(var(--p) / .7);
-      animation: yuksel 450ms ease-out 900ms both; }
+      position: relative; overflow: hidden; }
+    .sonuc::after { content: ''; position: absolute; top: -10px; bottom: -10px; left: -90px; width: 60px; transform: skewX(-20deg);
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.22), rgba(255,255,255,0));
+      animation: parilti 900ms ease-in-out 1150ms both; }
+    @keyframes parilti { from { left: -90px; } to { left: calc(100% + 40px); } }
     .sonuc .ikon-kutu { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: rgb(var(--p) / .2); color: var(--m); }
     .sonuc .ikon { width: 22px; height: 22px; }
     .sonuc .yon { font-size: 22px; font-weight: 800; font-style: italic; color: var(--m); letter-spacing: .01em; }
     .sonuc .yuzde { font-size: 22px; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
     .sonuc .fiyatlar { font-size: 18px; font-weight: 500; color: rgba(255,255,255,.62); font-variant-numeric: tabular-nums; }
     .sonuc .sert { font-size: 13px; font-weight: 800; letter-spacing: .14em; color: #1a0d06; background: #ff9a52; padding: 5px 10px; border-radius: 999px; }
-    .imza { position: absolute; bottom: 22px; left: 0; right: 0; text-align: center; font-size: 17px; animation: yuksel 400ms ease-out 1100ms both; }
+    .imza { position: absolute; bottom: 22px; left: 0; right: 0; text-align: center; font-size: 17px; }
     canvas { position: absolute; inset: 0; pointer-events: none; }
   </style></head><body>
   <div class="kart">
@@ -339,11 +349,14 @@ export function sonucHtml(v) {
       <defs>
         <linearGradient id="alan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgb(${y.parilti})" stop-opacity=".18"/><stop offset="1" stop-color="rgb(${y.parilti})" stop-opacity="0"/></linearGradient>
         <filter id="isilti" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+        <filter id="isilti-ince" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur stdDeviation="1.2"/></filter>
       </defs>
       <path d="${yol} L${W} ${H} L0 ${H} Z" fill="url(#alan)"/>
       <path d="${yol}" fill="none" stroke="rgb(${y.parilti})" stroke-width="7" stroke-opacity=".55" filter="url(#isilti)"/>
       <path d="${yol}" fill="none" stroke="rgb(${y.parilti})" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" stroke-opacity=".9"/>
-      <circle class="uc" cx="${sonX - 6}" cy="${sonY}" r="7" fill="#fff" stroke="rgb(${y.parilti})" stroke-width="4"/>
+      <path class="kuyruk" d="${yol}" pathLength="1000" fill="none" stroke="#fff" stroke-width="3.5" stroke-linejoin="round" stroke-opacity=".9" filter="url(#isilti-ince)"/>
+      <circle class="uc-nabiz" cx="${sonX - 6}" cy="${sonY}" r="7" fill="none" stroke="rgb(${y.parilti})" stroke-width="3"/>
+      <circle cx="${sonX - 6}" cy="${sonY}" r="7" fill="#fff" stroke="rgb(${y.parilti})" stroke-width="4"/>
     </svg>
     <header class="ust">
       <span class="etiket"><i></i>GÜNÜN TAHMİNİ</span>
