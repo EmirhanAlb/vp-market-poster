@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "6827cbc7cb2d45b1",
+      "ts": 1792492811040,
+      "baslik": "TSX vadeli işlemleri Kanada Merkez Bankası faiz yolu izlenirken geriledi"
+    },
+    {
       "anahtar": "5bce2bcf754e5d6d",
       "ts": 1792484377025,
       "baslik": "Polonya’nın sanayi üretimi Eylül’de %4,6 arttı"
@@ -229,11 +234,6 @@
       "anahtar": "324a62f57d96d7cf",
       "ts": 1791893108630,
       "baslik": "Siber saldırı krizi bir ülkeye daha sıçradı: Raflar boş kaldı, siparişler aksadı"
-    },
-    {
-      "anahtar": "21b3b915dbc69b24",
-      "ts": 1791884051932,
-      "baslik": "Buğday fiyatlarında sert düşüş: Eylül ayında yüzde 12,7 geriledi"
     }
   ]
 }
