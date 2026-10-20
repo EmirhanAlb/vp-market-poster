@@ -188,6 +188,37 @@
         "U0BN7JJGVU1",
         "U0BVB3WM1V3"
       ]
+    },
+    {
+      "tarih": "20.10.2026",
+      "kanal": "C08AJ51934P",
+      "ts": "1792494007.378009",
+      "acilisFiyat": 4121.2,
+      "kapanisFiyat": 4149.3,
+      "degisim": 0.682,
+      "yon": "yukari",
+      "oySayisi": 3,
+      "gecersiz": 0,
+      "kazananlar": [
+        "U0A6YRKCLBF",
+        "U0A3NTGK47L"
+      ]
+    },
+    {
+      "tarih": "20.10.2026",
+      "kanal": "C0BNPGR567R",
+      "ts": "1792494013.123779",
+      "acilisFiyat": 4121.2,
+      "kapanisFiyat": 4149.3,
+      "degisim": 0.682,
+      "yon": "yukari",
+      "oySayisi": 5,
+      "gecersiz": 0,
+      "kazananlar": [
+        "U0BVB3WM1V3",
+        "U0BNPGJDGBZ",
+        "U0BNYNLGWQK"
+      ]
     }
   ]
 }
