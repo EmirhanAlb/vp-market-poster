@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "f612af6cdc1878fe",
+      "ts": 1792586424774,
+      "baslik": "Son dakika... Ahmet Eşref Fakıbaba İYİ Parti ve Ankara milletvekiliğinden istifa etti"
+    },
+    {
       "anahtar": "cf7251fddb69106e",
       "ts": 1792565287524,
       "baslik": "Altın, İran barış belirsizliği ve Fed faiz riskleriyle 4.120 dolar yakınında geriledi"
@@ -204,36 +209,6 @@
       "anahtar": "9afc2924173339df",
       "ts": 1791981930994,
       "baslik": "ABD'de enflasyon yıllık yüzde 3,7 ile beklentilerin üzerinde arttı"
-    },
-    {
-      "anahtar": "6f942b462539afdb",
-      "ts": 1791971067750,
-      "baslik": "Merkez Bankası rezervlerinde tarihi değişim! Swap yüzde 67'den yüzde 7,7'ye geriledi"
-    },
-    {
-      "anahtar": "2d0f28f9a1908d72",
-      "ts": 1791969847859,
-      "baslik": "Bitcoin'de hareketlilik azaldı: Piyasada durgunluk sinyali"
-    },
-    {
-      "anahtar": "234e1aa5f1197d94",
-      "ts": 1791963799848,
-      "baslik": "ASML’nin satış tahmini Avrupa borsalarını yükseltti; ABD TÜFE verisi bekleniyor"
-    },
-    {
-      "anahtar": "fc76fdb6a2cb6eb0",
-      "ts": 1791962599221,
-      "baslik": "Tüccarlar Fed’in faiz görünümünü değerlendirirken altın düştü"
-    },
-    {
-      "anahtar": "b7536d4193ce9e34",
-      "ts": 1791962599221,
-      "baslik": "İspanya’da enflasyon Eylül’de %5,0’a yükseldi"
-    },
-    {
-      "anahtar": "2a8216a2d7f298bc",
-      "ts": 1791962599221,
-      "baslik": "Dolar, ABD enflasyon verisi öncesinde geriledi; Çin ve Singapur verileri odakta"
     }
   ]
 }
