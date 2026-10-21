@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "cf7251fddb69106e",
+      "ts": 1792565287524,
+      "baslik": "Altın, İran barış belirsizliği ve Fed faiz riskleriyle 4.120 dolar yakınında geriledi"
+    },
+    {
+      "anahtar": "dfaf33282b8f31da",
+      "ts": 1792564087841,
+      "baslik": "İngiltere’de enflasyon Eylül’de yüzde 3,5’e yükseldi"
+    },
+    {
       "anahtar": "bbdb5a07a14868fb",
       "ts": 1792499464755,
       "baslik": "Romanya merkez bankası oybirliğiyle faizi sabit tuttu"
@@ -224,16 +234,6 @@
       "anahtar": "2a8216a2d7f298bc",
       "ts": 1791962599221,
       "baslik": "Dolar, ABD enflasyon verisi öncesinde geriledi; Çin ve Singapur verileri odakta"
-    },
-    {
-      "anahtar": "3132de986617970c",
-      "ts": 1791937217798,
-      "baslik": "Petrol fiyatları Husi-Suudi saldırıları sonrası yükseldi"
-    },
-    {
-      "anahtar": "db5c9c6bf6152162",
-      "ts": 1791900954475,
-      "baslik": "Kazakistan ekonomisi %4,2 büyüdü, petrol üretimi %8,3 düştü"
     }
   ]
 }
