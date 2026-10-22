@@ -243,6 +243,35 @@
       "oySayisi": 6,
       "gecersiz": 0,
       "kazananlar": []
+    },
+    {
+      "tarih": "22.10.2026",
+      "kanal": "C08AJ51934P",
+      "ts": "1792666806.821489",
+      "acilisFiyat": 4083.22,
+      "kapanisFiyat": 4059.18,
+      "degisim": -0.589,
+      "yon": "asagi",
+      "oySayisi": 6,
+      "gecersiz": 0,
+      "kazananlar": [
+        "U09H81N1BK9",
+        "U0A6YRKCLBF"
+      ]
+    },
+    {
+      "tarih": "22.10.2026",
+      "kanal": "C0BNPGR567R",
+      "ts": "1792666810.399799",
+      "acilisFiyat": 4083.22,
+      "kapanisFiyat": 4059.18,
+      "degisim": -0.589,
+      "yon": "asagi",
+      "oySayisi": 5,
+      "gecersiz": 0,
+      "kazananlar": [
+        "U0BN7JJGVU1"
+      ]
     }
   ]
 }
