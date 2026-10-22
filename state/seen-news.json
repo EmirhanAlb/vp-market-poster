@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "c2e4da4a4cabc100",
+      "ts": 1792632368841,
+      "baslik": "Altın 4.115 dolara geriledi, Suudi saldırılar enflasyon endişesi yarattı"
+    },
+    {
       "anahtar": "f612af6cdc1878fe",
       "ts": 1792586424774,
       "baslik": "Son dakika... Ahmet Eşref Fakıbaba İYİ Parti ve Ankara milletvekiliğinden istifa etti"
@@ -169,46 +174,6 @@
       "anahtar": "165a56c97616705f",
       "ts": 1792033882005,
       "baslik": "Güney Kore’de KOSPI çip satışı ve Fed faiz endişesiyle sert düştü"
-    },
-    {
-      "anahtar": "1d02f2b38c267dba",
-      "ts": 1792026638783,
-      "baslik": "Avustralya beklenmedik şekilde 39.300 iş kaybetti, RBA faiz artırımı beklentileri azaldı"
-    },
-    {
-      "anahtar": "3baade06acb6943e",
-      "ts": 1792025439876,
-      "baslik": "Petrol ABD TÜFE sonrası geriledi; IEA toplantısı odakta"
-    },
-    {
-      "anahtar": "9413632f0221a709",
-      "ts": 1792025439876,
-      "baslik": "ABD hisse senedi vadeli işlemleri yüksek enflasyon sonrası düştü"
-    },
-    {
-      "anahtar": "67f0efe8df863e86",
-      "ts": 1792008516382,
-      "baslik": "Altın madenciliği hisseleri Fed faiz artırımı beklentisiyle düştü"
-    },
-    {
-      "anahtar": "54b89b061d7ff488",
-      "ts": 1792006684970,
-      "baslik": "Fed Bej Kitap: 6 bölgede fiyat baskısı yükseldi"
-    },
-    {
-      "anahtar": "d9bd20343220ef63",
-      "ts": 1792000050602,
-      "baslik": "Uganda merkez bankası şilini desteklemek için faizi %12’ye yükseltti"
-    },
-    {
-      "anahtar": "8cd5955d58ddc64a",
-      "ts": 1791983751520,
-      "baslik": "ABD enflasyonu beklenenden yüksek geldi: Bitcoin yatay kaldı, altın düştü"
-    },
-    {
-      "anahtar": "9afc2924173339df",
-      "ts": 1791981930994,
-      "baslik": "ABD'de enflasyon yıllık yüzde 3,7 ile beklentilerin üzerinde arttı"
     }
   ]
 }
