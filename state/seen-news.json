@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "4cb56a4846bb2343",
+      "ts": 1792670234727,
+      "baslik": "Merkez Bankası rezervleri 2 milyar 478 milyon dolar azaldı"
+    },
+    {
+      "anahtar": "b073e3b966786a88",
+      "ts": 1792668438817,
+      "baslik": "Merkez Bankası, politika faizini yüzde 36'ya indirdi"
+    },
+    {
       "anahtar": "65bdddbd573b1885",
       "ts": 1792667216436,
       "baslik": "Son dakika... Merkez Bankası yılın yedinci faiz kararını açıkladı"
@@ -154,16 +164,6 @@
       "anahtar": "5dd6d1d1d32bfe53",
       "ts": 1792068314284,
       "baslik": "Piyasaların gözü bu verideydi: ABD üretici enflasyonu sert yükseldi"
-    },
-    {
-      "anahtar": "0c927ad55d3c45d2",
-      "ts": 1792065298416,
-      "baslik": "SON DAKİKA | Merkez Bankası rezervleri 171,6 milyar dolara yükseldi"
-    },
-    {
-      "anahtar": "fee6bb993a4a8531",
-      "ts": 1792065298416,
-      "baslik": "Merkez Bankası açıkladı: Yabancılar hisse sattı"
     }
   ]
 }
