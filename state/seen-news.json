@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "dedee7a4819c9aae",
+      "ts": 1792661172690,
+      "baslik": "Fransız tahvil faizi %5’i aşarak 24 yılın zirvesine çıktı"
+    },
+    {
       "anahtar": "487075e05a7debdb",
       "ts": 1792656329756,
       "baslik": "FTSE 100: Körfez savaşı petrolü yükseltti, hisseler düştü"
@@ -149,11 +154,6 @@
       "anahtar": "fee6bb993a4a8531",
       "ts": 1792065298416,
       "baslik": "Merkez Bankası açıkladı: Yabancılar hisse sattı"
-    },
-    {
-      "anahtar": "9297f6e9dd226f68",
-      "ts": 1792052624141,
-      "baslik": "Bitcoin'de Fed baskısı: Bir ayın en düşük seviyesine geriledi"
     }
   ]
 }
