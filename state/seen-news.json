@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "487075e05a7debdb",
+      "ts": 1792656329756,
+      "baslik": "FTSE 100: Körfez savaşı petrolü yükseltti, hisseler düştü"
+    },
+    {
       "anahtar": "2e62998541ef6663",
       "ts": 1792637196435,
       "baslik": "Kore Merkez Bankası, art arda faiz artışlarının ardından oranı %3’te sabit tuttu"
@@ -149,36 +154,6 @@
       "anahtar": "9297f6e9dd226f68",
       "ts": 1792052624141,
       "baslik": "Bitcoin'de Fed baskısı: Bir ayın en düşük seviyesine geriledi"
-    },
-    {
-      "anahtar": "9b83b0fde4f98968",
-      "ts": 1792049604973,
-      "baslik": "Dolar, sıcak ABD TÜFE verisine rağmen geriledi; yen müdahale uyarılarıyla güçlendi"
-    },
-    {
-      "anahtar": "98a5f76fbf181b1a",
-      "ts": 1792046585109,
-      "baslik": "Bitcoin, ABD TÜFE verileriyle 81 bin doların altına düştü"
-    },
-    {
-      "anahtar": "22e793c203ac357a",
-      "ts": 1792044765190,
-      "baslik": "ABD'de enflasyonun hızlanması küresel piyasalarda satış baskısını artırdı"
-    },
-    {
-      "anahtar": "f1e27935c16390d5",
-      "ts": 1792042340378,
-      "baslik": "ABD Hazine tahvil faizleri TÜFE sonrası sert düştü"
-    },
-    {
-      "anahtar": "33520c832e5ddc32",
-      "ts": 1792042340378,
-      "baslik": "Altın, ABD enflasyonunun Fed faiz artışı endişelerini körüklemesiyle %1 toparlandı"
-    },
-    {
-      "anahtar": "165a56c97616705f",
-      "ts": 1792033882005,
-      "baslik": "Güney Kore’de KOSPI çip satışı ve Fed faiz endişesiyle sert düştü"
     }
   ]
 }
