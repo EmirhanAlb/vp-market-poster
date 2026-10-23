@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "23ecc82bcbd37cae",
+      "ts": 1792727000360,
+      "baslik": "Asya borsaları düştü, yapay zeka çöküşü Güney Kore’yi vurdu"
+    },
+    {
       "anahtar": "fb1e608bc674b049",
       "ts": 1792678701290,
       "baslik": "Altın ve gümüş çakıldı: Savaş korkusu ve Fed kıskacında piyasalar altüst oldu"
@@ -154,16 +159,6 @@
       "anahtar": "d5e969e769ac3cd6",
       "ts": 1792132350726,
       "baslik": "Bakır, alüminyum ve çinko yükseldi: Fed endişeleri azaldı"
-    },
-    {
-      "anahtar": "daa5c20dfc944622",
-      "ts": 1792114838564,
-      "baslik": "Nasdaq vadeli işlemleri yapay zeka harcamaları ve Fed endişeleriyle geriledi"
-    },
-    {
-      "anahtar": "26ece04b171c4038",
-      "ts": 1792096707594,
-      "baslik": "Kanada doları yükseldi, ABD ÜFE verileri görünümü karıştırdı"
     }
   ]
 }
