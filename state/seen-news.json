@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "9094b31375d7019a",
+      "ts": 1792740298978,
+      "baslik": "Yıllık enflasyon beklentisi hanehalkı ve reel sektör için geriledi"
+    },
+    {
+      "anahtar": "0e18e36c7c83cf5b",
+      "ts": 1792739699243,
+      "baslik": "İngiltere’de perakende satışlar Eylül’de %0,4 düştü, tüketici güveni altı ayın en düşüğünde"
+    },
+    {
       "anahtar": "23ecc82bcbd37cae",
       "ts": 1792727000360,
       "baslik": "Asya borsaları düştü, yapay zeka çöküşü Güney Kore’yi vurdu"
@@ -154,11 +164,6 @@
       "anahtar": "e1803e7c2e286c62",
       "ts": 1792151055343,
       "baslik": "Enflasyon beklentisi yükseldi: TCMB anketinde yıl sonu tahmini yüzde 29,63"
-    },
-    {
-      "anahtar": "d5e969e769ac3cd6",
-      "ts": 1792132350726,
-      "baslik": "Bakır, alüminyum ve çinko yükseldi: Fed endişeleri azaldı"
     }
   ]
 }
