@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "9eaf64b1417dcb9f",
+      "ts": 1792832094891,
+      "baslik": "Altın fiyatlarında sert düşüş: Rekor seviyeden yüzde 20'yi aşan kayıp"
+    },
+    {
       "anahtar": "af33db44200ea868",
       "ts": 1792784986641,
       "baslik": "Hindistan’ın ham petrol ithalatı Eylül’de %16 arttı"
@@ -164,11 +169,6 @@
       "anahtar": "e22ceffe86616bf3",
       "ts": 1792358740743,
       "baslik": "Hürmüz'de sıcak gelişme! Mayına çarpan petrol tankerinde yangın çıktı"
-    },
-    {
-      "anahtar": "1e22825d8fe2247e",
-      "ts": 1792182475122,
-      "baslik": "Son dakika... Yemen hükümeti duyurdu: İran destekli Husiler, kritik noktayı balistik füze ile hedef aldı"
     }
   ]
 }
