@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "4443fbb4f5de8074",
+      "ts": 1792978444691,
+      "baslik": "Petrol 6 aylık zirveden geriledi; Suudi saldırıları odakta"
+    },
+    {
       "anahtar": "9d991f7a1bf43d51",
       "ts": 1792906600040,
       "baslik": "Bitcoin bugünkü fiyatı: BTC, Fed toplantısı öncesi 80.800 dolara yükseldi"
@@ -164,21 +169,6 @@
       "anahtar": "3811c8ac5241e0ed",
       "ts": 1792377463865,
       "baslik": "Çin’de sanayi üretimi ve Retail satışlar tahminleri aştı"
-    },
-    {
-      "anahtar": "5fc6ee8582e8ce17",
-      "ts": 1792373233487,
-      "baslik": "Warsh’ın açıklamaları Fed faiz artışı beklentilerini azalttı, altın yükseldi"
-    },
-    {
-      "anahtar": "cc31ac074ad065a1",
-      "ts": 1792370215310,
-      "baslik": "Trump Rusya yaptırımlarını kaldırdı, petrol fiyatları düştü"
-    },
-    {
-      "anahtar": "e22ceffe86616bf3",
-      "ts": 1792358740743,
-      "baslik": "Hürmüz'de sıcak gelişme! Mayına çarpan petrol tankerinde yangın çıktı"
     }
   ]
 }
