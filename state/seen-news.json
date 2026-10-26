@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "36b20db59678fa8b",
+      "ts": 1793010427389,
+      "baslik": "Avrupa doğal gazı Ortadoğu savaşıyla 2022 zirvesine çıktı"
+    },
+    {
+      "anahtar": "568003a1b3808e7c",
+      "ts": 1793009226051,
+      "baslik": "Sterlin bugün: Fed kararı öncesi dolar güçlü seyrederken sterlin geriledi"
+    },
+    {
       "anahtar": "c727cb83b13aa8d1",
       "ts": 1792998346222,
       "baslik": "Çip hisselerindeki gerilemeyle Asya borsaları düştü; kazançlar ve merkez bankası toplantıları gündemde"
@@ -154,11 +164,6 @@
       "anahtar": "99990914a6b1b5cb",
       "ts": 1792413694971,
       "baslik": "İngiltere Merkez Bankası, finans devi Barclays hakkında inceleme başlattı"
-    },
-    {
-      "anahtar": "78e78e988393152f",
-      "ts": 1792394983541,
-      "baslik": "TCMB açıkladı: Türkiye’nin kısa vadeli dış borcu yükseldi"
     }
   ]
 }
