@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "cf32a7ba4107c130",
+      "ts": 1793054871051,
+      "baslik": "Petrol krizinde faturanın üçte biri ABD'ye çıktı"
+    },
+    {
       "anahtar": "6eba3757a47266de",
       "ts": 1793013451044,
       "baslik": "Pakistan merkez bankası enflasyon nedeniyle faizi %12’ye yükseltti"
@@ -159,16 +164,6 @@
       "anahtar": "4c28f5e870edcd87",
       "ts": 1792464446716,
       "baslik": "Altın petrol fiyatları ve Fed endişeleriyle düştü"
-    },
-    {
-      "anahtar": "0009be7191b17be6",
-      "ts": 1792423986003,
-      "baslik": "Fintables/Gözen “makul senaryoyu” açıkladı: Fed ekimde nasıl bir karar alacak?"
-    },
-    {
-      "anahtar": "99990914a6b1b5cb",
-      "ts": 1792413694971,
-      "baslik": "İngiltere Merkez Bankası, finans devi Barclays hakkında inceleme başlattı"
     }
   ]
 }
