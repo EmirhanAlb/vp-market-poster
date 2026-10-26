@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "c727cb83b13aa8d1",
+      "ts": 1792998346222,
+      "baslik": "Çip hisselerindeki gerilemeyle Asya borsaları düştü; kazançlar ve merkez bankası toplantıları gündemde"
+    },
+    {
       "anahtar": "4443fbb4f5de8074",
       "ts": 1792978444691,
       "baslik": "Petrol 6 aylık zirveden geriledi; Suudi saldırıları odakta"
@@ -154,21 +159,6 @@
       "anahtar": "78e78e988393152f",
       "ts": 1792394983541,
       "baslik": "TCMB açıkladı: Türkiye’nin kısa vadeli dış borcu yükseldi"
-    },
-    {
-      "anahtar": "f83e6b14a98247d7",
-      "ts": 1792393154958,
-      "baslik": "Fed’den sürpriz hamle beklentisi: İki senaryo masada"
-    },
-    {
-      "anahtar": "9d2cb09cc7baa77b",
-      "ts": 1792381084419,
-      "baslik": "Ekim’de %10 yükseldi: Yapay zeka seçimi hisse Asya’nın 2 trilyon dolarlık çip çöküşüne direndi"
-    },
-    {
-      "anahtar": "3811c8ac5241e0ed",
-      "ts": 1792377463865,
-      "baslik": "Çin’de sanayi üretimi ve Retail satışlar tahminleri aştı"
     }
   ]
 }
