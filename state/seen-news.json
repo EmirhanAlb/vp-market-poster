@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "e261610d72613160",
+      "ts": 1793075991718,
+      "baslik": "Altın, Fed kararı ve İran diplomasisi beklentisiyle 4.010 doların altına geriledi"
+    },
+    {
       "anahtar": "cf32a7ba4107c130",
       "ts": 1793054871051,
       "baslik": "Petrol krizinde faturanın üçte biri ABD'ye çıktı"
@@ -159,11 +164,6 @@
       "anahtar": "a7568b864bb9966e",
       "ts": 1792476518507,
       "baslik": "Saldırılar petrolü yükseltti"
-    },
-    {
-      "anahtar": "4c28f5e870edcd87",
-      "ts": 1792464446716,
-      "baslik": "Altın petrol fiyatları ve Fed endişeleriyle düştü"
     }
   ]
 }
