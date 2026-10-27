@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "fe526a68815d468a",
+      "ts": 1793088069536,
+      "baslik": "Türkiye’de işsizlik oranı Eylül’de %8,4’e yükseldi"
+    },
+    {
       "anahtar": "e261610d72613160",
       "ts": 1793075991718,
       "baslik": "Altın, Fed kararı ve İran diplomasisi beklentisiyle 4.010 doların altına geriledi"
@@ -159,11 +164,6 @@
       "anahtar": "5bce2bcf754e5d6d",
       "ts": 1792484377025,
       "baslik": "Polonya’nın sanayi üretimi Eylül’de %4,6 arttı"
-    },
-    {
-      "anahtar": "a7568b864bb9966e",
-      "ts": 1792476518507,
-      "baslik": "Saldırılar petrolü yükseltti"
     }
   ]
 }
