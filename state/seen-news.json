@@ -1,6 +1,21 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "6ad375e1fdebdbbd",
+      "ts": 1793210741930,
+      "baslik": "ABD Merkez Bankası, politika faizini beklentiler dahilinde yüzde 3,75-4 aralığında sabit tuttu"
+    },
+    {
+      "anahtar": "e9c66f82e218a0f5",
+      "ts": 1793210741930,
+      "baslik": "Son dakika! Fed faizi sabit tuttu: Gözler Warsh’ın açıklamalarına çevrildi"
+    },
+    {
+      "anahtar": "c3f1591cefa06c56",
+      "ts": 1793210741930,
+      "baslik": "FED faiz kararını açıkladı"
+    },
+    {
       "anahtar": "3e12d5754fd304bd",
       "ts": 1793184153603,
       "baslik": "Sterlin bugün: Pound geriledi; İngiltere bütçesi ve Fed odakta"
@@ -169,11 +184,6 @@
       "anahtar": "c2e4da4a4cabc100",
       "ts": 1792632368841,
       "baslik": "Altın 4.115 dolara geriledi, Suudi saldırılar enflasyon endişesi yarattı"
-    },
-    {
-      "anahtar": "f612af6cdc1878fe",
-      "ts": 1792586424774,
-      "baslik": "Son dakika... Ahmet Eşref Fakıbaba İYİ Parti ve Ankara milletvekiliğinden istifa etti"
     }
   ]
 }
