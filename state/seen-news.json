@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "3e12d5754fd304bd",
+      "ts": 1793184153603,
+      "baslik": "Sterlin bugün: Pound geriledi; İngiltere bütçesi ve Fed odakta"
+    },
+    {
       "anahtar": "e04e6f3fd143a0eb",
       "ts": 1793163591189,
       "baslik": "Piyasalar karara kilitlendi: Dev kurumlar tek tek Fed tahminini açıkladı"
@@ -169,16 +174,6 @@
       "anahtar": "f612af6cdc1878fe",
       "ts": 1792586424774,
       "baslik": "Son dakika... Ahmet Eşref Fakıbaba İYİ Parti ve Ankara milletvekiliğinden istifa etti"
-    },
-    {
-      "anahtar": "cf7251fddb69106e",
-      "ts": 1792565287524,
-      "baslik": "Altın, İran barış belirsizliği ve Fed faiz riskleriyle 4.120 dolar yakınında geriledi"
-    },
-    {
-      "anahtar": "dfaf33282b8f31da",
-      "ts": 1792564087841,
-      "baslik": "İngiltere’de enflasyon Eylül’de yüzde 3,5’e yükseldi"
     }
   ]
 }
