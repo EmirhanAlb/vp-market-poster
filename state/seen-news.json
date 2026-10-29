@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "13e7fb9d474d39e5",
+      "ts": 1793259083652,
+      "baslik": "İsveç’te tüketici güveni Ekim’de 94,3’e geriledi"
+    },
+    {
+      "anahtar": "4831988b4faacc3e",
+      "ts": 1793257882415,
+      "baslik": "Bitcoin 80 bin dolara geriledi, Fed ve teknoloji şirketleri baskı yaptı"
+    },
+    {
       "anahtar": "817bf87cf4ab6aed",
       "ts": 1793238568580,
       "baslik": "Altın Fed’in faiz kararı sonrası geriledi, PCE verisi odakta"
@@ -194,11 +204,6 @@
       "anahtar": "487075e05a7debdb",
       "ts": 1792656329756,
       "baslik": "FTSE 100: Körfez savaşı petrolü yükseltti, hisseler düştü"
-    },
-    {
-      "anahtar": "2e62998541ef6663",
-      "ts": 1792637196435,
-      "baslik": "Kore Merkez Bankası, art arda faiz artışlarının ardından oranı %3’te sabit tuttu"
     }
   ]
 }
