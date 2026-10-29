@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "817bf87cf4ab6aed",
+      "ts": 1793238568580,
+      "baslik": "Altın Fed’in faiz kararı sonrası geriledi, PCE verisi odakta"
+    },
+    {
       "anahtar": "7c00d8fa1865d0ba",
       "ts": 1793234912703,
       "baslik": "Petrol, İran diplomasisi ve yeni saldırı riskleri arasında geriledi"
@@ -194,11 +199,6 @@
       "anahtar": "2e62998541ef6663",
       "ts": 1792637196435,
       "baslik": "Kore Merkez Bankası, art arda faiz artışlarının ardından oranı %3’te sabit tuttu"
-    },
-    {
-      "anahtar": "c2e4da4a4cabc100",
-      "ts": 1792632368841,
-      "baslik": "Altın 4.115 dolara geriledi, Suudi saldırılar enflasyon endişesi yarattı"
     }
   ]
 }
