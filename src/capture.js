@@ -1,4 +1,5 @@
 import { chromium } from 'playwright';
+import { grafikVerisiniSagla } from './poster-veri.js';
 
 const POSTER_URL = process.env.POSTER_URL || 'https://vestaprimes.com/en/market-poster';
 const POSTER_WIDTH = 1080;
@@ -16,12 +17,11 @@ const FIYAT = '.vpmp [class*="__price"]';
 const BEKLEYEN_FIYAT = '.vpmp [class*="__price--pending"]';
 const LIVE_TIMEOUT_MS = Number(process.env.LIVE_TIMEOUT_MS || 60_000);
 
-// Kartlardaki mini grafikler fiyatlardan cok sonra geliyor: DXY ve Brent
-// verisi Yahoo'dan iki ucretsiz CORS vekili uzerinden cekiliyor ve ilk ikisi
-// 10 ve 18 saniyede zaman asimina dusuyor; tarayicida ~50 sn suruyor. Grafik
-// gelince kartin SVG'sine path ekleniyor, gelmeden once yalnizca kesikli cizgi
-// var. Sayfa acildiktan sonra en fazla bu kadar bekleniyor; tum grafikler daha
-// erken gelirse beklemeden cekiliyor.
+// Kartlardaki mini grafikler fiyatlardan sonra geliyor. Grafik gelince kartin
+// SVG'sine path ekleniyor, gelmeden once yalnizca kesikli cizgi var. Sayfa
+// acildiktan sonra en fazla bu kadar bekleniyor; tum grafikler daha erken
+// gelirse beklemeden cekiliyor. Verileri artik poster-veri.js sagladigi icin
+// grafikler genellikle birkac saniyede geliyor; sinir yedek olarak duruyor.
 const GRAFIK_BEKLEME_MS = Number(process.env.GRAFIK_BEKLEME_SN || 50) * 1000;
 
 /**
@@ -45,6 +45,9 @@ export async function capturePoster(outPath) {
       colorScheme: 'dark',
     });
     const page = await context.newPage();
+    // Grafik verisinin kaynaklari GitHub'in ABD makinelerinden erisilemiyor;
+    // istekler yolda yakalanip erisilebilen kaynaklardan karsilaniyor.
+    const grafikVerisi = await grafikVerisiniSagla(page);
 
     page.on('console', (msg) => {
       if (msg.type() === 'error') console.warn('[sayfa hatasi]', msg.text());
@@ -103,6 +106,7 @@ export async function capturePoster(outPath) {
     }
     const [grafik, kart] = await grafikDurumu();
     console.log(`Grafikler: ${grafik}/${kart} (${((Date.now() - acilis) / 1000).toFixed(0)} sn sonra)`);
+    console.log(`Grafik verisi: ${grafikVerisi.ozet()}`);
     // Grafik cizim animasyonunun bitmesi icin.
     if (grafik > 0) await page.waitForTimeout(1500);
 

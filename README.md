@@ -30,11 +30,15 @@ Poster sunucuda duran hazır bir dosya değil — sayfa açıldığında tarayı
 2. Fiyatlar gelip durum rozeti **LIVE** olana kadar beklenir (fiyat alanlarındaki `·····` kaybolana kadar).
    Ardından kartlardaki mini grafikler beklenir: sayfa açıldıktan sonra en fazla 50 sn, altı grafik
    daha erken gelirse hemen çekilir. Grafikler gelmezse poster yine gider.
+   Grafik verisini sayfa Binance'ten ve Yahoo'dan (vekil üzerinden) çekiyor; bunlar GitHub'ın
+   ABD makinelerinden erişilemediği için istekler yolda yakalanıp Binance'in veri adresi, Kraken
+   ve doğrudan Yahoo'dan karşılanıyor (`src/poster-veri.js`).
 3. Sayfanın kartı ekrana sığdırmak için uyguladığı küçültme (`--s` CSS değişkeni) iptal edilir, kart tam 1080×1350 boyutunda ekran görüntüsü olarak alınır.
 4. PNG, Slack Web API ile kanala dosya olarak yüklenir.
 
 ```
 src/capture.js       → Playwright ile poster yakalama
+src/poster-veri.js   → grafik verisini sağlar (sitenin kaynakları GitHub'ın ABD makinelerinden erişilemiyor)
 src/slack.js         → Slack'e dosya yükleme (kanal başına ayrı yükleme)
 src/index.js         → akışı yöneten giriş noktası
 scripts/make-icons.mjs → Slack app ikonu varyantlarını üretir (assets/ altına)
