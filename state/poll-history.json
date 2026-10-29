@@ -372,6 +372,30 @@
       "kazananlar": [
         "U0BN7JJGVU1"
       ]
+    },
+    {
+      "tarih": "29.10.2026",
+      "kanal": "C08AJ51934P",
+      "ts": "1793271606.883919",
+      "acilisFiyat": 4026.24,
+      "kapanisFiyat": 4027.01,
+      "degisim": 0.019,
+      "yon": "duragan",
+      "oySayisi": 2,
+      "gecersiz": 0,
+      "kazananlar": []
+    },
+    {
+      "tarih": "29.10.2026",
+      "kanal": "C0BNPGR567R",
+      "ts": "1793271612.362709",
+      "acilisFiyat": 4026.24,
+      "kapanisFiyat": 4027.01,
+      "degisim": 0.019,
+      "yon": "duragan",
+      "oySayisi": 2,
+      "gecersiz": 0,
+      "kazananlar": []
     }
   ]
 }
