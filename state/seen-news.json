@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "4ba44690cbbb692f",
+      "ts": 1793309836060,
+      "baslik": "Mısır Merkez Bankası faiz oranlarını 100 baz puan artırdı"
+    },
+    {
       "anahtar": "8f0ee6e00c4d4f8d",
       "ts": 1793282671939,
       "baslik": "ECB faiz oranlarını sabit tutarken sterlin avro karşısında 17 aylık zirveye ulaştı"
@@ -184,11 +189,6 @@
       "anahtar": "23ecc82bcbd37cae",
       "ts": 1792727000360,
       "baslik": "Asya borsaları düştü, yapay zeka çöküşü Güney Kore’yi vurdu"
-    },
-    {
-      "anahtar": "fb1e608bc674b049",
-      "ts": 1792678701290,
-      "baslik": "Altın ve gümüş çakıldı: Savaş korkusu ve Fed kıskacında piyasalar altüst oldu"
     }
   ]
 }
