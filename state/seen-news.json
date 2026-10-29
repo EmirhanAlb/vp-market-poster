@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "c337b1123baface3",
+      "ts": 1793274833944,
+      "baslik": "Lagarde'ın ECB'den erken ayrılacağı haberi euroyu yükseltti"
+    },
+    {
       "anahtar": "13e7fb9d474d39e5",
       "ts": 1793259083652,
       "baslik": "İsveç’te tüketici güveni Ekim’de 94,3’e geriledi"
@@ -179,31 +184,6 @@
       "anahtar": "4cb56a4846bb2343",
       "ts": 1792670234727,
       "baslik": "Merkez Bankası rezervleri 2 milyar 478 milyon dolar azaldı"
-    },
-    {
-      "anahtar": "b073e3b966786a88",
-      "ts": 1792668438817,
-      "baslik": "Merkez Bankası, politika faizini yüzde 36'ya indirdi"
-    },
-    {
-      "anahtar": "65bdddbd573b1885",
-      "ts": 1792667216436,
-      "baslik": "Son dakika... Merkez Bankası yılın yedinci faiz kararını açıkladı"
-    },
-    {
-      "anahtar": "9433ec68e1250c58",
-      "ts": 1792662994848,
-      "baslik": "Yen, merkez bankası toplantıları öncesinde dolardaki sarsıntıyla 3 haftanın zirvesine fırladı"
-    },
-    {
-      "anahtar": "dedee7a4819c9aae",
-      "ts": 1792661172690,
-      "baslik": "Fransız tahvil faizi %5’i aşarak 24 yılın zirvesine çıktı"
-    },
-    {
-      "anahtar": "487075e05a7debdb",
-      "ts": 1792656329756,
-      "baslik": "FTSE 100: Körfez savaşı petrolü yükseltti, hisseler düştü"
     }
   ]
 }
