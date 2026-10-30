@@ -1,6 +1,21 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "76ff0809c3613816",
+      "ts": 1793358129323,
+      "baslik": "Polonya’da enflasyon Ekim’de %3,5’e geriledi, tahminlerin altında"
+    },
+    {
+      "anahtar": "13c7682a95bca8ec",
+      "ts": 1793356927898,
+      "baslik": "İtalya’da tüketici enflasyonu Ekim’de %5,4’e sıçradı"
+    },
+    {
+      "anahtar": "85487ca1644f0642",
+      "ts": 1793356927898,
+      "baslik": "Son dakika... Mustafa Sarıgül Yeni Parti'den istifa etti"
+    },
+    {
       "anahtar": "a32dde03a17afbdd",
       "ts": 1793355706216,
       "baslik": "ECB faiz oranlarını ne kadar daha yükseltebilir? UBS görüşünü açıkladı"
@@ -209,11 +224,6 @@
       "anahtar": "3896ed1d1362013b",
       "ts": 1792755398688,
       "baslik": "TCMB anketinde dikkat çeken sonuç: Altın ve gayrimenkul öne çıktı"
-    },
-    {
-      "anahtar": "a5f19111d75aa1d6",
-      "ts": 1792752377922,
-      "baslik": "Rusya Merkez Bankası enflasyon endişeleri nedeniyle faizi %14’te tuttu"
     }
   ]
 }
