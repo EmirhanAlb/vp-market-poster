@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "d329ad2c6f89e57c",
+      "ts": 1793352080136,
+      "baslik": "Nasdaq vadeli işlemleri düştü; Binance büyük saldırıya uğradı"
+    },
+    {
+      "anahtar": "d0e358cc18dedb9d",
+      "ts": 1793350279852,
+      "baslik": "İsviçre Merkez Bankası 54 milyar dolar kar açıkladı"
+    },
+    {
       "anahtar": "957eb3229b702f95",
       "ts": 1793332184639,
       "baslik": "Asya hisseleri yapay zeka harcama endişeleriyle düştü; BOJ faizi sabit tuttu"
@@ -194,16 +204,6 @@
       "anahtar": "a5f19111d75aa1d6",
       "ts": 1792752377922,
       "baslik": "Rusya Merkez Bankası enflasyon endişeleri nedeniyle faizi %14’te tuttu"
-    },
-    {
-      "anahtar": "9094b31375d7019a",
-      "ts": 1792740298978,
-      "baslik": "Yıllık enflasyon beklentisi hanehalkı ve reel sektör için geriledi"
-    },
-    {
-      "anahtar": "0e18e36c7c83cf5b",
-      "ts": 1792739699243,
-      "baslik": "İngiltere’de perakende satışlar Eylül’de %0,4 düştü, tüketici güveni altı ayın en düşüğünde"
     }
   ]
 }
