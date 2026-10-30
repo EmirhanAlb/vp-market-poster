@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "d8f1fd80b7842673",
+      "ts": 1793362960904,
+      "baslik": "Goldman, Çek Merkez Bankası faiz görüşünü enflasyon riskleri nedeniyle yükseltti"
+    },
+    {
       "anahtar": "76ff0809c3613816",
       "ts": 1793358129323,
       "baslik": "Polonya’da enflasyon Ekim’de %3,5’e geriledi, tahminlerin altında"
@@ -219,11 +224,6 @@
       "anahtar": "af33db44200ea868",
       "ts": 1792784986641,
       "baslik": "Hindistan’ın ham petrol ithalatı Eylül’de %16 arttı"
-    },
-    {
-      "anahtar": "3896ed1d1362013b",
-      "ts": 1792755398688,
-      "baslik": "TCMB anketinde dikkat çeken sonuç: Altın ve gayrimenkul öne çıktı"
     }
   ]
 }
