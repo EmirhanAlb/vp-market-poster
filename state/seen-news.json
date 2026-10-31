@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "de5fc3f7eb05059c",
+      "ts": 1793424581365,
+      "baslik": "Altın çakıldı, dev kuruluştan 5 bin dolar tahmini! Yüzde 25'lik yükseliş için tarih verdi"
+    },
+    {
       "anahtar": "d8f1fd80b7842673",
       "ts": 1793362960904,
       "baslik": "Goldman, Çek Merkez Bankası faiz görüşünü enflasyon riskleri nedeniyle yükseltti"
@@ -219,11 +224,6 @@
       "anahtar": "9eaf64b1417dcb9f",
       "ts": 1792832094891,
       "baslik": "Altın fiyatlarında sert düşüş: Rekor seviyeden yüzde 20'yi aşan kayıp"
-    },
-    {
-      "anahtar": "af33db44200ea868",
-      "ts": 1792784986641,
-      "baslik": "Hindistan’ın ham petrol ithalatı Eylül’de %16 arttı"
     }
   ]
 }
