@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "341682bd8e5d22cb",
+      "ts": 1793520589884,
+      "baslik": "Makao’da kumar gelirleri Altın Hafta’ya rağmen Ekim’de %10 düştü"
+    },
+    {
       "anahtar": "de5fc3f7eb05059c",
       "ts": 1793424581365,
       "baslik": "Altın çakıldı, dev kuruluştan 5 bin dolar tahmini! Yüzde 25'lik yükseliş için tarih verdi"
@@ -209,21 +214,6 @@
       "anahtar": "4443fbb4f5de8074",
       "ts": 1792978444691,
       "baslik": "Petrol 6 aylık zirveden geriledi; Suudi saldırıları odakta"
-    },
-    {
-      "anahtar": "9d991f7a1bf43d51",
-      "ts": 1792906600040,
-      "baslik": "Bitcoin bugünkü fiyatı: BTC, Fed toplantısı öncesi 80.800 dolara yükseldi"
-    },
-    {
-      "anahtar": "886e7016f3447545",
-      "ts": 1792851998433,
-      "baslik": "Netanyahu yaptırımları aşmak için kripto paralara yöneleceğini açıkladı"
-    },
-    {
-      "anahtar": "9eaf64b1417dcb9f",
-      "ts": 1792832094891,
-      "baslik": "Altın fiyatlarında sert düşüş: Rekor seviyeden yüzde 20'yi aşan kayıp"
     }
   ]
 }
