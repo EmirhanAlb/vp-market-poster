@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "5554bd5704a0483d",
+      "ts": 1793600274648,
+      "baslik": "Hollanda’da perakende satışlar Eylül’de %2,7 arttı"
+    },
+    {
       "anahtar": "341682bd8e5d22cb",
       "ts": 1793520589884,
       "baslik": "Makao’da kumar gelirleri Altın Hafta’ya rağmen Ekim’de %10 düştü"
@@ -209,11 +214,6 @@
       "anahtar": "c727cb83b13aa8d1",
       "ts": 1792998346222,
       "baslik": "Çip hisselerindeki gerilemeyle Asya borsaları düştü; kazançlar ve merkez bankası toplantıları gündemde"
-    },
-    {
-      "anahtar": "4443fbb4f5de8074",
-      "ts": 1792978444691,
-      "baslik": "Petrol 6 aylık zirveden geriledi; Suudi saldırıları odakta"
     }
   ]
 }
