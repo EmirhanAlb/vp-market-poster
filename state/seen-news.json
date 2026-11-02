@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "be0de929dc77a869",
+      "ts": 1793627466532,
+      "baslik": "İran duyurdu: Hürmüz Boğazı'nda 9 günde 11 petrol tankeri alev aldı"
+    },
+    {
       "anahtar": "5554bd5704a0483d",
       "ts": 1793600274648,
       "baslik": "Hollanda’da perakende satışlar Eylül’de %2,7 arttı"
@@ -194,26 +199,6 @@
       "anahtar": "cf32a7ba4107c130",
       "ts": 1793054871051,
       "baslik": "Petrol krizinde faturanın üçte biri ABD'ye çıktı"
-    },
-    {
-      "anahtar": "6eba3757a47266de",
-      "ts": 1793013451044,
-      "baslik": "Pakistan merkez bankası enflasyon nedeniyle faizi %12’ye yükseltti"
-    },
-    {
-      "anahtar": "36b20db59678fa8b",
-      "ts": 1793010427389,
-      "baslik": "Avrupa doğal gazı Ortadoğu savaşıyla 2022 zirvesine çıktı"
-    },
-    {
-      "anahtar": "568003a1b3808e7c",
-      "ts": 1793009226051,
-      "baslik": "Sterlin bugün: Fed kararı öncesi dolar güçlü seyrederken sterlin geriledi"
-    },
-    {
-      "anahtar": "c727cb83b13aa8d1",
-      "ts": 1792998346222,
-      "baslik": "Çip hisselerindeki gerilemeyle Asya borsaları düştü; kazançlar ve merkez bankası toplantıları gündemde"
     }
   ]
 }
