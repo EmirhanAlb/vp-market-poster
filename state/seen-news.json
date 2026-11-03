@@ -1,6 +1,21 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "2d713c675f420d06",
+      "ts": 1793694114015,
+      "baslik": "İsviçre’de enflasyon ekim ayında yakıt maliyetleriyle tahminlerin üzerinde yüzde 1,5’e yükseldi"
+    },
+    {
+      "anahtar": "0377de05f3331ec6",
+      "ts": 1793693514322,
+      "baslik": "Dış ticaret açığı ekimde yüzde 11,4 azaldı"
+    },
+    {
+      "anahtar": "827ba9d972c8f478",
+      "ts": 1793692314080,
+      "baslik": "4 AYLIK ENFLASYON FARKI: Memur, SSK ve Bağ-Kur emeklisi maaş farkı yüzde kaç çıktı? 4 aylık enflasyon farkına göre kesin"
+    },
+    {
       "anahtar": "5c13f270611e749d",
       "ts": 1793686874628,
       "baslik": "Son dakika... ENAG ekim ayı enflasyon rakamlarını açıkladı"
@@ -214,11 +229,6 @@
       "anahtar": "b3aa99e96e123889",
       "ts": 1793092290037,
       "baslik": "Ülkede siyasi kriz! Bakan istifa etti, gerekçesi dikkat çekti"
-    },
-    {
-      "anahtar": "fe526a68815d468a",
-      "ts": 1793088069536,
-      "baslik": "Türkiye’de işsizlik oranı Eylül’de %8,4’e yükseldi"
     }
   ]
 }
