@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "c314abe692b5c571",
+      "ts": 1793664525660,
+      "baslik": "Güney Kore TÜFE’si Ekimde beklentinin altında arttı"
+    },
+    {
       "anahtar": "2712b4077a7c9ecf",
       "ts": 1793637175143,
       "baslik": "Ortadoğu’daki gerilim azalınca petrol hisseleri düştü"
@@ -204,11 +209,6 @@
       "anahtar": "e261610d72613160",
       "ts": 1793075991718,
       "baslik": "Altın, Fed kararı ve İran diplomasisi beklentisiyle 4.010 doların altına geriledi"
-    },
-    {
-      "anahtar": "cf32a7ba4107c130",
-      "ts": 1793054871051,
-      "baslik": "Petrol krizinde faturanın üçte biri ABD'ye çıktı"
     }
   ]
 }
