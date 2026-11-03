@@ -1,6 +1,21 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "5c13f270611e749d",
+      "ts": 1793686874628,
+      "baslik": "Son dakika... ENAG ekim ayı enflasyon rakamlarını açıkladı"
+    },
+    {
+      "anahtar": "1ece51f7a0807ddd",
+      "ts": 1793685678121,
+      "baslik": "Petrol, ABD’nin İran’ın Kişm Adası’na düzenlediği saldırının ardından yükseldi"
+    },
+    {
+      "anahtar": "5acdb4882194696d",
+      "ts": 1793685678121,
+      "baslik": "Petrol fiyatları %7’den fazla düşünce Avustralya ve Çin havayolu hisseleri sıçradı"
+    },
+    {
       "anahtar": "c314abe692b5c571",
       "ts": 1793664525660,
       "baslik": "Güney Kore TÜFE’si Ekimde beklentinin altında arttı"
@@ -204,11 +219,6 @@
       "anahtar": "fe526a68815d468a",
       "ts": 1793088069536,
       "baslik": "Türkiye’de işsizlik oranı Eylül’de %8,4’e yükseldi"
-    },
-    {
-      "anahtar": "e261610d72613160",
-      "ts": 1793075991718,
-      "baslik": "Altın, Fed kararı ve İran diplomasisi beklentisiyle 4.010 doların altına geriledi"
     }
   ]
 }
