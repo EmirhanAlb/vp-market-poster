@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "44bdc7f45c83e3d3",
+      "ts": 1793766027344,
+      "baslik": "Asya dövizleri dolar gerilerken yükseldi, yuan PBOC hamlesiyle zayıfladı"
+    },
+    {
       "anahtar": "5759374c0c675fb6",
       "ts": 1793712865771,
       "baslik": "Binance saldırısı sonrası Ethereum arzı borsalarda hızla geriledi"
@@ -214,16 +219,6 @@
       "anahtar": "e04e6f3fd143a0eb",
       "ts": 1793163591189,
       "baslik": "Piyasalar karara kilitlendi: Dev kurumlar tek tek Fed tahminini açıkladı"
-    },
-    {
-      "anahtar": "4c60fb934953adf0",
-      "ts": 1793160571340,
-      "baslik": "Petrol yeniden alev aldı! Suudi Arabistan’daki saldırı fiyatları yükseltti"
-    },
-    {
-      "anahtar": "04e5114d2bfba272",
-      "ts": 1793111657227,
-      "baslik": "Fed kararı öncesi Bitcoin’de kısa pozisyonlar 28,18 milyar dolara çıktı"
     }
   ]
 }
