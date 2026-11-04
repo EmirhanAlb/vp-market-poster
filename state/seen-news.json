@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "aa3bcbd872661f7a",
+      "ts": 1793781716149,
+      "baslik": "FTSE 100, BoE faiz kararı öncesi temkinli yükseldi"
+    },
+    {
       "anahtar": "44bdc7f45c83e3d3",
       "ts": 1793766027344,
       "baslik": "Asya dövizleri dolar gerilerken yükseldi, yuan PBOC hamlesiyle zayıfladı"
@@ -214,11 +219,6 @@
       "anahtar": "3e12d5754fd304bd",
       "ts": 1793184153603,
       "baslik": "Sterlin bugün: Pound geriledi; İngiltere bütçesi ve Fed odakta"
-    },
-    {
-      "anahtar": "e04e6f3fd143a0eb",
-      "ts": 1793163591189,
-      "baslik": "Piyasalar karara kilitlendi: Dev kurumlar tek tek Fed tahminini açıkladı"
     }
   ]
 }
