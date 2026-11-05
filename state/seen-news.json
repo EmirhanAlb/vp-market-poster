@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "cfb7cd6f7661ae8b",
+      "ts": 1793852768397,
+      "baslik": "Petrol fiyatları çakıldı! Piyasalar savaşın bitmesini fiyatlıyor"
+    },
+    {
       "anahtar": "df14a8d36f384613",
       "ts": 1793788416863,
       "baslik": "BMW'nin üçüncü çeyrek faaliyet karı Çin pazarındaki durgunluk nedeniyle yüzde 30 geriledi"
@@ -194,46 +199,6 @@
       "anahtar": "4831988b4faacc3e",
       "ts": 1793257882415,
       "baslik": "Bitcoin 80 bin dolara geriledi, Fed ve teknoloji şirketleri baskı yaptı"
-    },
-    {
-      "anahtar": "817bf87cf4ab6aed",
-      "ts": 1793238568580,
-      "baslik": "Altın Fed’in faiz kararı sonrası geriledi, PCE verisi odakta"
-    },
-    {
-      "anahtar": "7c00d8fa1865d0ba",
-      "ts": 1793234912703,
-      "baslik": "Petrol, İran diplomasisi ve yeni saldırı riskleri arasında geriledi"
-    },
-    {
-      "anahtar": "8da2aed9f16e2eaf",
-      "ts": 1793222842428,
-      "baslik": "Kanada tahvil faizleri merkez bankası faiz artırımıyla yükseldi"
-    },
-    {
-      "anahtar": "2e0f4998e65a12c3",
-      "ts": 1793214391042,
-      "baslik": "Fed/Warsh duyurdu: Faiz toplantılarının sayısı azalacak"
-    },
-    {
-      "anahtar": "6ad375e1fdebdbbd",
-      "ts": 1793210741930,
-      "baslik": "ABD Merkez Bankası, politika faizini beklentiler dahilinde yüzde 3,75-4 aralığında sabit tuttu"
-    },
-    {
-      "anahtar": "e9c66f82e218a0f5",
-      "ts": 1793210741930,
-      "baslik": "Son dakika! Fed faizi sabit tuttu: Gözler Warsh’ın açıklamalarına çevrildi"
-    },
-    {
-      "anahtar": "c3f1591cefa06c56",
-      "ts": 1793210741930,
-      "baslik": "FED faiz kararını açıkladı"
-    },
-    {
-      "anahtar": "3e12d5754fd304bd",
-      "ts": 1793184153603,
-      "baslik": "Sterlin bugün: Pound geriledi; İngiltere bütçesi ve Fed odakta"
     }
   ]
 }
