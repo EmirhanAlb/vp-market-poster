@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "e5d9f7dfde751e1d",
+      "ts": 1793884172666,
+      "baslik": "Haftalık yüzde 20’lik petrol çöküşü enflasyon korkularını azaltırken Alman tahvil getirileri Ağustos düşüklerine geriled"
+    },
+    {
       "anahtar": "d7adb493efaf28ed",
       "ts": 1793881751810,
       "baslik": "Sterlin bugün: BoE 25 baz puan artırdı, dolar istihdam verisi öncesi sakinleşti"
@@ -219,11 +224,6 @@
       "anahtar": "d4e9b53630353eea",
       "ts": 1793280872011,
       "baslik": "ECB faizleri sabit tuttu, Başkan Lagarde ayrılığını açıkladı"
-    },
-    {
-      "anahtar": "781cee3a346b8007",
-      "ts": 1793279048326,
-      "baslik": "ABD’de PCE enflasyonu eylülde yıllık yüzde 3,6’ya yükseldi"
     }
   ]
 }
