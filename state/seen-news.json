@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "07a7edb41ddef291",
+      "ts": 1793894438568,
+      "baslik": "Türkiye Merkez Bankası rezervleri dört ayın en düşüğüne geriledi"
+    },
+    {
       "anahtar": "e5d9f7dfde751e1d",
       "ts": 1793884172666,
       "baslik": "Haftalık yüzde 20’lik petrol çöküşü enflasyon korkularını azaltırken Alman tahvil getirileri Ağustos düşüklerine geriled"
@@ -214,16 +219,6 @@
       "anahtar": "4ba44690cbbb692f",
       "ts": 1793309836060,
       "baslik": "Mısır Merkez Bankası faiz oranlarını 100 baz puan artırdı"
-    },
-    {
-      "anahtar": "8f0ee6e00c4d4f8d",
-      "ts": 1793282671939,
-      "baslik": "ECB faiz oranlarını sabit tutarken sterlin avro karşısında 17 aylık zirveye ulaştı"
-    },
-    {
-      "anahtar": "d4e9b53630353eea",
-      "ts": 1793280872011,
-      "baslik": "ECB faizleri sabit tuttu, Başkan Lagarde ayrılığını açıkladı"
     }
   ]
 }
