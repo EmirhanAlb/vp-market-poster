@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "99b709c3e8e1ac22",
+      "ts": 1793928244121,
+      "baslik": "Petrol yeni tanker saldırılarıyla yükseldi ancak sert haftalık kayba yöneldi"
+    },
+    {
       "anahtar": "07a7edb41ddef291",
       "ts": 1793894438568,
       "baslik": "Türkiye Merkez Bankası rezervleri dört ayın en düşüğüne geriledi"
@@ -214,11 +219,6 @@
       "anahtar": "469e3e54a38b295a",
       "ts": 1793323727000,
       "baslik": "Altın 4.000 dolar seviyesinde, enflasyon ve petrol Fed endişelerini artırdı"
-    },
-    {
-      "anahtar": "4ba44690cbbb692f",
-      "ts": 1793309836060,
-      "baslik": "Mısır Merkez Bankası faiz oranlarını 100 baz puan artırdı"
     }
   ]
 }
