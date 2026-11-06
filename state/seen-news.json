@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "22f40c0b75c5026e",
+      "ts": 1793943937341,
+      "baslik": "Tayland’da TÜFE enflasyonu Ekim’de dört yılın zirvesine çıktı"
+    },
+    {
+      "anahtar": "59623637f36971e1",
+      "ts": 1793941537215,
+      "baslik": "Bankacılık krizi baskıyı artırdı, Paraguay Devlet Başkanı Pena istifa etti"
+    },
+    {
       "anahtar": "99b709c3e8e1ac22",
       "ts": 1793928244121,
       "baslik": "Petrol yeni tanker saldırılarıyla yükseldi ancak sert haftalık kayba yöneldi"
@@ -199,26 +209,6 @@
       "anahtar": "d0e358cc18dedb9d",
       "ts": 1793350279852,
       "baslik": "İsviçre Merkez Bankası 54 milyar dolar kar açıkladı"
-    },
-    {
-      "anahtar": "957eb3229b702f95",
-      "ts": 1793332184639,
-      "baslik": "Asya hisseleri yapay zeka harcama endişeleriyle düştü; BOJ faizi sabit tuttu"
-    },
-    {
-      "anahtar": "560b2415338cf2f0",
-      "ts": 1793330962764,
-      "baslik": "BOJ faiz oranlarını beklendiği gibi sabit tuttu; TÜFE hedefte"
-    },
-    {
-      "anahtar": "3c625db2c865ef92",
-      "ts": 1793327942717,
-      "baslik": "Avustralya’da 3. çeyrek üretici enflasyonu beklentileri aştı, RBA faiz artışları gündemde kalmaya devam ediyor"
-    },
-    {
-      "anahtar": "469e3e54a38b295a",
-      "ts": 1793323727000,
-      "baslik": "Altın 4.000 dolar seviyesinde, enflasyon ve petrol Fed endişelerini artırdı"
     }
   ]
 }
