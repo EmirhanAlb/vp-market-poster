@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "24dc83790f61421c",
+      "ts": 1793963274247,
+      "baslik": "Altın ve gümüş için çöküş uyarısı yaptı, nedenini açıkladı"
+    },
+    {
       "anahtar": "fe72541ca12056a6",
       "ts": 1793962048732,
       "baslik": "Macaristan’da perakende satışlar Eylül’de %4,3 arttı"
@@ -194,11 +199,6 @@
       "anahtar": "d8f1fd80b7842673",
       "ts": 1793362960904,
       "baslik": "Goldman, Çek Merkez Bankası faiz görüşünü enflasyon riskleri nedeniyle yükseltti"
-    },
-    {
-      "anahtar": "76ff0809c3613816",
-      "ts": 1793358129323,
-      "baslik": "Polonya’da enflasyon Ekim’de %3,5’e geriledi, tahminlerin altında"
     }
   ]
 }
