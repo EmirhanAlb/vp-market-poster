@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "088b1503ec5c11a5",
+      "ts": 1794032680780,
+      "baslik": "Çin Merkez Bankası'nın altın iştahı dinmiyor: Alım serisi 24 aya çıktı"
+    },
+    {
       "anahtar": "cddc92dce0bacd0b",
       "ts": 1793988029385,
       "baslik": "Avrupa Merkez Bankası başkanlığı için iki aday çıktı"
@@ -209,11 +214,6 @@
       "anahtar": "341682bd8e5d22cb",
       "ts": 1793520589884,
       "baslik": "Makao’da kumar gelirleri Altın Hafta’ya rağmen Ekim’de %10 düştü"
-    },
-    {
-      "anahtar": "de5fc3f7eb05059c",
-      "ts": 1793424581365,
-      "baslik": "Altın çakıldı, dev kuruluştan 5 bin dolar tahmini! Yüzde 25'lik yükseliş için tarih verdi"
     }
   ]
 }
