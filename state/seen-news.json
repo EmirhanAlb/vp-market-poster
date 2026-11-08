@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "c1a69e5540fb17e6",
+      "ts": 1794143736436,
+      "baslik": "Mehmet Şimşek: Savaş küresel büyümeyi yavaşlattı, enflasyonu yükseltti"
+    },
+    {
       "anahtar": "f5675ff375004868",
       "ts": 1794050785243,
       "baslik": "ECB adayı de Cos, İran savaşı enerji fiyatlarını yüksek tutarken enflasyon risklerine karşı uyardı"
@@ -214,11 +219,6 @@
       "anahtar": "5554bd5704a0483d",
       "ts": 1793600274648,
       "baslik": "Hollanda’da perakende satışlar Eylül’de %2,7 arttı"
-    },
-    {
-      "anahtar": "341682bd8e5d22cb",
-      "ts": 1793520589884,
-      "baslik": "Makao’da kumar gelirleri Altın Hafta’ya rağmen Ekim’de %10 düştü"
     }
   ]
 }
