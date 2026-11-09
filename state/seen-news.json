@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "95a40468fa2fa833",
+      "ts": 1794242670360,
+      "baslik": "Merkez Bankası aralıkta faiz indirecek mi? Alaattin Aktaş beklentisini açıkladı"
+    },
+    {
       "anahtar": "99ddd88558ef9916",
       "ts": 1794199834292,
       "baslik": "Asya para birimleri güçlü ABD istihdam verisi sonrası dolarda istikrar ile yükseldi; Çin TÜFE odakta"
@@ -224,26 +229,6 @@
       "anahtar": "c314abe692b5c571",
       "ts": 1793664525660,
       "baslik": "Güney Kore TÜFE’si Ekimde beklentinin altında arttı"
-    },
-    {
-      "anahtar": "2712b4077a7c9ecf",
-      "ts": 1793637175143,
-      "baslik": "Ortadoğu’daki gerilim azalınca petrol hisseleri düştü"
-    },
-    {
-      "anahtar": "c92822bf06cd8903",
-      "ts": 1793635951571,
-      "baslik": "BAE İran savaşına rağmen petrol ihracatını artırdı"
-    },
-    {
-      "anahtar": "be0de929dc77a869",
-      "ts": 1793627466532,
-      "baslik": "İran duyurdu: Hürmüz Boğazı'nda 9 günde 11 petrol tankeri alev aldı"
-    },
-    {
-      "anahtar": "5554bd5704a0483d",
-      "ts": 1793600274648,
-      "baslik": "Hollanda’da perakende satışlar Eylül’de %2,7 arttı"
     }
   ]
 }
