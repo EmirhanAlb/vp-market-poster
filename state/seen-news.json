@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "7887fc774d235207",
+      "ts": 1794300067923,
+      "baslik": "Petrol fiyatlarındaki düşüş enflasyon endişesini azalttı, Avrupa hisseleri rekor seviyelere yaklaşıyor"
+    },
+    {
       "anahtar": "1a779777935b82f9",
       "ts": 1794296451738,
       "baslik": "Norveç’te çekirdek enflasyon Ekim’de beklentinin altında arttı"
@@ -219,21 +224,6 @@
       "anahtar": "0724b2aa89527304",
       "ts": 1793702577403,
       "baslik": "Sterlin bugün: Pound dolar karşısında yükseldi, BoE toplantısı bekleniyor"
-    },
-    {
-      "anahtar": "2d713c675f420d06",
-      "ts": 1793694114015,
-      "baslik": "İsviçre’de enflasyon ekim ayında yakıt maliyetleriyle tahminlerin üzerinde yüzde 1,5’e yükseldi"
-    },
-    {
-      "anahtar": "0377de05f3331ec6",
-      "ts": 1793693514322,
-      "baslik": "Dış ticaret açığı ekimde yüzde 11,4 azaldı"
-    },
-    {
-      "anahtar": "827ba9d972c8f478",
-      "ts": 1793692314080,
-      "baslik": "4 AYLIK ENFLASYON FARKI: Memur, SSK ve Bağ-Kur emeklisi maaş farkı yüzde kaç çıktı? 4 aylık enflasyon farkına göre kesin"
     }
   ]
 }
