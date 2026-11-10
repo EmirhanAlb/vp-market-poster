@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "36770af5fcd0638e",
+      "ts": 1794316988957,
+      "baslik": "Sanayi üretimi eylülde yüzde 2,6 arttı"
+    },
+    {
       "anahtar": "b2219843258adb05",
       "ts": 1794307332974,
       "baslik": "Trump İran saldırılarını durdurdu, Avrupa gaz fiyatları düştü"
@@ -229,11 +234,6 @@
       "anahtar": "5759374c0c675fb6",
       "ts": 1793712865771,
       "baslik": "Binance saldırısı sonrası Ethereum arzı borsalarda hızla geriledi"
-    },
-    {
-      "anahtar": "0724b2aa89527304",
-      "ts": 1793702577403,
-      "baslik": "Sterlin bugün: Pound dolar karşısında yükseldi, BoE toplantısı bekleniyor"
     }
   ]
 }
