@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "c661828248d30615",
+      "ts": 1794289809628,
+      "baslik": "Brent petrol çakıldı! Savaşın kaderi o tarihte değişebilir"
+    },
+    {
       "anahtar": "f196991b4ad60b3f",
       "ts": 1794245716172,
       "baslik": "Fitch, Binance saldırısının bitcoin piyasasının dayanıklılığına işaret ettiğini açıkladı"
@@ -229,11 +234,6 @@
       "anahtar": "5acdb4882194696d",
       "ts": 1793685678121,
       "baslik": "Petrol fiyatları %7’den fazla düşünce Avustralya ve Çin havayolu hisseleri sıçradı"
-    },
-    {
-      "anahtar": "c314abe692b5c571",
-      "ts": 1793664525660,
-      "baslik": "Güney Kore TÜFE’si Ekimde beklentinin altında arttı"
     }
   ]
 }
