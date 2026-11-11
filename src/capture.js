@@ -1,13 +1,15 @@
 import { chromium } from 'playwright';
-import { grafikVerisiniSagla } from './poster-veri.js';
+import { piyasaGoruntusu, goruntuOzeti, ENSTRUMANLAR } from './piyasa.js';
+import { posterVerisiniSagla } from './poster-veri.js';
 
 const POSTER_URL = process.env.POSTER_URL || 'https://vestaprimes.com/en/market-poster';
 const POSTER_WIDTH = 1080;
 const POSTER_HEIGHT = 1350;
 
-// Sayfa canli fiyatlari Binance / CoinGecko / open.er-api'den cekiyor.
-// Fiyatlar gelene kadar her fiyat alaninda "·····" ve "--pending" sinifi
-// duruyor. Bunlarin hepsinin gecmesini bekliyoruz.
+// Fiyat ve grafik verisini sayfaya biz veriyoruz (src/piyasa.js ve
+// src/poster-veri.js); sayfa yalnizca ciziyor. Fiyatlar cizilene kadar her
+// fiyat alaninda "·····" ve "--pending" sinifi duruyor. Bunlarin hepsinin
+// gecmesini bekliyoruz.
 //
 // Sinif adi tasarimla degisiyor: eski liste tasariminda vpmp-row__price,
 // Ekim 2026 kart tasariminda vpmp-card__price. Ikisini de yakalamak icin
@@ -16,12 +18,16 @@ const POSTER_HEIGHT = 1350;
 const FIYAT = '.vpmp [class*="__price"]';
 const BEKLEYEN_FIYAT = '.vpmp [class*="__price--pending"]';
 const LIVE_TIMEOUT_MS = Number(process.env.LIVE_TIMEOUT_MS || 60_000);
+// Brent sitenin kendi kaynagina birakildiginda (bizde verisi yoksa) o kart icin
+// en fazla bu kadar beklenir; daha uzunu diger bes kartin fiyatini eskitir.
+const BRENT_BEKLEME_MS = 12_000;
+// Cekim, fiyatlarin okunmasindan bu kadar saniyeden uzun surduyse mesaja not dusulur.
+const VERI_YAS_SINIRI_SN = 45;
 
-// Kartlardaki mini grafikler fiyatlardan sonra geliyor. Grafik gelince kartin
-// SVG'sine path ekleniyor, gelmeden once yalnizca kesikli cizgi var. Sayfa
-// acildiktan sonra en fazla bu kadar bekleniyor; tum grafikler daha erken
-// gelirse beklemeden cekiliyor. Verileri artik poster-veri.js sagladigi icin
-// grafikler genellikle birkac saniyede geliyor; sinir yedek olarak duruyor.
+// Grafik gelince kartin SVG'sine path ekleniyor, gelmeden once yalnizca
+// kesikli cizgi var. Serisini bizim verdigimiz kartlarin grafigi beklenir;
+// veri hazir oldugu icin bu birkac saniye surer. Sinir ust sinirdir: serisi
+// hic alinamamis bir kart icin beklenmez, cunku beklerken fiyatlar eskir.
 const GRAFIK_BEKLEME_MS = Number(process.env.GRAFIK_BEKLEME_SN || 50) * 1000;
 
 /**
@@ -29,7 +35,9 @@ const GRAFIK_BEKLEME_MS = Number(process.env.GRAFIK_BEKLEME_SN || 50) * 1000;
  * poster kartini 1080x1350 PNG olarak diske yazar.
  *
  * @param {string} outPath PNG'nin yazilacagi dosya yolu
- * @returns {Promise<{path: string, status: string, stamp: string, live: boolean}>}
+ * @returns {Promise<{path: string, status: string, stamp: string, live: boolean,
+ *   sorunlar: Array<{enstruman: string, mesaj: string, not: string|null}>}>}
+ *   `sorunlar`: bayat/eksik/dogrulanamayan veri; `not`u dolu olanlar mesaja dusulur.
  */
 export async function capturePoster(outPath) {
   const browser = await chromium.launch({
@@ -45,9 +53,18 @@ export async function capturePoster(outPath) {
       colorScheme: 'dark',
     });
     const page = await context.newPage();
-    // Grafik verisinin kaynaklari GitHub'in ABD makinelerinden erisilemiyor;
-    // istekler yolda yakalanip erisilebilen kaynaklardan karsilaniyor.
-    const grafikVerisi = await grafikVerisiniSagla(page);
+
+    // Veri sayfa acilmadan hemen once okunur: sayfanin ilk yoklamasi hazir
+    // yanit bulur ve cekim anindaki fiyat birkac saniyelik olur.
+    const goruntu = await piyasaGoruntusu();
+    console.log(`Piyasa verisi:\n${goruntuOzeti(goruntu)}`);
+    for (const s of goruntu.sorunlar) console.warn(`  ${s.not ? '!' : '-'} ${s.enstruman}: ${s.mesaj}`);
+    // Hicbir kaynak yanit vermediyse (ag kesik) alti bos kartlik bir poster
+    // gondermenin anlami yok; bu saat atlanir, hata loga duser.
+    if (Object.keys(goruntu.enstrumanlar).length === 0) {
+      throw new Error('Hicbir piyasa verisi alinamadi; poster cekilmedi.');
+    }
+    const veri = await posterVerisiniSagla(page, goruntu);
 
     page.on('console', (msg) => {
       if (msg.type() === 'error') console.warn('[sayfa hatasi]', msg.text());
@@ -63,16 +80,33 @@ export async function capturePoster(outPath) {
     // Fiyat alani hic bulunamazsa da beklemeye devam ediyoruz: tasarim sinif
     // adlarini yeniden degistirirse kontrol sessizce gecip bos kartlari
     // cekmesin, zaman asimina dussun ve Slack notunda gorunsun.
-    let live = true;
-    try {
-      await page.waitForFunction(
-        ([fiyat, bekleyen]) =>
+    //
+    // Verisi hic alinamamis enstrumanin karti bos kalacak; onu beklemek yalnizca
+    // diger kartlarin fiyatini eskitir. Brent verimiz yoksa kart sitenin kendi
+    // kaynagina birakilir: dolabilir de dolmayabilir de, bu yuzden bizim
+    // kartlar geldikten sonra onun icin yalnizca kisa bir sure beklenir.
+    const brentSiteden = !goruntu.enstrumanlar.BRENT;
+    const bosKalacak = Object.keys(ENSTRUMANLAR).filter(
+      (anahtar) => !goruntu.enstrumanlar[anahtar] && anahtar !== 'BRENT',
+    ).length;
+    const kartlariBekle = (izin, timeout) =>
+      page.waitForFunction(
+        ([fiyat, bekleyen, n]) =>
           document.querySelector('.vpmp__live--live') !== null &&
           document.querySelectorAll(fiyat).length > 0 &&
-          document.querySelectorAll(bekleyen).length === 0,
-        [FIYAT, BEKLEYEN_FIYAT],
-        { timeout: LIVE_TIMEOUT_MS },
+          document.querySelectorAll(bekleyen).length <= n,
+        [FIYAT, BEKLEYEN_FIYAT, izin],
+        { timeout },
       );
+    let live = true;
+    try {
+      await kartlariBekle(bosKalacak + (brentSiteden ? 1 : 0), LIVE_TIMEOUT_MS);
+      if (bosKalacak) console.warn(`Uyari: ${bosKalacak} kartin verisi alinamadi, bos cekiliyor.`);
+      if (brentSiteden) {
+        await kartlariBekle(bosKalacak, BRENT_BEKLEME_MS).catch(() =>
+          console.warn("Uyari: BRENT sitenin kendi kaynagindan da gelmedi, karti bos cekiliyor."),
+        );
+      }
     } catch {
       live = false;
       const [toplam, bekleyen] = await page.evaluate(
@@ -91,24 +125,35 @@ export async function capturePoster(outPath) {
         const svgler = Array.from(document.querySelectorAll('.vpmp-card__chart'));
         return [svgler.filter((s) => s.querySelector('path')).length, svgler.length];
       });
+    const seriliKartlar = Object.entries(ENSTRUMANLAR)
+      .filter(([anahtar]) => goruntu.enstrumanlar[anahtar]?.seri)
+      .map(([, { ad }]) => ad);
     const grafikKalan = GRAFIK_BEKLEME_MS - (Date.now() - acilis);
-    if (grafikKalan > 0) {
+    if (grafikKalan > 0 && seriliKartlar.length) {
       await page
         .waitForFunction(
-          () => {
-            const svgler = document.querySelectorAll('.vpmp-card__chart');
-            return svgler.length > 0 && Array.from(svgler).every((s) => s.querySelector('path'));
-          },
-          null,
-          { timeout: grafikKalan, polling: 1000 },
+          (adlar) =>
+            Array.from(document.querySelectorAll('.vpmp-card'))
+              .filter((kart) => adlar.includes(kart.querySelector('.vpmp-card__sym')?.textContent.trim()))
+              .every((kart) => kart.querySelector('.vpmp-card__chart path')),
+          seriliKartlar,
+          { timeout: grafikKalan, polling: 500 },
         )
         .catch(() => {});
     }
     const [grafik, kart] = await grafikDurumu();
     console.log(`Grafikler: ${grafik}/${kart} (${((Date.now() - acilis) / 1000).toFixed(0)} sn sonra)`);
-    console.log(`Grafik verisi: ${grafikVerisi.ozet()}`);
     // Grafik cizim animasyonunun bitmesi icin.
     if (grafik > 0) await page.waitForTimeout(1500);
+
+    // Kartlarda yazanlar verdigimiz degerler mi? Site veri mantigini degistirirse
+    // yakalama sessizce devre disi kalir; bunu burada yakalayip gorunur kiliyoruz.
+    const dogrulama = await veri.dogrula();
+    for (const s of dogrulama) console.warn(`  ${s.bilgi ? '-' : '!'} ${s.enstruman}: ${s.mesaj}`);
+    const tutmayan = dogrulama.filter((s) => !s.bilgi).length;
+    console.log(tutmayan ? `Dogrulama: ${tutmayan} kart tutmuyor` : 'Dogrulama: kartlar verilen degerlerle ayni');
+    // Altin ve EUR/USD kartlarinin grafik etiketi verinin kapsadigi sureyi soylesin.
+    await veri.etiketleriDuzelt().catch(() => 0);
 
     // Sayfa karti ekrana sigdirmak icin CSS transform ile kucultuyor (--s degiskeni).
     // Birebir 1080x1350 cekmek icin olcegi 1'e sabitliyoruz.
@@ -148,7 +193,17 @@ export async function capturePoster(outPath) {
     const status = (await page.locator('.vpmp__live').first().innerText().catch(() => '')).trim();
     const stamp = (await page.locator('.vpmp__stamp').first().innerText().catch(() => '')).trim();
 
-    return { path: outPath, status, stamp, live };
+    // Fiyatlar sayfa acilmadan once okundu ve o andan beri degismedi. Cekim
+    // normalde birkac saniye surer; sayfa yavas yuklendiyse ya da bir grafik
+    // hic cizilmediyse (beklemeler dolar) posterdeki fiyat o kadar eskidir.
+    const gecenSn = Math.round((Date.now() - goruntu.an) / 1000);
+    console.log(`Fiyatlar cekimden ${gecenSn} sn once okundu.`);
+    const gecikme =
+      gecenSn > VERI_YAS_SINIRI_SN
+        ? [{ enstruman: 'Poster', mesaj: `cekim ${gecenSn} sn surdu`, not: `Fiyatlar çekimden yaklaşık ${gecenSn} sn önce okundu` }]
+        : [];
+
+    return { path: outPath, status, stamp, live, sorunlar: [...goruntu.sorunlar, ...dogrulama, ...gecikme] };
   } finally {
     await browser.close();
   }

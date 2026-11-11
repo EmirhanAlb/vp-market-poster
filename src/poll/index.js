@@ -3,7 +3,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { WebClient } from '@slack/web-api';
 import { hedefler as slackHedefleri, slotluHedefler } from '../slack-out/targets.js';
-import { altinFiyati, fiyatYaz } from './price.js';
+import { sureYaz } from '../piyasa.js';
+import { altinFiyati, kaynakEslestir, fiyatCoz, fiyatYaz } from './price.js';
 import { bugunSaat, saatCoz, trSaat, trTarih, bekle } from './time.js';
 import { oylamaKarti, sonucKarti } from './kart.js';
 
@@ -501,13 +502,19 @@ async function sonucPaylas({ client, kanal }, ts, veri) {
 // --- ANA AKIS --------------------------------------------------------------
 
 /** Bir oylamayi sonuclandirir: oylari okur, sonucu paylasir, gecmise yazar. */
-async function sonuclandir(mesajlar, acilisFiyat, kapanisFiyat) {
+async function sonuclandir(mesajlar, { acilisFiyat, kapanisFiyat, kaynak, karisik }) {
   const degisim = ((kapanisFiyat - acilisFiyat) / acilisFiyat) * 100;
   const yon = yonBelirle(degisim);
   console.log(
-    `Acilis $${fiyatYaz(acilisFiyat)} -> kapanis $${fiyatYaz(kapanisFiyat)} | ` +
+    `Acilis $${fiyatYaz(acilisFiyat)} -> kapanis $${fiyatYaz(kapanisFiyat)} (${kaynak}) | ` +
       `degisim ${degisim.toFixed(2)}% -> ${yon}`,
   );
+  if (karisik) sorunlar.push(`Acilis ve kapanis ayni kaynaktan eslestirilemedi (${kaynak}); sonuc yine de aciklandi.`);
+  // Bir saat arayla okunan spot fiyatin kurusu kurusuna ayni cikmasi olagan
+  // degil; kaynak donmus (piyasa kapali) olabilir.
+  if (acilisFiyat === kapanisFiyat) {
+    sorunlar.push(`Acilis ve kapanis fiyati birebir ayni ($${fiyatYaz(acilisFiyat)}, ${kaynak}); kaynak donmus olabilir.`);
+  }
 
   // Bir kanaldaki hata digerlerinin sonucunu engellemez. Sonuclanamayanlar
   // durum dosyasinda kalir ki "npm run poll:settle" ile tamamlanabilsin.
@@ -518,11 +525,17 @@ async function sonuclandir(mesajlar, acilisFiyat, kapanisFiyat) {
       const { gecerli, gecersiz } = await oylariOku(mesaj, ts);
       await sonucPaylas(mesaj, ts, { acilisFiyat, kapanisFiyat, degisim, yon, gecerli, gecersiz });
       kayitEkle({
-        tarih: trTarih(new Date()),
+        // Oylamanin kendi gunu (mesajin atildigi gun). Sonuclandirma gunu
+        // yazilsaydi, dunun oylamasi bugun elle sonuclandirildiginda bugunun
+        // oylamasi "islendi" sayilip atlanirdi.
+        tarih: trTarih(new Date(Number(ts) * 1000 || Date.now())),
         kanal,
         ts,
         acilisFiyat,
         kapanisFiyat,
+        // Fiyatlarin okundugu spot kaynagi. 11.11.2026 oncesi kayitlarda yok: o
+        // zaman PAXG ya da vadeli kontrat okunuyordu ve hangisi oldugu yazilmiyordu.
+        kaynak,
         degisim: Number(degisim.toFixed(3)),
         yon,
         oySayisi: gecerli.size,
@@ -536,8 +549,12 @@ async function sonuclandir(mesajlar, acilisFiyat, kapanisFiyat) {
       kalan.push(mesaj);
     }
   }
-  if (kalan.length) aktifYaz({ ...aktifOku(), mesajlar: kayitlik(kalan) });
-  else aktifSil();
+  // Kalan kanallar icin hesaplanan sonuc da saklanir: "poll:settle" fiyati
+  // yeniden okursa o anki fiyati "1 saat sonraki fiyat" diye yayimlar ve
+  // kanallar birbiriyle celisen sonuc alirdi.
+  if (kalan.length) {
+    aktifYaz({ ...aktifOku(), mesajlar: kayitlik(kalan), sonuc: { acilisFiyat, kapanisFiyat, kaynak, karisik } });
+  } else aktifSil();
 }
 
 async function main() {
@@ -556,10 +573,18 @@ async function calis() {
     const kaynak = arg('--ts')
       ? [{ ts: arg('--ts'), kanal: arg('--kanal') || kanallar()[0]?.kanal, slot: arg('--slot') || 'varsayilan' }]
       : aktif?.mesajlar || [];
-    const acilisFiyat = Number(arg('--acilis') || aktif?.acilisFiyat || aktif?.baslangicFiyat);
-
     if (!kaynak.length) throw new Error('Sonuclandirilacak oylama yok. --ts <zaman damgasi> verin.');
-    if (!Number.isFinite(acilisFiyat)) throw new Error('Acilis fiyati bilinmiyor. --acilis <fiyat> verin.');
+
+    const eslesme = await sonucuBelirle(aktif, kaynak);
+    if (dryRun) {
+      const degisim = ((eslesme.kapanisFiyat - eslesme.acilisFiyat) / eslesme.acilisFiyat) * 100;
+      console.log(
+        `--dry-run: acilis $${fiyatYaz(eslesme.acilisFiyat)} -> kapanis $${fiyatYaz(eslesme.kapanisFiyat)} ` +
+          `(${eslesme.kaynak}) | degisim ${degisim.toFixed(2)}% -> ${yonBelirle(degisim)}. ` +
+          `${kaynak.length} kanal icin sonuc aciklanacakti; gonderim yapilmadi, kayitlara dokunulmadi.`,
+      );
+      return;
+    }
 
     const cozum = slotluHedefler(kaynak.map((m) => `${m.slot || 'varsayilan'}:${m.kanal}`).join(','));
     sorunlar.push(...cozum.hatalar);
@@ -572,8 +597,7 @@ async function calis() {
     });
     if (!mesajlar.length) throw new Error('Sonuclandirilacak oylamanin hicbir kanalina erisilemiyor.');
 
-    const { fiyat: kapanisFiyat } = await altinFiyati();
-    await sonuclandir(mesajlar, acilisFiyat, kapanisFiyat);
+    await sonuclandir(mesajlar, eslesme);
     return;
   }
 
@@ -615,6 +639,91 @@ async function calis() {
     return;
   }
   await gunlukAkis(hedefler, plan);
+}
+
+/**
+ * "--settle" icin acilis ve kapanis fiyatini belirler.
+ *
+ *  - Sonuc daha once hesaplanmis ama bazi kanallara gonderilememisse o sonuc
+ *    aynen kullanilir.
+ *  - Acilis: durum dosyasindaki spot acilis ya da `--acilis`. 11.11.2026
+ *    oncesi surumun kaydettigi acilis PAXG ya da vadeli fiyatiydi; kaynagi
+ *    yazili olmayan kayit kabul edilmez. Oylama anindaki fiyat (baslangicFiyat)
+ *    acilis yerine KULLANILMAZ: o 14:00'un fiyati, 09:30 New York'un degil.
+ *  - Kapanis: `--kapanis` ya da o anki spot. Sonuc saati coktan gectiyse o
+ *    anki fiyat "1 saat sonraki fiyat" degildir; bu durumda `--kapanis`
+ *    istenir (`--simdiki-fiyat` ile bilerek gecilebilir).
+ * @returns {Promise<{acilisFiyat: number, kapanisFiyat: number, kaynak: string, karisik: boolean}>}
+ */
+async function sonucuBelirle(aktif, mesajlar) {
+  const elleFiyat = (ad) => {
+    if (arg(ad) === undefined) return null;
+    const fiyat = fiyatCoz(arg(ad));
+    if (fiyat == null) throw new Error(`${ad} degeri anlasilamadi: "${arg(ad)}". Ornek: ${ad} 4046.50`);
+    return fiyat;
+  };
+  const elleAcilis = elleFiyat('--acilis');
+  const elleKapanis = elleFiyat('--kapanis');
+
+  if (aktif?.sonuc && elleAcilis == null && elleKapanis == null && !arg('--ts')) {
+    console.log('Onceden hesaplanmis sonuc kullaniliyor (kalan kanallar icin).');
+    return aktif.sonuc;
+  }
+
+  let acilis;
+  if (elleAcilis != null) {
+    acilis = { fiyat: elleAcilis, kaynak: 'elle', adaylar: {} };
+  } else if (!(aktif?.acilisFiyat > 0)) {
+    throw new Error(
+      'Acilis fiyati yakalanamamis. 09:30 New York anindaki spot altin fiyatini elle verin: --acilis 4046.50',
+    );
+  } else if (!aktif.acilisKaynak) {
+    throw new Error(
+      'Kayitli acilis fiyati eski surumle (PAXG/vadeli) alinmis, spot kapanisla kiyaslanamaz. ' +
+        'Spot acilis fiyatini elle verin: --acilis 4046.50',
+    );
+  } else {
+    acilis = { fiyat: aktif.acilisFiyat, kaynak: aktif.acilisKaynak, adaylar: aktif.acilisAdaylar || {} };
+  }
+
+  let kapanis;
+  if (elleKapanis != null) {
+    kapanis = { fiyat: elleKapanis, kaynak: 'elle', adaylar: {} };
+  } else {
+    const paylasim = aktif?.paylasildi ? new Date(aktif.paylasildi) : new Date(Number(mesajlar[0].ts) * 1000);
+    const sonucAni = Number.isFinite(paylasim.getTime()) ? gununPlani(paylasim).sonucAni : null;
+    const gecikmeDk = sonucAni ? Math.round((Date.now() - sonucAni.getTime()) / 60_000) : 0;
+    if (gecikmeDk > GEC_SONUC_DK && !process.argv.includes('--simdiki-fiyat')) {
+      throw new Error(
+        `Sonuc saati (${trSaat(sonucAni)} TR, ${trTarih(sonucAni)}) ${sureYaz(gecikmeDk * 60)} once gecti; simdiki fiyat ` +
+          '"1 saat sonraki fiyat" degil. O anin (10:30 New York) spot fiyatini verin: --kapanis 4050.10 ' +
+          '(yine de simdiki fiyatla sonuclandirmak icin --simdiki-fiyat ekleyin).',
+      );
+    }
+    kapanis = await fiyatOku('Kapanis', 60);
+    tazelikKontrolu('Kapanis', kapanis);
+  }
+
+  // Elle girilen deger varsa kaynak eslestirmesi anlamsiz; ne girildiyse o kullanilir.
+  const eslesme =
+    acilis.kaynak === 'elle' || kapanis.kaynak === 'elle'
+      ? {
+          acilisFiyat: acilis.fiyat,
+          kapanisFiyat: kapanis.fiyat,
+          kaynak: `${acilis.kaynak} -> ${kapanis.kaynak}`,
+          karisik: false,
+        }
+      : kaynakEslestir(acilis, kapanis);
+  // "4.046" gibi yanlis yazilmis bir fiyat ya da baska bir gunun degeri sacma bir sonuc ilan ettirmesin.
+  const fark = Math.abs(eslesme.kapanisFiyat / eslesme.acilisFiyat - 1) * 100;
+  if (fark > 5) {
+    throw new Error(
+      `Acilis ($${fiyatYaz(eslesme.acilisFiyat)}) ile kapanis ($${fiyatYaz(eslesme.kapanisFiyat)}) arasinda ` +
+        `%${fark.toFixed(1)} fark var; bir saatlik hareket icin olagan disi. Degerleri kontrol edin.`,
+    );
+  }
+  if (acilis.kaynak === 'elle' || kapanis.kaynak === 'elle') console.log(`Elle verilen fiyat kullaniliyor (${eslesme.kaynak}).`);
+  return eslesme;
 }
 
 /**
@@ -705,8 +814,19 @@ async function zincirHalkasi(hedefler) {
 async function gunlukAkis(hedefler, { paylasAni, acilisAni, sonucAni }) {
   // 1) Oylamayi paylas
   await bekle(paylasAni, 'Oylama saati');
-  const { fiyat: baslangicFiyat, kaynak } = await altinFiyati();
-  console.log(`Baslangic fiyati: $${fiyatYaz(baslangicFiyat)} (${kaynak})`);
+  const baslangic = await fiyatOku('Baslangic');
+  // Resmi tatilde (25 Aralik, 1 Ocak, Kutsal Cuma) spot piyasa butun gun kapali:
+  // fiyat kimildamaz ve "Durağan" bilenler bos yere tebrik edilirdi. O gun
+  // oylama acilmaz; gecmise yazilir ki sonraki halkalar yeniden denemesin.
+  if (piyasaKapaliGorunuyor(baslangic)) {
+    kayitEkle({ tarih: trTarih(new Date()), atlandi: 'piyasa kapali', yaslar: baslangic.yaslar });
+    console.log(
+      `Bugun oylama yok: spot altin piyasasi kapali gorunuyor (son islem: ${yasMetni(baslangic.yaslar)}).`,
+    );
+    return;
+  }
+  tazelikKontrolu('Baslangic', baslangic);
+  const baslangicFiyat = baslangic.fiyat;
 
   const kartYolu = await kartUret(
     (yol) => oylamaKarti(oylamaKartVerisi(baslangicFiyat, { paylasAni, acilisAni, sonucAni }), yol),
@@ -732,18 +852,110 @@ async function gunlukAkis(hedefler, { paylasAni, acilisAni, sonucAni }) {
 
   // Durumu diske yaz: is bu noktadan sonra coker veya kesilirse oylama
   // "--settle" ile sonradan sonuclandirilabilsin.
-  aktifYaz({ mesajlar: kayitlik(mesajlar), baslangicFiyat, paylasildi: new Date().toISOString() });
+  const paylasildi = new Date().toISOString();
+  aktifYaz({ mesajlar: kayitlik(mesajlar), baslangicFiyat, baslangicKaynak: baslangic.kaynak, paylasildi });
 
   // 2) Acilis fiyatini yakala
   await bekle(acilisAni, 'ABD acilisi');
-  const { fiyat: acilisFiyat } = await altinFiyati();
-  console.log(`Acilis fiyati: $${fiyatYaz(acilisFiyat)}`);
-  aktifYaz({ mesajlar: kayitlik(mesajlar), baslangicFiyat, acilisFiyat, paylasildi: new Date().toISOString() });
+  const acilis = await fiyatOku('Acilis');
+  tazelikKontrolu('Acilis', acilis);
+  aktifYaz({
+    mesajlar: kayitlik(mesajlar),
+    baslangicFiyat,
+    baslangicKaynak: baslangic.kaynak,
+    acilisFiyat: acilis.fiyat,
+    acilisKaynak: acilis.kaynak,
+    acilisAdaylar: acilis.adaylar,
+    paylasildi,
+  });
 
   // 3) Bir saat sonra sonucu hesapla ve acikla
   await bekle(sonucAni, 'Sonuc saati');
-  const { fiyat: kapanisFiyat } = await altinFiyati();
-  await sonuclandir(mesajlar, acilisFiyat, kapanisFiyat);
+  const kapanis = await fiyatOku('Kapanis');
+  tazelikKontrolu('Kapanis', kapanis);
+  // Guncel olmayan fiyatla sonuc ilan edilmez: yanlis kisileri tebrik etmektense
+  // oylama acik kalir ve elle sonuclandirilir. (Yeniden denemelerden sonra bu
+  // noktaya gelmek icin dort kaynagin da dakikalarca bayat kalmasi gerekir.)
+  const kullanilamaz = [
+    ['Acilis', acilis],
+    ['Kapanis', kapanis],
+  ]
+    .filter(([, f]) => fiyatKullanilamaz(f))
+    .map(([ad]) => ad);
+  if (kullanilamaz.length) {
+    throw new Error(
+      `Sonuc ACIKLANMADI: ${kullanilamaz.join(' ve ')} fiyati guncel degil (piyasa kapali ya da kaynaklar bayat). ` +
+        'Oylama kanalda acik duruyor. Elle sonuclandirmak icin: ' +
+        'npm run poll:settle -- --acilis <09:30 New York spot fiyati> --kapanis <10:30 New York spot fiyati>',
+    );
+  }
+  await sonuclandir(mesajlar, kaynakEslestir(acilis, kapanis));
+}
+
+/** Fiyat okumalarinda taze veri gelene kadar yeniden deneme suresi (sn). */
+const FIYAT_DENEME_SN = 180;
+/** Islem damgali kaynaklarda son islem bundan eskiyse piyasa kapali sayilir (sn). */
+const KAPALI_ESIK_SN = 30 * 60;
+/** Taze olmayan bir fiyat en fazla bu kadar eskiyse sonuc yine aciklanir (sn). */
+const ESKI_FIYAT_SN = 10 * 60;
+/** "--settle" sonuc saatinden bu kadar dakika sonra calisirsa simdiki fiyat kapanis sayilmaz. */
+const GEC_SONUC_DK = 10;
+
+const yasMetni = (yaslar) =>
+  Object.entries(yaslar || {})
+    .map(([kaynak, sn]) => `${kaynak} ${sn == null ? 'zaman damgasi yok' : `${sureYaz(sn)} once`}`)
+    .join(', ') || 'bilinmiyor';
+
+/**
+ * Spot altini okur ve loga yazar: fiyat, kaynak, verinin yasi, o an taze olan
+ * diger kaynaklar ve yanit vermeyenler. Fiyat taze degilse `denemeSn` boyunca
+ * yeniden dener; okuma bu yuzden hedef andan en fazla o kadar gec olabilir.
+ */
+async function fiyatOku(etiket, denemeSn = FIYAT_DENEME_SN) {
+  const f = await altinFiyati({
+    denemeSn,
+    bildir: (neden, deneme) => console.warn(`  ! ${etiket} fiyati, ${deneme}. okuma: ${neden}`),
+  });
+  console.log(
+    `${etiket} fiyati: $${fiyatYaz(f.fiyat)} (${f.kaynak}, ` +
+      `${f.yasSn == null ? 'zaman damgasi yok' : `${sureYaz(f.yasSn)} once`}; taze kaynaklar: ${JSON.stringify(f.adaylar)})`,
+  );
+  if (f.hatalar?.length) console.warn(`  - yanit vermeyen kaynaklar: ${f.hatalar.join(' | ')}`);
+  return f;
+}
+
+/**
+ * Spot altin piyasasi kapali mi? Islem zamani veren iki kaynagin (Swissquote,
+ * CNBC) yanit verenlerinin hepsinde son islem KAPALI_ESIK_SN'den eskiyse evet.
+ * goldprice.org ve gold-api.com'a bakilmaz: piyasa kapaliyken de zaman
+ * damgalarini ilerletebiliyorlar. Iki kaynak da yanit vermediyse karar
+ * verilemez; "kapali" denmez.
+ */
+function piyasaKapaliGorunuyor(f) {
+  const yaslar = ['swissquote', 'cnbc'].map((k) => f.yaslar?.[k]).filter((y) => y != null);
+  return yaslar.length > 0 && yaslar.every((y) => y > KAPALI_ESIK_SN);
+}
+
+/** Bu fiyatla sonuc ilan edilemez mi: piyasa kapali gorunuyor ya da veri ESKI_FIYAT_SN'den eski. */
+function fiyatKullanilamaz(f) {
+  return piyasaKapaliGorunuyor(f) || (!f.taze && !(f.yasSn <= ESKI_FIYAT_SN));
+}
+
+/**
+ * Oylama saatlerinde (hafta ici 14:00 TR, 09:30 ve 10:30 New York) spot altin
+ * piyasasi acik; fiyat taze olmali. Bayat ya da kaynaklar arasi tutarsiz bir
+ * fiyat loga ve sorunlara yazilir, calistirma hatali biter ki fark edilsin.
+ */
+function tazelikKontrolu(etiket, f) {
+  const bulgular = (f.notlar || []).map((n) => `${etiket} fiyati: ${n}`);
+  if (!f.taze) {
+    bulgular.push(
+      `${etiket} fiyati taze degil: ${f.kaynak}, ${f.yasSn == null ? 'zaman damgasi yok' : `${sureYaz(f.yasSn)} once`}` +
+        (f.hatalar?.length ? ` (${f.hatalar.join(' | ')})` : ''),
+    );
+  }
+  for (const b of bulgular) console.warn(`  ! ${b}`);
+  sorunlar.push(...bulgular);
 }
 
 main()

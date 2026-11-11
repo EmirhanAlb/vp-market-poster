@@ -67,12 +67,13 @@ export async function juiceGonder({ metin, saat, cevrildi = true }) {
  * bu metinden temizlenemez. Marka gecmemesi gereken bir kanala poster
  * gondermeyin; hedefi bos birakin veya markasiz bir gorsel uretin.
  */
-export async function posterGonder({ dosyaYolu, saat, canli = true }) {
+export async function posterGonder({ dosyaYolu, saat, canli = true, notlar = [] }) {
   const liste = hedefler('poster');
   if (liste.length === 0) return 0;
   const aciklama =
     `📈 <b>Canlı Piyasalar</b> · ${kacir(saat)}` +
-    (canli ? '' : '\n<i>Fiyatlar canlı akışa geçmeden yakalandı.</i>');
+    (canli ? '' : '\n<i>Fiyatlar canlı akışa geçmeden yakalandı.</i>') +
+    (notlar.length ? `\n<i>Not: ${kacir(notlar.join(' · '))}</i>` : '');
   let basarili = 0;
   for (const { token, chatId } of liste) {
     if (await fotografGonder(token, chatId, dosyaYolu, aciklama)) basarili += 1;

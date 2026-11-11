@@ -22,7 +22,10 @@
     "tg:bul": "node scripts/telegram-check.mjs --bul",
     "slack:check": "node scripts/slack-check.mjs",
     "slack:test": "node scripts/slack-check.mjs --gonder",
-    "kart:onizle": "node scripts/kart-onizle.mjs"
+    "kart:onizle": "node scripts/kart-onizle.mjs",
+    "fiyat": "node scripts/fiyat-kontrol.mjs",
+    "fiyat:test": "node scripts/fiyat-test.mjs",
+    "poster:sozlesme": "node scripts/poster-sozlesme.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

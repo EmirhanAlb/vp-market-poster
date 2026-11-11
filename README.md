@@ -1,6 +1,6 @@
 # Vestaprime Slack Otomasyonları
 
-Bu repo üç bağımsız otomasyon barındırır. Üçü de aynı Slack app'ini (`Vestaprime Son Dakika`)
+Bu repo dört bağımsız otomasyon barındırır. Hepsi aynı Slack app'ini (`Vestaprime Son Dakika`)
 ve aynı bot token'ını kullanır, ancak ayrı workflow'lar olarak çalışır.
 
 | Otomasyon | Ne yapar | Sıklık | Kanal secret'ı |
@@ -8,6 +8,7 @@ ve aynı bot token'ını kullanır, ancak ayrı workflow'lar olarak çalışır.
 | **Market Poster** | Canlı piyasa posterini yakalar, PNG olarak gönderir | TR 11:00, 14:00, 16:00, 16:50, 17:00, 18:00 | `SLACK_CHANNEL_ID` |
 | **Son Dakika** | Önemli global finansal haberleri filtreleyip gönderir | 10 dk (ABD seansı) / 30 dk | `NEWS_CHANNEL_ID` |
 | **FinancialJuice** | Telegram ham piyasa akışını Türkçeye çevirip aktarır | 5 dakikada bir | `TELEGRAM_CHANNEL_ID` |
+| **Günün Tahmini** | Altın oylaması: ABD açılışından sonraki 1 saatin yönü | Hafta içi TR 14:00 | workflow'daki `POLL_CHANNEL_ID` |
 
 ---
 
@@ -16,31 +17,103 @@ ve aynı bot token'ını kullanır, ancak ayrı workflow'lar olarak çalışır.
 [vestaprimes.com/en/market-poster](https://vestaprimes.com/en/market-poster) sayfasındaki canlı piyasa posterini
 otomatik olarak yakalayıp Slack kanalına gönderir. Elle "Download PNG" tıklamaya gerek kalmaz.
 
-**Çıktı:** 1080×1350 PNG (sayfadaki indirme butonuyla birebir aynı ölçü).
+**Çıktı:** 1080×1350 PNG (sayfadaki indirme butonuyla aynı ölçü ve tasarım). Fiyatlar ise sayfadan
+değil bu otomasyonun kendi kaynaklarından gelir; sayfadaki "Download PNG" hâlâ sayfanın kendi
+(aşağıda anlatılan hatalı) değerlerini verir.
 **Zamanlama:** Her gün TR 11:00, 14:00, 16:00, 16:50, 17:00 ve 18:00 — başka hiçbir saatte gönderilmez.
 
 ---
 
 ## Nasıl çalışıyor?
 
-Poster sunucuda duran hazır bir dosya değil — sayfa açıldığında tarayıcıda canlı fiyatlarla çiziliyor
-(fiyatlar Binance / CoinGecko / open.er-api'den geliyor). Bu yüzden otomasyon gerçek bir tarayıcı çalıştırıyor:
+Poster sunucuda duran hazır bir dosya değil — sayfa açıldığında tarayıcıda çiziliyor. Bu yüzden
+otomasyon gerçek bir tarayıcı çalıştırıyor. **Fiyatları ve grafikleri ise sayfa değil otomasyon sağlıyor:**
+sayfanın kendi kaynakları yanlış ya da bayat (aşağıda "Sayfanın kendi verisi neden kullanılmıyor"
+başlığına bakın), bu yüzden veri istekleri yolda
+yakalanıp doğru kaynaklardan yanıtlanıyor; sayfa yalnızca çiziyor.
 
-1. Headless Chromium ile `/en/market-poster` sayfası açılır.
-2. Fiyatlar gelip durum rozeti **LIVE** olana kadar beklenir (fiyat alanlarındaki `·····` kaybolana kadar).
-   Ardından kartlardaki mini grafikler beklenir: sayfa açıldıktan sonra en fazla 50 sn, altı grafik
-   daha erken gelirse hemen çekilir. Grafikler gelmezse poster yine gider.
-   Grafik verisini sayfa Binance'ten ve Yahoo'dan (vekil üzerinden) çekiyor; bunlar GitHub'ın
-   ABD makinelerinden erişilemediği için istekler yolda yakalanıp Binance'in veri adresi, Kraken
-   ve doğrudan Yahoo'dan karşılanıyor (`src/poster-veri.js`).
-3. Sayfanın kartı ekrana sığdırmak için uyguladığı küçültme (`--s` CSS değişkeni) iptal edilir, kart tam 1080×1350 boyutunda ekran görüntüsü olarak alınır.
-4. PNG, Slack Web API ile kanala dosya olarak yüklenir.
+1. Altı enstrümanın o anki fiyatı, günlük değişimi ve grafik serisi okunur (`src/piyasa.js`).
+2. Headless Chromium ile `/en/market-poster` sayfası açılır; sayfanın veri istekleri bu veriyle
+   yanıtlanır (`src/poster-veri.js`).
+3. Fiyatlar ve grafikler çizilene kadar beklenir (birkaç saniye). Ardından kartlarda yazan değerler
+   verilen değerlerle karşılaştırılır; tutmayan kart olursa Slack mesajına not düşülür.
+4. Sayfanın kartı ekrana sığdırmak için uyguladığı küçültme (`--s` CSS değişkeni) iptal edilir, kart tam 1080×1350 boyutunda ekran görüntüsü olarak alınır.
+5. PNG, Slack Web API ile kanala dosya olarak yüklenir.
+
+### Fiyatlar nereden geliyor?
+
+Hepsi anahtarsız, herkese açık kaynaklar; 11.11.2026'da GitHub'ın sunucularından tek tek sınandı.
+Hiçbiri hizmet garantisi vermiyor; bu yüzden her enstrümanın yedeği var.
+
+| Enstrüman | Fiyat (öncelik sırasıyla) | Tazelik | Değişim yüzdesi |
+|---|---|---|---|
+| XAU/USD | Swissquote spot → CNBC `XAU=` → goldprice.org → gold-api.com | saniyeler | önceki kapanışa göre (New York 17:00) |
+| EUR/USD | Swissquote spot → CNBC `EUR=` (ikisi de bayatsa ya da birbirini tutmuyorsa, piyasa açıkken Kraken) | saniyeler | önceki kapanışa göre (New York 17:00) |
+| DXY | Swissquote'un altı kurundan ICE formülü → CNBC `.DXY` | saniyeler | önceki ICE kapanışına göre |
+| BRENT | CNBC `@LCO.1` 1 dakikalık bar (ICE ön ay vadeli) → CNBC kotasyonu (10 dk gecikmeli) → sitenin kendi kaynağı | 1–3 dk | önceki ICE uzlaşı fiyatına göre |
+| BTC/USD, ETH/USD | Coinbase; yanıt vermezse ya da son işlemi bayatsa Kraken, Bitstamp, Binance veri aynası, CoinGecko | saniyeler | son 24 saat |
+
+**Yüzdeler.** Altın ve EUR/USD'de önceki kapanış New York 17:00 seviyesidir; işlem platformlarının
+günlük mumuyla aynı kural. Brent'te taban ICE uzlaşı fiyatıdır (Londra 19:30); yüzdeyi bir önceki
+seansın son işleminden ölçen platformlarda Brent yüzdesi farklı görünebilir. Önceki kapanış CNBC
+kotasyonundan, o gelmezse 1 dakikalık barlardan okunur.
+
+**Grafikler.** Altın, EUR/USD, DXY ve Brent kartlarında grafik son New York 17:00'sinden bu yana
+15 dakikalık kapanışlarla çizilir ve kartta "1D" yazar: çizginin yönü ile yüzdenin işareti aynı şeyi
+anlatır. (Altın ve EUR/USD kartlarında site etiketi sabit "24H" yazıyor; çekimden önce "1D"ye
+çevrilir.) BTC ve ETH'de son 24 saat çizilir. Seriler CNBC'nin 1 dakikalık barlarından (kriptoda borsa
+mumlarından) gelir. CNBC'nin altın barlarındaki boşluklar COMEX vadeli barlarından, iki seri arasındaki
+fark kadar kaydırılarak doldurulur. CNBC'nin grafik servisi hiç yanıt vermezse altın kartında PAXG
+mumlarının yalnızca şekli (spot düzeyine taşınmış, "24H" etiketiyle), EUR/USD'de Kraken mumları
+kullanılır. **Yüzde hiçbir durumda token'dan türetilmez:** önceki kapanış bilinmiyorsa rozet boş (—)
+kalır ve mesaja not düşer.
+
+**Kaynak denetimi.** Altında en az üç taze kaynak varken diğerlerinden %0,25'ten fazla ayrışan kaynak
+elenir. EUR/USD ve DXY'de iki kaynak birbirini tutmazsa son 1 dakikalık bar (EUR/USD'de ayrıca Kraken)
+hakem olur; o da çözmezse öncelikli kaynak yayımlanır ve mesaja "kaynakları birbirini tutmuyor" notu
+düşer. Brent ve kriptoda kaynaklar birbiriyle karşılaştırılmaz.
+
+**Sessiz kalmayan durumlar.** Aşağıdakiler Slack/Telegram mesajına tek satırlık `Not:` olarak düşer ve
+Actions günlüğüne yazılır:
+
+- piyasa açıkken en taze veri 2 dakikadan (Brent'te 4 dakikadan) eskiyse: "BRENT verisi 10 dk öncesine ait";
+- hafta sonu: "Döviz ve emtia piyasaları kapalı; DXY, BRENT, EUR/USD, XAU/USD son kapanış fiyatını gösteriyor";
+- bir kartın verisi hiç alınamazsa, günlük değişimi hesaplanamazsa ya da Brent sitenin kendi kaynağına
+  bırakıldıysa;
+- kartta yazan değer verilen değerle aynı değilse (site veri mantığını değiştirmiş demektir).
+
+Resmî tatiller ayrıca tanımlı değil: o günlerde saatlerce eski veri "(piyasa kapalı olabilir)" notuyla
+gönderilir.
+
+**Sayfanın kendi verisi neden kullanılmıyor** (11.11.2026 ölçümü):
+
+- "XAU/USD — Gold (Spot)" kartı spot altın değil **PAXG token'ının** fiyatını gösteriyordu: spot 4.044 $
+  iken 4.032 $ (token o hafta spotun 31 $ altı ile 22 $ üstü arasında gezdi). Yüzde de token'ın son
+  24 saatteki değişimiydi (−%0,75); spot o gün önceki kapanışa göre artıdaydı.
+- Posterde EUR/USD ve DXY `open.er-api.com`'dan geliyordu; ücretsiz katmanı **günde bir kez**
+  güncelleniyor: 1,1187 gösterilirken gerçek 1,1135'ti (52 pip), DXY 102,07 gösterilirken gerçek
+  102,53'tü. (Sayfanın birincil EUR/USD kaynağı Binance; GitHub'ın ABD sunucularından erişilemiyor.)
+  Bu iki kartın yüzdesi de ikinci veri yoklamasından sonra hep "%0,00" görünüyordu.
+- Brent doğru enstrümandı ama 10 dakika gecikmeliydi.
+- Grafik kaynakları (Binance, vekil üzerinden Yahoo) GitHub'ın ABD sunucularından erişilemiyor.
+
+Aynı sorunlar sitenin kendisinde (ziyaretçilerin gördüğü sayfalarda) sürüyor; kalıcı çözüm sitenin veri
+katmanında (`src/lib/marketData.js`). Bu repo yalnızca Slack'e giden posteri düzeltiyor. Bu yüzden
+mesajdaki bağlantıya tıklayan kişi sayfada posterdekinden farklı değerler görebilir.
+
+**Bu düzen sitenin iç yapısına bağlı.** Yakalama, sayfanın hangi adreslerden veri istediğine
+dayanıyor. Site değişirse kartlar yeniden sayfanın kendi verisini gösterebilir; doğrulama adımı bunu
+yakalar ve mesaja not düşer. Site güncellendikten sonra `npm run poster:sozlesme` ile sınayın.
 
 ```
+src/piyasa.js        → fiyat, günlük değişim ve grafik serileri (kaynak seçimi, tazelik denetimi)
+src/poster-veri.js   → sayfanın veri isteklerini bu veriyle yanıtlar, kartları doğrular
 src/capture.js       → Playwright ile poster yakalama
-src/poster-veri.js   → grafik verisini sağlar (sitenin kaynakları GitHub'ın ABD makinelerinden erişilemiyor)
 src/slack.js         → Slack'e dosya yükleme (kanal başına ayrı yükleme)
 src/index.js         → akışı yöneten giriş noktası
+scripts/fiyat-kontrol.mjs   → o anki fiyatlar, kaynakları ve yaşları (npm run fiyat)
+scripts/fiyat-test.mjs      → kaynak seçimi senaryo testleri, ağsız (npm run fiyat:test)
+scripts/poster-sozlesme.mjs → gerçek sayfada yakalama testi (npm run poster:sozlesme)
 scripts/make-icons.mjs → Slack app ikonu varyantlarını üretir (assets/ altına)
 .github/workflows/market-poster.yml → gönderim saatlerini bekleyen, kendini yeniden tetikleyen iş
 ```
@@ -112,6 +185,13 @@ npx playwright install chromium
 # Sadece PNG üret, Slack'e gönderme (out/ klasörüne yazar):
 npm run capture
 
+# Fiyatlar şu an nereden geliyor, ne kadar taze? (hiçbir şey göndermez)
+npm run fiyat
+
+# Kaynak seçimi testleri (ağ kullanmaz) ve gerçek sayfada yakalama testi:
+npm run fiyat:test
+npm run poster:sozlesme
+
 # Slack'e de gönder (önce .env dosyasını doldur):
 cp .env.example .env
 npm start
@@ -130,7 +210,7 @@ variable** → ad `POSTER_SAATLERI`, değer örneğin `11:00,14:00,16:00`. Deği
 
 Neden cron değil: GitHub'ın zamanlayıcısı bu repoda cron'ları saatlerce geç çalıştırıyor ya da hiç
 çalıştırmıyor. İş bu yüzden saatleri kendisi bekliyor ve ~5 saatte bir kendini yeniden tetikliyor.
-Yakalama ~1 dk sürdüğü için mesaj hedef saatten yaklaşık bir dakika sonra düşer.
+Yakalama birkaç saniye sürer; mesaj hedef saatten yarım dakika içinde düşer.
 
 ### Diğer
 
@@ -139,12 +219,15 @@ Yakalama ~1 dk sürdüğü için mesaj hedef saatten yaklaşık bir dakika sonra
 - `SLACK_CHANNEL_ID` — tek kanal (`C123...`) veya virgülle ayrılmış birden çok kanal (`C123...,C456...`)
 - `POSTER_URL` — farklı bir dil/sayfa kullanmak için (varsayılan `https://vestaprimes.com/en/market-poster`)
 - `TZ_NAME` — saat damgası ve dosya adı için zaman dilimi (varsayılan `Europe/Istanbul`)
-- `LIVE_TIMEOUT_MS` — fiyatların gelmesi için beklenecek süre (varsayılan 60000)
-- `GRAFIK_BEKLEME_SN` — sayfa açıldıktan sonra grafikler için en fazla kaç saniye beklenecek (varsayılan 50;
-  workflow'da `POSTER_GRAFIK_BEKLEME_SN` repo değişkeniyle değiştirilir)
+- `LIVE_TIMEOUT_MS` — fiyatların çizilmesi için beklenecek süre (varsayılan 60000)
+- `GRAFIK_BEKLEME_SN` — grafiklerin çizilmesi için üst sınır (varsayılan 50; workflow'da
+  `POSTER_GRAFIK_BEKLEME_SN` repo değişkeniyle değiştirilir). Veri hazır geldiği için normalde birkaç
+  saniye sürer; serisi hiç alınamamış bir kart için beklenmez.
 
-Poster canlı fiyatlara geçemeden yakalanırsa iş yine de tamamlanır, ancak Slack mesajının altına
-"fiyatlar canlı akışa geçmeden yakalandı" notu düşülür.
+Poster eksik ya da bayat veriyle yakalanırsa iş yine de tamamlanır, ancak Slack mesajının altına ne
+olduğunu söyleyen bir `Not:` satırı düşülür (örneğin "BRENT verisi 10 dk öncesine ait",
+"XAU/USD için canlı veri alınamadı"). Bir gönderim hiç yapılamazsa (hiçbir kaynak yanıt vermedi, Slack
+hatası) o halka Actions'ta hatalı (kırmızı) biter; zincir yine de devam eder.
 
 ---
 
@@ -155,7 +238,9 @@ Poster canlı fiyatlara geçemeden yakalanırsa iş yine de tamamlanır, ancak S
 | `not_in_channel` | Bot kanala davet edilmemiş → `/invite @Vestaprime Market Poster` |
 | `missing_scope` | `files:write` scope'u eklenmemiş → scope'u ekleyip app'i **yeniden install** et |
 | `invalid_auth` | Token yanlış/süresi dolmuş → secret'ı güncelle |
-| Poster boş veya fiyatlar `·····` | Fiyat API'leri yavaş → `LIVE_TIMEOUT_MS` değerini artır |
+| Bir kartta `·····` | O enstrümanın hiçbir kaynağı yanıt vermedi; Actions günlüğündeki "Piyasa verisi" bölümü hangi kaynağın neden düştüğünü yazar |
+| Mesajda "… kaynakla uyuşmuyor" ya da "Posterdeki değerler kaynakla doğrulanamadı" notu | Site veri mantığını ya da tasarımını değiştirmiş, yakalama devre dışı kalmış → `npm run poster:sozlesme` ile bak; `src/poster-veri.js` sitenin yeni isteklerine göre güncellenmeli |
+| Mesajda "… kaynakları birbirini tutmuyor" notu | İki kaynak farklı fiyat veriyor ve hangisinin doğru olduğu belirlenemedi → `npm run fiyat` ile kaynakları yan yana gör |
 | Actions çalışmıyor | Repo 60 gün hareketsiz kalırsa GitHub zamanlanmış işleri durdurur → repoya bir commit at veya Actions'tan yeniden etkinleştir |
 
 Hata durumunda workflow, ürettiği PNG'yi 3 gün boyunca **Artifacts** altında saklar — çalıştırma sayfasından indirip bakabilirsin.
@@ -347,6 +432,35 @@ npm run juice        # gerçekten gönder
 ```
 
 Actions → **FinancialJuice -> Slack** → **Run workflow** (varsayılan `dry_run: true`).
+
+---
+
+# 4) Günün Tahmini (altın oylaması) → Slack
+
+Hafta içi her gün TR 14:00'te kanala bir oylama düşer: "Altın, ABD açılışından sonraki 1 saatte nasıl
+seyreder?" (Yukarı / Aşağı / Durağan). Açılış fiyatı 09:30 New York'ta, kapanış bir saat sonra okunur;
+değişim ±%0,15'in içindeyse "Durağan" sayılır. Sonuç ve doğru bilenler kanala yazılır.
+
+**Fiyat:** gerçek spot altın (`src/poll/price.js` → `src/piyasa.js`): Swissquote → CNBC → goldprice.org
+→ gold-api.com. Açılış ve kapanış **aynı kaynaktan** eşleştirilir; kaynağın adı `state/poll-history.json`
+kaydına yazılır. 11.11.2026'ya kadar fiyat PAXG token'ından (ya da vadeli kontrattan) okunuyordu ve
+hangisinin okunduğu kaydedilmiyordu; o tarihten önceki kayıtlarda `kaynak` alanı yoktur.
+
+- Her okuma, taze fiyat gelene kadar 3 dakika boyunca 15 saniyede bir yeniden denenir.
+- **Tatil:** 14:00'te spot piyasa kapalı görünüyorsa (Swissquote ve CNBC'de son işlem 30 dakikadan
+  eski: 25 Aralık, 1 Ocak, Kutsal Cuma) o gün oylama açılmaz. ABD borsasının kapalı ama altının
+  açık olduğu günlerde (Şükran Günü gibi) oylama yine yapılır.
+- Açılış ya da kapanış fiyatı güncel değilse sonuç **ilan edilmez**; oylama kanalda açık kalır ve
+  halka Actions'ta hatalı biter. Elle sonuçlandırmak için:
+
+```bash
+npm run poll:settle -- --acilis 4046.50 --kapanis 4050.10   # 09:30 ve 10:30 New York spot fiyatları
+npm run poll:settle -- --dry-run                             # ne ilan edileceğini göster, gönderme
+```
+
+`poll:settle` kayıtlı açılışı kullanır; sonuç saati 10 dakikadan fazla geçtiyse `--kapanis` ister
+(o anki fiyat "1 saat sonraki fiyat" değildir). Bir kanala gönderim başarısız olduysa hesaplanan sonuç
+saklanır ve `poll:settle` aynı sonucu kalan kanala gönderir.
 
 ---
 

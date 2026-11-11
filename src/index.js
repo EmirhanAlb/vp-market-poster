@@ -43,6 +43,12 @@ async function birTur() {
   const result = await capturePoster(outPath);
   const bytes = fs.statSync(outPath).size;
   console.log(`Yakalandi (${(bytes / 1024).toFixed(0)} KB) | durum: ${result.status || 'bilinmiyor'}`);
+  // Bayat, eksik ya da dogrulanamayan veri sessiz kalmaz: mesaja tek satirlik
+  // not olarak duser. Kartlar cizilemediyse ve bunu aciklayan ozel bir not
+  // yoksa genel bir not yazilir.
+  const notlar = [...new Set((result.sorunlar || []).map((s) => s.not).filter(Boolean))];
+  if (!result.live && notlar.length === 0) notlar.push('Bazı kartlar boş kalmış olabilir');
+  for (const not of notlar) console.log(`Mesaja dusecek not: ${not}`);
 
   if (dryRun) {
     console.log('--dry-run: Slack gonderimi atlandi.');
@@ -72,7 +78,7 @@ async function birTur() {
     );
   }
 
-  const warn = result.live ? '' : '\n_(Not: fiyatlar canli akisa gecmeden yakalandi.)_';
+  const warn = notlar.length ? `\n_Not: ${notlar.join(' · ')}_` : '';
   const toplam = [...gruplar.values()].reduce((n, k) => n + k.size, 0);
   console.log(`Slack'e gonderiliyor (${toplam} kanal, ${gruplar.size} workspace)...`);
   const results = [];
@@ -82,8 +88,8 @@ async function birTur() {
         token,
         channels: [...channels],
         filePath: outPath,
-        title: `Vestaprime — Canli Piyasalar ${human}`,
-        comment: `:chart_with_upwards_trend: *Canli Piyasalar* — ${human}\n<https://vestaprimes.com/en/market-poster|vestaprimes.com>${warn}`,
+        title: `Vestaprime — Canlı Piyasalar ${human}`,
+        comment: `:chart_with_upwards_trend: *Canlı Piyasalar* — ${human}\n<https://vestaprimes.com/en/market-poster|vestaprimes.com>${warn}`,
       })),
     );
   }
@@ -93,7 +99,7 @@ async function birTur() {
   console.log(`Ozet: ${results.length - failed.length}/${results.length} kanal basarili`);
 
   // Telegram cikisi opsiyonel; TELEGRAM_OUT_POSTER bos ise atlanir.
-  await posterGonder({ dosyaYolu: outPath, saat: human, canli: result.live });
+  await posterGonder({ dosyaYolu: outPath, saat: human, notlar });
 
   // Bir kanal basarisiz olsa bile digerlerine gonderim yapildi; yine de
   // calistirmayi hatali isaretliyoruz ki Actions'ta gozden kacmasin.
@@ -168,6 +174,7 @@ async function dongu() {
   console.log(`Halka sonu: ${saatYaz(new Date(bitis))}\n`);
 
   let tur = 0;
+  let basarisiz = 0;
   for (;;) {
     const hedef = sonrakiGonderim();
     if (hedef.getTime() > bitis + TASMA_DK * 60_000) {
@@ -184,10 +191,16 @@ async function dongu() {
     } catch (err) {
       // Tek turun hatasi donguyu bitirmemeli: sayfa gecici olarak
       // yuklenmeyebilir ya da Slack anlik hata dondurebilir.
+      basarisiz += 1;
       console.error('  tur hatasi:', err?.message || err);
+      // GitHub Actions calistirma ozetinde gorunsun.
+      if (process.env.GITHUB_ACTIONS) console.log(`::error::${saatYaz(new Date())} posteri gonderilemedi: ${err?.message || err}`);
     }
   }
-  console.log(`\nHalka tamamlandi: ${tur} gonderim.`);
+  console.log(`\nHalka tamamlandi: ${tur} gonderim${basarisiz ? `, ${basarisiz} tanesi basarisiz` : ''}.`);
+  // Gonderilemeyen poster sessiz kalmasin: halka hatali biter (zincir yine de
+  // devam eder, workflow'daki yeniden tetikleme adimi always() ile calisiyor).
+  if (basarisiz) throw new Error(`${basarisiz} gonderim basarisiz oldu.`);
 }
 
 const calistir = process.argv.includes('--loop') ? dongu : birTur;
