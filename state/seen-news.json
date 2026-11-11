@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "2e180dafcdc8d416",
+      "ts": 1794388810037,
+      "baslik": "Küresel tahviller düştü, sıcak ABD TÜFE ve Fed retoriği 50 baz puanlık artış korkusunu tetikledi"
+    },
+    {
       "anahtar": "c67ad74b77a9f7eb",
       "ts": 1794383367033,
       "baslik": "Almanya'da enflasyon %2,8'e geriledi"
@@ -259,16 +264,6 @@
       "anahtar": "1aca410d68643a1c",
       "ts": 1793787753637,
       "baslik": "Avro Bölgesi’nde enflasyon ekimde %4’e yükseldi"
-    },
-    {
-      "anahtar": "1fd33155205c1ea7",
-      "ts": 1793782934273,
-      "baslik": "İsveç Merkez Bankası enflasyon endişeleriyle faizi %2’ye çıkardı"
-    },
-    {
-      "anahtar": "aa3bcbd872661f7a",
-      "ts": 1793781716149,
-      "baslik": "FTSE 100, BoE faiz kararı öncesi temkinli yükseldi"
     }
   ]
 }
