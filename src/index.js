@@ -52,7 +52,7 @@ async function birTur() {
 
   if (dryRun) {
     console.log('--dry-run: Slack gonderimi atlandi.');
-    return;
+    return result.dogrulandi;
   }
 
   // Token workspace'e bagli: kanallar token'a gore gruplanip her grup kendi
@@ -109,6 +109,7 @@ async function birTur() {
 
   // Actions calistirmalarinda diski sisirmemek icin dosyayi birak, calisma zaten efemer.
   if (process.env.KEEP_LOCAL_FILE !== '1' && process.env.CI) fs.unlinkSync(outPath);
+  return result.dogrulandi;
 }
 
 /**
@@ -140,7 +141,8 @@ function sonrakiGonderim(simdi = new Date()) {
 }
 
 /**
- * Dongu modu: zincirin tek halkasi.
+ * Dongu modu: zincirin tek halkasi. Bir gonderim yapilamazsa ya da posterdeki
+ * degerler dogrulanamazsa halka hatali biter (zincir yine de devam eder).
  *
  * Saatlik cron ayarliydi ama GitHub'in zamanlayicisi bu repoda onu
  * calistirmiyor: 27-31 Agustos 2026 arasinda gunde 24 yerine 1-6 calistirma
@@ -175,6 +177,7 @@ async function dongu() {
 
   let tur = 0;
   let basarisiz = 0;
+  let dogrulanamayan = 0;
   for (;;) {
     const hedef = sonrakiGonderim();
     if (hedef.getTime() > bitis + TASMA_DK * 60_000) {
@@ -187,7 +190,14 @@ async function dongu() {
     tur += 1;
     console.log(`--- ${saatYaz(new Date())} gonderimi ---`);
     try {
-      await birTur();
+      // Poster gitti ama kartlar verilen degerleri gostermiyorsa (site veri
+      // mantigini degistirmis) mesajdaki not disinda calistirma da isaretlenir.
+      if ((await birTur()) === false) {
+        dogrulanamayan += 1;
+        if (process.env.GITHUB_ACTIONS) {
+          console.log(`::warning::${saatYaz(new Date())} posteri dogrulanamadi: kartlar verilen degerleri gostermiyor (npm run poster:sozlesme)`);
+        }
+      }
     } catch (err) {
       // Tek turun hatasi donguyu bitirmemeli: sayfa gecici olarak
       // yuklenmeyebilir ya da Slack anlik hata dondurebilir.
@@ -200,7 +210,9 @@ async function dongu() {
   console.log(`\nHalka tamamlandi: ${tur} gonderim${basarisiz ? `, ${basarisiz} tanesi basarisiz` : ''}.`);
   // Gonderilemeyen poster sessiz kalmasin: halka hatali biter (zincir yine de
   // devam eder, workflow'daki yeniden tetikleme adimi always() ile calisiyor).
-  if (basarisiz) throw new Error(`${basarisiz} gonderim basarisiz oldu.`);
+  if (basarisiz || dogrulanamayan) {
+    throw new Error(`${basarisiz} gonderim basarisiz, ${dogrulanamayan} gonderim dogrulanamadi.`);
+  }
 }
 
 const calistir = process.argv.includes('--loop') ? dongu : birTur;

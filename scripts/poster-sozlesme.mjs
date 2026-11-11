@@ -3,12 +3,16 @@
 // src/poster-veri.js sitenin ic veri mantigina dayaniyor. Site degisirse
 // yakalama sessizce ise yaramaz hale gelebilir; bu test onu dakikalar icinde
 // gosterir. Sayfa sahte degerlerle (XAU 1.111,11, EUR/USD 1,2345...) acilir ve
-// 6., 26. ve 46. saniyede - yani sayfanin 20 sn'lik ikinci ve ucuncu veri
-// yoklamasindan sonra da - kartlarda yazanlar okunur.
+// 10., 26. ve 46. saniyede - yani sayfanin 20 sn'lik ikinci ve ucuncu veri
+// yoklamasindan sonra da - kartlarda yazanlar okunur. (Ilk okuma 10. saniyede:
+// Brent siteye birakildiginda sayfa butun kartlari o yanit gelince, en gec
+// ~8. saniyede yaziyor.) Iki ayri denetim yapilir:
+// uretimdeki dogrula() ve ondan bagimsiz beklentiler (degisim verilmediyse rozet
+// bos mu, sayfa kendi gunluk yedegine dusmus mu, grafik verdigimiz seriyle mi).
 // Slack'e hicbir sey gonderilmez. Kullanim: npm run poster:sozlesme [senaryo no]
 import { chromium } from 'playwright';
 import { posterVerisiniSagla } from '../src/poster-veri.js';
-import { dxyHesapla } from '../src/piyasa.js';
+import { dxyHesapla, ENSTRUMANLAR } from '../src/piyasa.js';
 
 const seri = (bas, son, n = 96) => Array.from({ length: n }, (_, i) => bas + ((son - bas) * i) / (n - 1) + Math.sin(i / 3) * (son * 0.001));
 const bacaklar = { EURUSD: 1.2345, USDJPY: 150.5, GBPUSD: 1.3, USDCAD: 1.4, USDSEK: 10.1, USDCHF: 0.85 };
@@ -40,6 +44,8 @@ const SENARYOLAR = [
   ['7 Brent verisi yok (siteye birakilir)', (e) => { const { BRENT, ...kalan } = e; return kalan; }],
   // Brent bizde ama serisi yok: sayfa kendi Brent grafik yedegine dusmemeli.
   ['8 Brent serisi yok, DXY degisimsiz ve serisiz', (e) => ({ ...e, BRENT: { ...e.BRENT, seri: null }, DXY: { ...e.DXY, degisim: null, oncekiKapanis: null, seri: null } })],
+  // CNBC tamamen yokken piyasa.js'in urettigi goruntu: Brent yok, DXY ve XAU degisimsiz ve serisiz.
+  ['9 CNBC kesintisi: Brent yok, DXY ve XAU degisimsiz ve serisiz', (e) => { const { BRENT, ...kalan } = e; return { ...kalan, DXY: { ...e.DXY, degisim: null, oncekiKapanis: null, seri: null }, XAUUSD: { ...e.XAUUSD, degisim: null, oncekiKapanis: null, seri: null } }; }],
 ];
 const secim = process.argv[2] ? SENARYOLAR.filter(([ad]) => ad.startsWith(process.argv[2])) : SENARYOLAR;
 
@@ -55,26 +61,40 @@ await Promise.all(
     await sayfa.goto('https://vestaprimes.com/en/market-poster', { waitUntil: 'domcontentloaded', timeout: 60_000 });
     await sayfa.waitForSelector('.vpmp', { timeout: 60_000 });
     const satirlar = [`\n## ${ad}`];
-    for (const sn of [6, 26, 46]) {
+    for (const sn of [10, 26, 46]) {
       await sayfa.waitForTimeout(Math.max(0, sn * 1000 - (Date.now() - t0)));
       const kartlar = await sayfa.evaluate(() =>
-        Array.from(document.querySelectorAll('.vpmp-card')).map((k) =>
-          [
-            k.querySelector('.vpmp-card__sym')?.textContent.trim(),
-            k.querySelector('[class*="__price"]')?.textContent.trim(),
-            (['up', 'down', 'flat'].find((y) => k.querySelector(`.vpmp-pill--${y}`)) || '?') + ' ' + k.querySelector('.vpmp-pill')?.textContent.trim(),
-            k.querySelector('.vpmp-card__meta')?.textContent.trim().replace(/^.*?(24H|1D|2W|1M)?$/, '$1') || '-',
-            k.querySelector('.vpmp-card__chart path') ? 'grafik' : 'GRAFIK-YOK',
-          ].join(' | '),
-        ),
+        Array.from(document.querySelectorAll('.vpmp-card')).map((k) => ({
+          ad: k.querySelector('.vpmp-card__sym')?.textContent.trim(),
+          fiyat: k.querySelector('[class*="__price"]')?.textContent.trim(),
+          bos: Boolean(k.querySelector('[class*="__price--pending"]')),
+          yon: ['up', 'down', 'flat'].find((y) => k.querySelector(`.vpmp-pill--${y}`)) || '?',
+          rozet: k.querySelector('.vpmp-pill')?.textContent.trim() || '',
+          etiket: k.querySelector('.vpmp-card__meta')?.textContent.trim().replace(/^.*?(24H|1D|2W|1M)?$/, '$1') || '-',
+          grafik: Boolean(k.querySelector('.vpmp-card__chart path')),
+        })),
       );
       const canli = await sayfa.evaluate(() => document.querySelector('.vpmp__live')?.className.replace('vpmp__live ', ''));
       const bulgular = await veri.dogrula();
-      const sorunlar = bulgular.filter((s) => !s.bilgi);
+      const sorunlar = bulgular.filter((s) => !s.bilgi).map((s) => `${s.enstruman} ${s.mesaj}`);
+      // dogrula()'dan bagimsiz beklentiler.
+      for (const [anahtar, { ad: kartAdi }] of Object.entries(ENSTRUMANLAR)) {
+        const v = g.enstrumanlar[anahtar];
+        const k = kartlar.find((x) => x.ad === kartAdi);
+        if (!k) { sorunlar.push(`${kartAdi} karti sayfada yok`); continue; }
+        if (!v) {
+          // Verisi olmayan kart bos kalmali (Brent haric: sitenin kendi kaynagindan dolabilir).
+          if (anahtar !== 'BRENT' && !k.bos) sorunlar.push(`${kartAdi}: veri verilmedi ama kart ${k.fiyat} gosteriyor`);
+          continue;
+        }
+        if (v.degisim == null && /\d/.test(k.rozet)) sorunlar.push(`${kartAdi}: degisim verilmedi ama rozet ${k.rozet}`);
+        if (['2W', '1M'].includes(k.etiket)) sorunlar.push(`${kartAdi}: sayfa kendi gunluk yedegine dusmus (${k.etiket})`);
+        if (sn >= 26 && Boolean(v.seri) !== k.grafik) sorunlar.push(`${kartAdi}: grafik ${k.grafik ? 'var' : 'yok'}, seri ${v.seri ? 'verildi' : 'verilmedi'}`);
+      }
       if (sorunlar.length) basarisiz += 1;
-      satirlar.push(`  t=${sn}sn  rozet=${canli}  dogrulama=${sorunlar.length ? 'TUTMUYOR: ' + sorunlar.map((s) => s.enstruman + ' ' + s.mesaj).join(' ;; ') : 'tamam'}`);
+      satirlar.push(`  t=${sn}sn  rozet=${canli}  denetim=${sorunlar.length ? 'TUTMUYOR: ' + sorunlar.join(' ;; ') : 'tamam'}`);
       for (const b of bulgular.filter((s) => s.bilgi)) satirlar.push(`      (bilgi) ${b.enstruman}: ${b.mesaj}  ->  "${b.not}"`);
-      for (const k of kartlar) satirlar.push(`      ${k}`);
+      for (const k of kartlar) satirlar.push(`      ${[k.ad, k.fiyat, `${k.yon} ${k.rozet}`, k.etiket, k.grafik ? 'grafik' : 'GRAFIK-YOK'].join(' | ')}`);
     }
     console.log(satirlar.join('\n'));
     await baglam.close();
@@ -82,5 +102,5 @@ await Promise.all(
 );
 await tarayici.close();
 console.log(`\nDXY beklenen (bacaklardan): ${dxy.toFixed(4)}`);
-console.log(basarisiz ? `SONUC: ${basarisiz} anda dogrulama tutmadi` : 'SONUC: tum senaryolarda dogrulama tamam');
+console.log(basarisiz ? `SONUC: ${basarisiz} anda denetim tutmadi` : 'SONUC: tum senaryolarda denetimler tamam');
 process.exit(basarisiz ? 1 : 0);

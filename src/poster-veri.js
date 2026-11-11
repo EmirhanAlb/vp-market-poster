@@ -19,8 +19,8 @@
  *   Supabase functions/v1/brent       Brent kotasyonu; ?symbol=X&series=1 ile
  *                                     Brent ve DXY grafik serisi
  *   Binance klines 15m x 96           BTC, ETH, XAU (PAXGUSDT), EUR grafik serisi
- *   corsproxy.io / allorigins         Yahoo yedegi (reddedilir; yalnizca Brent
- *                                     siteye birakildiysa BZ=F istekleri gecer)
+ *   corsproxy.io / allorigins         Yahoo yedegi (hep reddedilir)
+ *   jsDelivr currency-api             DXY'nin gunluk yedegi (hep reddedilir)
  * Kotasyonlar 20 sn'de bir yeniden istenir.
  *
  * BU BAGIMLILIK KIRILGAN: site veri mantigini degistirirse yakalama ise
@@ -85,7 +85,8 @@ const COINGECKO = { bitcoin: 'BTCUSD', ethereum: 'ETHUSD', 'pax-gold': 'XAUUSD' 
  * @param {import('playwright').Page} page
  * @param {Awaited<ReturnType<typeof import('./piyasa.js').piyasaGoruntusu>>} goruntu
  * @returns {Promise<{ dogrula: () => Promise<Array<{enstruman: string, mesaj: string, not: string, bilgi?: boolean}>>,
- *   etiketleriDuzelt: () => Promise<number> }>}
+ *   etiketleriDuzelt: () => Promise<number>, verilemeyen: string[] }>}
+ *   `verilemeyen`: goruntude olup sayfaya ulastirilamayan enstruman anahtarlari (kartlari bos kalir).
  */
 export async function posterVerisiniSagla(page, goruntu) {
   const e = goruntu.enstrumanlar;
@@ -159,17 +160,21 @@ export async function posterVerisiniSagla(page, goruntu) {
     return yanitla(route, { result: 'success', base_code: 'USD', rates: kurlar });
   });
 
-  await page.route(/^https:\/\/[a-z0-9]+\.supabase\.co\/functions\/v1\/brent(\?|$)/, (route) => {
+  // Brent verimiz yoksa (CNBC'den alinamadiysa) kart sitenin kendi kaynagina
+  // birakilir: Supabase "brent" fonksiyonu (Yahoo, 10 dk gecikmeli). O istek
+  // sayfa adina BURADA yapilir ki sonuc hemen ve kesin bilinsin; sayfanin
+  // sonraki yedekleri (CORS vekilleri) kapali oldugu icin kart ya bu degeri
+  // gosterir ya bos kalir. `siteBrent`: { fiyat } | false (denendi, alinamadi) | null.
+  let siteBrent = null;
+  await page.route(/^https:\/\/[a-z0-9]+\.supabase\.co\/functions\/v1\/brent(\?|$)/, async (route) => {
     const p = new URL(route.request().url()).searchParams;
     if (p.get('series') === '1') {
       const sembol = (p.get('symbol') || 'BRENT').toUpperCase();
       const v = e[sembol];
-      // Enstrumanin verisi hic yoksa (Brent) kart sitenin kendi kaynagina birakilmistir.
-      if (!v) return route.continue();
-      // Fiyati bizden gelen ama serisi olmayan kart: istek reddedilir ki sayfa
-      // kendi gunluk yedegine dusup karta baska bir yuzde ve "2W" grafik yazmasin
-      // (CNBC kesintisinde DXY boyle "%0,62 · 2W" gostermisti).
-      if (!v.seri) return route.abort();
+      // Serimiz yoksa istek reddedilir: sayfa kendi gunluk yedegine dusup karta
+      // baska bir yuzde ve "2W" grafik yazmasin (CNBC kesintisinde DXY boyle
+      // "%0,62 · 2W" gostermisti). Sitenin yayindaki fonksiyonu zaten seri vermiyor.
+      if (!v?.seri) return route.abort();
       return yanitla(route, {
         symbol: sembol,
         // Sayfa "1D" serilerine canli fiyati eklemiyor; cizgi kartta yazan
@@ -181,11 +186,25 @@ export async function posterVerisiniSagla(page, goruntu) {
         at: Date.now(),
       });
     }
-    // Brent verimiz yoksa sitenin kendi kaynagi (Yahoo, 10 dk gecikmeli) kullanilir.
-    // Degisimi bilinmeyen kotasyon da verilmez: sayfa Brent'i bellekte tuttugu
-    // icin "yalnizca ilk tur" numarasi burada islemiyor, ikinci yoklamada karta
-    // kendi "%0,00"ini yaziyor (gercek sayfada denendi).
-    if (!e.BRENT || e.BRENT.degisim == null) return route.continue();
+    if (!e.BRENT) {
+      try {
+        const yanit = await route.fetch({ timeout: 6000 });
+        const govde = yanit.ok() ? await yanit.json() : null;
+        if (Number(govde?.price) > 0) {
+          siteBrent = { fiyat: Number(govde.price) };
+          return route.fulfill({ response: yanit });
+        }
+      } catch {
+        /* asagida "alinamadi" sayilir */
+      }
+      siteBrent = siteBrent || false;
+      return route.abort();
+    }
+    // Degisimi bilinmeyen kotasyon verilmez: sayfa Brent'i bellekte tuttugu icin
+    // "yalnizca ilk tur" numarasi burada islemiyor, ikinci yoklamada karta kendi
+    // "%0,00"ini yaziyor (gercek sayfada denendi). Sitenin kendi degeri gecer;
+    // fiyat farkliysa dogrula() bildirir.
+    if (e.BRENT.degisim == null) return route.continue();
     return yanitla(route, {
       price: e.BRENT.fiyat,
       changePct: e.BRENT.degisim,
@@ -201,22 +220,22 @@ export async function posterVerisiniSagla(page, goruntu) {
     return seri ? yanitla(route, mumSatirlari(seri)) : route.abort();
   });
 
-  // Yahoo'ya giden CORS vekilleri: seriler yukaridan geldigi icin gerekmiyor.
-  // Hemen reddedilir ki serisi olmayan kartta sayfa 8 sn beklemeden kendi son
-  // yedegine (DXY icin jsDelivr) gecsin. Tek istisna: Brent verimiz yoksa kart
-  // sitenin kendi zincirine birakilmistir; o zincirin son halkasi olan Brent
-  // (BZ=F) vekil istekleri gecirilir.
-  await page.route(/^https:\/\/(corsproxy\.io\/\?url=|api\.allorigins\.win\/raw\?url=)/, (route) =>
-    !e.BRENT && /BZ(=|%3D|%253D)F/i.test(route.request().url()) ? route.continue() : route.abort(),
-  );
-
-  // Sayfanin DXY icin son yedegi: gunde bir guncellenen doviz arsivi (iki
-  // haftalik grafik ve gunden gune degisim). Fiyati biz verdigimiz icin asla
-  // gerekmez; acik kalirsa serisiz DXY kartina kendi yuzdesini yazar.
+  // Sayfanin kendi yedek zincirleri hep kapali; aksi halde verisi eksik bir
+  // karta sayfa kendi (bayat ya da baska anlamli) degerini yazar ve grafikler
+  // gercek ag isteklerini bekler:
+  //   - Yahoo'ya giden CORS vekilleri (Brent ve DXY kotasyon/seri yedegi)
+  //   - jsDelivr doviz arsivi (DXY: gunden gune degisim ve iki haftalik grafik)
+  //   - Alpha Vantage / Twelve Data (anahtar tanimlanirsa devreye girecek yedekler)
+  await page.route(/^https:\/\/(corsproxy\.io\/\?url=|api\.allorigins\.win\/raw\?url=)/, (route) => route.abort());
   await page.route(/^https:\/\/cdn\.jsdelivr\.net\/npm\/@fawazahmed0\/currency-api/, (route) => route.abort());
-  // Ayni sey Brent'in gunluk yedegi (Alpha Vantage, bir aylik grafik) icin:
-  // Brent bizden geliyorsa kapatilir, siteye birakildiysa acik kalir.
-  await page.route(/^https:\/\/www\.alphavantage\.co\/query\?/, (route) => (e.BRENT ? route.abort() : route.continue()));
+  await page.route(/^https:\/\/(www\.alphavantage\.co|api\.twelvedata\.com)\//, (route) => route.abort());
+
+  // Goruntude olup sayfaya ULASTIRILAMAYAN enstrumanlar. Sayfa DXY'yi ve (Binance
+  // yolu kapaliyken) EUR/USD'yi er-api kurlarindan okuyor; o yanit ancak ikisi
+  // birden varsa kurulabiliyor. Bu kartlar bos kalir; beklenmez, notu dogrula() duser.
+  const verilemeyen = [];
+  if (e.DXY && !kurlar) verilemeyen.push('DXY');
+  if (e.EURUSD && e.EURUSD.degisim == null && !kurlar) verilemeyen.push('EURUSD');
 
   // Okuyucu notlarindaki sayilar Turkce yazilir: 4.046,10 ve −%0,75.
   const trSayi = (deger, ondalik) =>
@@ -256,7 +275,7 @@ export async function posterVerisiniSagla(page, goruntu) {
             enstruman: ad,
             bilgi: true,
             mesaj: dolu
-              ? `sitenin kendi kaynagindan cizildi (${kart.fiyat})`
+              ? `sitenin kendi kaynagindan cizildi (${kart.fiyat}${siteBrent ? `; fonksiyonun yaniti ${siteBrent.fiyat}` : ''})`
               : 'sitenin kendi kaynagi da yanit vermedi; kart bos',
             not: dolu ? `${ad} yedek kaynaktan alındı (yaklaşık 10 dk gecikmeli)` : `${ad} için canlı veri alınamadı`,
           });
@@ -342,5 +361,5 @@ export async function posterVerisiniSagla(page, goruntu) {
     }, adlar);
   }
 
-  return { dogrula, etiketleriDuzelt };
+  return { dogrula, etiketleriDuzelt, verilemeyen };
 }

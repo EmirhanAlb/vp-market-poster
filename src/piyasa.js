@@ -167,23 +167,42 @@ async function goldApi() {
 // Kripto borsalari. Hepsi { fiyat, zaman, degisim (24 saat), seri (15 dk x 96) } doner.
 
 const COINBASE = { BTCUSD: 'BTC-USD', ETHUSD: 'ETH-USD' };
+/**
+ * Coinbase: fiyat ve islem zamani ticker'dan. 24 saatlik degisimin referansi,
+ * 24 saat onceki ani iceren 1 dk'lik mumun kapanisi. /stats icindeki `open`
+ * KULLANILMAZ: o, 23 saat onceki saatlik mumun acilisi ve saat baslarinda
+ * basamak atliyor (11.11.2026 13:24 UTC'de BTC icin +%0,30 veriyordu, gercek
+ * 24 saatlik degisim -%0,49'du); posterlerin cogu tam saat basinda cikiyor.
+ */
 async function coinbase(anahtar) {
   const kok = `https://api.exchange.coinbase.com/products/${COINBASE[anahtar]}`;
-  const [t, s, m] = await Promise.all([
+  const simdi = Date.now();
+  const dun = simdi - 86_400_000;
+  const iso = (ms) => encodeURIComponent(new Date(ms).toISOString());
+  const [t, r, m] = await Promise.all([
     jsonAl(`${kok}/ticker`),
-    jsonAl(`${kok}/stats`),
-    jsonAl(`${kok}/candles?granularity=900`).catch(() => null),
+    jsonAl(`${kok}/candles?granularity=60&start=${iso(dun - 180_000)}&end=${iso(dun + 60_000)}`).catch(() => null),
+    // Pencere acikca verilir: penceresiz istek 5 dk onbellekten gelebiliyor.
+    jsonAl(`${kok}/candles?granularity=900&start=${iso(dun)}&end=${iso(simdi)}`).catch(() => null),
   ]);
   const fiyat = Number(t.veri.price);
-  // Mum satiri: [zaman, dusuk, yuksek, acilis, kapanis, hacim], yeniden eskiye.
-  const seri = Array.isArray(m?.veri)
-    ? m.veri
-        .slice(0, 96)
-        .reverse()
-        .map((r) => Number(r[4]))
-        .filter((c) => c > 0)
-    : null;
-  return { fiyat, zaman: Date.parse(t.veri.time) || t.an, degisim: yuzde(fiyat, Number(s.veri.open)), seri };
+  // Mum satiri: [zaman (sn), dusuk, yuksek, acilis, kapanis, hacim]; sira garanti degil.
+  const satirlar = (yanit) =>
+    (Array.isArray(yanit?.veri) ? yanit.veri : [])
+      .filter((s) => Array.isArray(s) && Number(s[0]) > 0 && Number(s[4]) > 0)
+      .sort((a, b) => a[0] - b[0]);
+  const dunku = satirlar(r)
+    .filter((s) => Number(s[0]) * 1000 <= dun)
+    .at(-1);
+  const mumlar = satirlar(m);
+  // 1 dk'lik mum alinamadiysa en yakin referans: 24 saatlik pencerenin ilk 15 dk'lik mumunun acilisi.
+  const referans = dunku ? Number(dunku[4]) : mumlar.length >= 90 ? Number(mumlar[0][3]) : null;
+  return {
+    fiyat,
+    zaman: Date.parse(t.veri.time) || t.an,
+    degisim: yuzde(fiyat, referans),
+    seri: mumlar.length >= 8 ? mumlar.slice(-96).map((s) => Number(s[4])) : null,
+  };
 }
 
 const KRAKEN = { BTCUSD: 'XBTUSD', ETHUSD: 'ETHUSD', EURUSD: 'EURUSD', PAXG: 'PAXGUSD' };

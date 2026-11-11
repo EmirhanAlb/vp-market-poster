@@ -75,8 +75,14 @@ globalThis.fetch = async (url) => {
     if (!S.coinbase) return yok();
     const f = S.coinbase[m[1]];
     if (m[2] === 'ticker') return json({ price: String(f), time: new GercekDate(SIMDI - (S.coinbase.yas ?? 800)).toISOString() });
-    if (m[2] === 'stats') return json({ open: String(f * 1.005), last: String(f) });
-    return json(Array.from({ length: 300 }, (_, i) => [Math.floor(SIMDI / 1000) - i * 900, 0, 0, 0, f * (1 + i * 0.0001), 1]));
+    // Mumlar: istenen pencere ve aralikta, yeniden eskiye. 1 dk'lik mumlar (24 saat onceki referans)
+    // fiyatin %0,5 ustunde; 15 dk'lik mumlar geriye dogru mum basina %0,01 artiyor.
+    const g = Number(/granularity=(\d+)/.exec(url)[1]);
+    const bas = Date.parse(decodeURIComponent(/start=([^&]+)/.exec(url)[1]));
+    const son = Date.parse(decodeURIComponent(/end=([^&]+)/.exec(url)[1]));
+    const satirlar = [];
+    for (let t = Math.floor(son / 1000 / g) * g, i = 0; t * 1000 >= bas; t -= g, i++) satirlar.push([t, 0, 0, f * 1.005, g === 60 ? f * 1.005 : f * (1 + i * 0.0001), 1]);
+    return json(satirlar);
   }
   if ((m = /api\.kraken\.com\/0\/public\/(Ticker|OHLC)\?pair=(\w+)/.exec(url))) {
     if (!S.kraken) return yok();

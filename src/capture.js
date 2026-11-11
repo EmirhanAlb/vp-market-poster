@@ -18,9 +18,6 @@ const POSTER_HEIGHT = 1350;
 const FIYAT = '.vpmp [class*="__price"]';
 const BEKLEYEN_FIYAT = '.vpmp [class*="__price--pending"]';
 const LIVE_TIMEOUT_MS = Number(process.env.LIVE_TIMEOUT_MS || 60_000);
-// Brent sitenin kendi kaynagina birakildiginda (bizde verisi yoksa) o kart icin
-// en fazla bu kadar beklenir; daha uzunu diger bes kartin fiyatini eskitir.
-const BRENT_BEKLEME_MS = 12_000;
 // Cekim, fiyatlarin okunmasindan bu kadar saniyeden uzun surduyse mesaja not dusulur.
 const VERI_YAS_SINIRI_SN = 45;
 
@@ -35,7 +32,7 @@ const GRAFIK_BEKLEME_MS = Number(process.env.GRAFIK_BEKLEME_SN || 50) * 1000;
  * poster kartini 1080x1350 PNG olarak diske yazar.
  *
  * @param {string} outPath PNG'nin yazilacagi dosya yolu
- * @returns {Promise<{path: string, status: string, stamp: string, live: boolean,
+ * @returns {Promise<{path: string, status: string, stamp: string, live: boolean, dogrulandi: boolean,
  *   sorunlar: Array<{enstruman: string, mesaj: string, not: string|null}>}>}
  *   `sorunlar`: bayat/eksik/dogrulanamayan veri; `not`u dolu olanlar mesaja dusulur.
  */
@@ -66,8 +63,14 @@ export async function capturePoster(outPath) {
     }
     const veri = await posterVerisiniSagla(page, goruntu);
 
+    // Sayfanin kendi yedek kaynaklarina giden istekleri bilerek reddediyoruz
+    // (src/poster-veri.js); tarayici her biri icin ayni hata satirini yaziyor.
+    // Onlar sayilir, digerleri oldugu gibi loglanir.
+    let reddedilen = 0;
     page.on('console', (msg) => {
-      if (msg.type() === 'error') console.warn('[sayfa hatasi]', msg.text());
+      if (msg.type() !== 'error') return;
+      if (/net::ERR_FAILED/.test(msg.text())) reddedilen += 1;
+      else console.warn('[sayfa hatasi]', msg.text());
     });
 
     await page.goto(POSTER_URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
@@ -81,32 +84,25 @@ export async function capturePoster(outPath) {
     // adlarini yeniden degistirirse kontrol sessizce gecip bos kartlari
     // cekmesin, zaman asimina dussun ve Slack notunda gorunsun.
     //
-    // Verisi hic alinamamis enstrumanin karti bos kalacak; onu beklemek yalnizca
-    // diger kartlarin fiyatini eskitir. Brent verimiz yoksa kart sitenin kendi
-    // kaynagina birakilir: dolabilir de dolmayabilir de, bu yuzden bizim
-    // kartlar geldikten sonra onun icin yalnizca kisa bir sure beklenir.
-    const brentSiteden = !goruntu.enstrumanlar.BRENT;
+    // Verisi hic alinamamis ya da sayfaya ulastirilamayan enstrumanin karti bos
+    // kalacak; onu beklemek yalnizca diger kartlarin fiyatini eskitir. Brent
+    // verimiz yoksa kart sitenin kendi kaynagina birakilir: dolabilir de
+    // dolmayabilir de. Sayfa butun fiyatlari tek seferde yazdigi icin bizim
+    // kartlar geldiginde onun sonucu da bellidir; ayrica beklenmez.
     const bosKalacak = Object.keys(ENSTRUMANLAR).filter(
-      (anahtar) => !goruntu.enstrumanlar[anahtar] && anahtar !== 'BRENT',
+      (anahtar) => !goruntu.enstrumanlar[anahtar] || veri.verilemeyen.includes(anahtar),
     ).length;
-    const kartlariBekle = (izin, timeout) =>
-      page.waitForFunction(
-        ([fiyat, bekleyen, n]) =>
-          document.querySelector('.vpmp__live--live') !== null &&
-          document.querySelectorAll(fiyat).length > 0 &&
-          document.querySelectorAll(bekleyen).length <= n,
-        [FIYAT, BEKLEYEN_FIYAT, izin],
-        { timeout },
-      );
     let live = true;
     try {
-      await kartlariBekle(bosKalacak + (brentSiteden ? 1 : 0), LIVE_TIMEOUT_MS);
-      if (bosKalacak) console.warn(`Uyari: ${bosKalacak} kartin verisi alinamadi, bos cekiliyor.`);
-      if (brentSiteden) {
-        await kartlariBekle(bosKalacak, BRENT_BEKLEME_MS).catch(() =>
-          console.warn("Uyari: BRENT sitenin kendi kaynagindan da gelmedi, karti bos cekiliyor."),
-        );
-      }
+      await page.waitForFunction(
+        ([fiyat, bekleyen, izin]) =>
+          document.querySelector('.vpmp__live--live') !== null &&
+          document.querySelectorAll(fiyat).length > 0 &&
+          document.querySelectorAll(bekleyen).length <= izin,
+        [FIYAT, BEKLEYEN_FIYAT, bosKalacak],
+        { timeout: LIVE_TIMEOUT_MS },
+      );
+      if (bosKalacak) console.warn(`Uyari: ${bosKalacak} kartin verisi yok ya da sayfaya verilemiyor; bos kalabilir.`);
     } catch {
       live = false;
       const [toplam, bekleyen] = await page.evaluate(
@@ -197,13 +193,24 @@ export async function capturePoster(outPath) {
     // normalde birkac saniye surer; sayfa yavas yuklendiyse ya da bir grafik
     // hic cizilmediyse (beklemeler dolar) posterdeki fiyat o kadar eskidir.
     const gecenSn = Math.round((Date.now() - goruntu.an) / 1000);
-    console.log(`Fiyatlar cekimden ${gecenSn} sn once okundu.`);
+    console.log(
+      `Fiyatlar cekimden ${gecenSn} sn once okundu.` +
+        (reddedilen ? ` Sayfanin kendi kaynaklarina giden ${reddedilen} istek reddedildi (beklenen).` : ''),
+    );
     const gecikme =
       gecenSn > VERI_YAS_SINIRI_SN
         ? [{ enstruman: 'Poster', mesaj: `cekim ${gecenSn} sn surdu`, not: `Fiyatlar çekimden yaklaşık ${gecenSn} sn önce okundu` }]
         : [];
 
-    return { path: outPath, status, stamp, live, sorunlar: [...goruntu.sorunlar, ...dogrulama, ...gecikme] };
+    return {
+      path: outPath,
+      status,
+      stamp,
+      live,
+      // Kartlar verilen degerleri gosteriyor mu (yakalama calisiyor mu)?
+      dogrulandi: tutmayan === 0,
+      sorunlar: [...goruntu.sorunlar, ...dogrulama, ...gecikme],
+    };
   } finally {
     await browser.close();
   }
