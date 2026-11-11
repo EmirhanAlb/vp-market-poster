@@ -52,13 +52,24 @@ jobs:
       - name: Bagimliliklari kur
         run: npm ci
 
+      # apt adimlari "olursa iyi" turunden: runner imajinda Liberation, DejaVu ve
+      # Noto Color Emoji fontlari ile Chromium'un sistem kutuphaneleri zaten var
+      # (11.11.2026'da apt'siz kurulumla birebir ayni poster cikti). O gun Ubuntu
+      # paket deposu dakikalarca yanit vermedi; bu adimlar asilip dustugu icin
+      # halka hic baslayamadi ve 17:00 posteri cikmadi. Bu yuzden sureleri
+      # sinirli ve basarisizliklari isi durdurmuyor.
       - name: Fontlari kur (poster tipografisi icin)
+        continue-on-error: true
+        timeout-minutes: 2
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq fonts-liberation fonts-noto-core fonts-noto-color-emoji
 
       - name: Chromium'u kur
-        run: npx playwright install --with-deps chromium
+        run: |
+          # Once sistem kutuphaneleriyle birlikte (apt kullanir); 2 dakikada
+          # bitmezse yalnizca tarayici indirilir.
+          timeout -k 10 120 npx playwright install --with-deps chromium || npx playwright install chromium
 
       - name: Poster'i gonderim saatlerinde yakala ve Slack'e gonder
         run: node src/index.js --loop
