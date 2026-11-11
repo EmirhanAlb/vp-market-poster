@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "11268a2904543ded",
+      "ts": 1794374316827,
+      "baslik": "Petrol fiyatları dipten döndü! Hürmüz Boğazı'nda saldırılar rekor kırdı"
+    },
+    {
+      "anahtar": "f7f29c0fe7a03dfd",
+      "ts": 1794374316827,
+      "baslik": "Geçen sene kayyım atanmıştı… Merkez Bankası o kuruluşun faaliyet iznini iptal etti"
+    },
+    {
       "anahtar": "f2bf6291b4d9e7f8",
       "ts": 1794368886448,
       "baslik": "Güçlü enflasyon sonrası Fed’in Aralık’ta faiz artırma ihtimali %88’e yükseldi"
@@ -244,11 +254,6 @@
       "anahtar": "aa3bcbd872661f7a",
       "ts": 1793781716149,
       "baslik": "FTSE 100, BoE faiz kararı öncesi temkinli yükseldi"
-    },
-    {
-      "anahtar": "44bdc7f45c83e3d3",
-      "ts": 1793766027344,
-      "baslik": "Asya dövizleri dolar gerilerken yükseldi, yuan PBOC hamlesiyle zayıfladı"
     }
   ]
 }
