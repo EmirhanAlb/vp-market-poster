@@ -605,6 +605,30 @@
       "oySayisi": 1,
       "gecersiz": 0,
       "kazananlar": []
+    },
+    {
+      "tarih": "11.11.2026",
+      "kanal": "C08AJ51934P",
+      "ts": "1794394808.349809",
+      "acilisFiyat": 4019.57,
+      "kapanisFiyat": 3999.55,
+      "degisim": -0.498,
+      "yon": "asagi",
+      "oySayisi": 1,
+      "gecersiz": 0,
+      "kazananlar": []
+    },
+    {
+      "tarih": "11.11.2026",
+      "kanal": "C0BNPGR567R",
+      "ts": "1794394813.522129",
+      "acilisFiyat": 4019.57,
+      "kapanisFiyat": 3999.55,
+      "degisim": -0.498,
+      "yon": "asagi",
+      "oySayisi": 0,
+      "gecersiz": 0,
+      "kazananlar": []
     }
   ]
 }
