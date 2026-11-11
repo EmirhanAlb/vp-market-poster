@@ -927,8 +927,8 @@ async function fiyatOku(etiket, denemeSn = FIYAT_DENEME_SN) {
 /**
  * Spot altin piyasasi kapali mi? Islem zamani veren iki kaynagin (Swissquote,
  * CNBC) yanit verenlerinin hepsinde son islem KAPALI_ESIK_SN'den eskiyse evet.
- * goldprice.org ve gold-api.com'a bakilmaz: piyasa kapaliyken de zaman
- * damgalarini ilerletebiliyorlar. Iki kaynak da yanit vermediyse karar
+ * gold-api.com'a bakilmaz: piyasa kapaliyken de zaman damgasini
+ * ilerletebiliyor. Iki kaynak da yanit vermediyse karar
  * verilemez; "kapali" denmez.
  */
 function piyasaKapaliGorunuyor(f) {

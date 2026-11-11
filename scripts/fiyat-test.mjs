@@ -11,6 +11,7 @@ import {
   seriyeIndir,
   sonNyKapanisi,
   piyasaKapaliOlabilir,
+  isGunuKaldi,
   TAZE_MS,
 } from '../src/piyasa.js';
 import { kaynakEslestir, fiyatCoz } from '../src/poll/price.js';
@@ -26,9 +27,9 @@ globalThis.Date = class extends GercekDate {
 const LEGS = { 'EUR/USD': 1.1135, 'USD/JPY': 159.1, 'GBP/USD': 1.331, 'USD/CAD': 1.423, 'USD/SEK': 9.92, 'USD/CHF': 0.8294 };
 const varsayilan = () => ({
   sq: { 'XAU/USD': { mid: 4046.0, yas: 1000 }, ...Object.fromEntries(Object.entries(LEGS).map(([k, v]) => [k, { mid: v, yas: 2000 }])) },
-  cnbc: { 'XAU=': { last: '4,045.50', yas: 30_000, prev: '4,030.93', rt: 'true' }, 'EUR=': { last: '1.1134', yas: 40_000, prev: '1.1163', rt: 'true' }, '.DXY': { last: '102.530', yas: 5000, prev: '102.231', rt: 'true' }, '@LCO.1': { last: '92.75', yas: 600_000, prev: '91.49', rt: 'false' } },
-  bar: { 'XAU=': { son: 4045.2, yas: 90_000 }, 'EUR=': { son: 1.1135, yas: 90_000 }, '.DXY': { son: 102.52, yas: 90_000 }, '@LCO.1': { son: 93.2, yas: 100_000 } },
-  goldprice: { fiyat: 4045.8, yas: 15_000 },
+  cnbc: { 'XAU=': { last: '4,045.50', yas: 30_000, prev: '4,030.93', rt: 'true' }, 'EUR=': { last: '1.1134', yas: 40_000, prev: '1.1163', rt: 'true' }, '.DXY': { last: '102.530', yas: 5000, prev: '102.231', rt: 'true' }, '@LCO.1': { last: '92.75', yas: 600_000, prev: '91.49', rt: 'false', vade: '2026-11-30', kod: 'LCOF7' }, '@LCO.2': { last: '90.45', yas: 600_000, prev: '89.45', rt: 'false', vade: '2026-12-30', kod: 'LCOG7' } },
+  bar: { 'XAU=': { son: 4045.2, yas: 90_000 }, 'EUR=': { son: 1.1135, yas: 90_000 }, '.DXY': { son: 102.52, yas: 90_000 }, '@LCO.1': { son: 93.2, yas: 100_000 }, '@LCO.2': { son: 90.9, yas: 100_000 } },
+  gunluk: { '@LCO.1': [['20261109', '92.5700'], ['20261110', '91.4900']], '@LCO.2': [['20261109', '90.5000'], ['20261110', '89.4500']] },
   goldapi: { fiyat: 4046.4, yas: 20_000 },
   coinbase: { BTC: 73800, ETH: 2050 },
   kraken: { BTC: 73810, ETH: 2051, EUR: 1.1133, PAXG: 4032 },
@@ -57,10 +58,16 @@ globalThis.fetch = async (url) => {
   if (url.includes('quote.cnbc.com')) {
     if (!S.cnbc) return yok();
     const istenen = decodeURIComponent(/symbols=([^&]+)/.exec(url)[1]).split('|');
-    const liste = istenen.filter((s) => S.cnbc[s]).map((s) => ({ symbol: s, last: S.cnbc[s].last, last_time: new GercekDate(SIMDI - S.cnbc[s].yas).toISOString(), previous_day_closing: S.cnbc[s].prev, realTime: S.cnbc[s].rt }));
+    const liste = istenen.filter((s) => S.cnbc[s]).map((s) => ({ symbol: s, last: S.cnbc[s].last, last_time: new GercekDate(SIMDI - S.cnbc[s].yas).toISOString(), previous_day_closing: S.cnbc[s].prev, realTime: S.cnbc[s].rt, expiration_date: S.cnbc[s].vade ?? null, altSymbol: S.cnbc[s].kod ?? s }));
+    if (liste.length === 0) return json({}); // CNBC'nin tanimadigi istemciye verdigi bos govde gibi
     return json({ FormattedQuoteResult: { FormattedQuote: liste.length === 1 ? liste[0] : liste } });
   }
-  if ((m = /ts-api\.cnbc\.com\/harmony\/app\/charts\/1D\.json\?symbol=(.+)$/.exec(url))) {
+  if ((m = /ts-api\.cnbc\.com\/harmony\/app\/bars\/([^/]+)\/1D\//.exec(url))) {
+    const g = S.gunluk?.[decodeURIComponent(m[1])];
+    if (!g) return yok();
+    return json({ barData: { priceBars: g.map(([gun, close]) => ({ open: '0.0000', close, tradeTime: `${gun}000000` })) } });
+  }
+  if ((m = /ts-api\.cnbc\.com\/harmony\/app\/charts\/1D\.json\?symbol=([^&]+)/.exec(url))) {
     const k = S.bar?.[decodeURIComponent(m[1])];
     if (!k) return yok();
     const n = 2000;
@@ -69,7 +76,6 @@ globalThis.fetch = async (url) => {
       .filter((_, i) => !k.bosluk || n - 1 - i < k.bosluk[0] || n - 1 - i >= k.bosluk[1]);
     return json({ barData: { priceBars } });
   }
-  if (url.includes('goldprice.org')) return S.goldprice ? json({ ts: SIMDI, tsj: SIMDI - S.goldprice.yas, items: [{ xauPrice: S.goldprice.fiyat, pcXau: 0.5, xauClose: 4022.875 }] }) : yok();
   if (url.includes('gold-api.com')) return S.goldapi ? json({ price: S.goldapi.fiyat, updatedAt: new GercekDate(SIMDI - S.goldapi.yas).toISOString() }) : yok();
   if ((m = /api\.exchange\.coinbase\.com\/products\/(BTC|ETH)-USD\/(ticker|stats|candles)/.exec(url))) {
     if (!S.coinbase) return yok();
@@ -141,7 +147,9 @@ await test('tum kaynaklar saglikli: Swissquote spot, gunluk degisim CNBC kapanis
   for (const k of ['BTCUSD', 'ETHUSD']) { assert.equal(e[k].seri.length, 96, `${k} seri`); assert.equal(e[k].seriEtiketi, '24H'); }
   assert.equal(e.BTCUSD.seri.at(-1), 73800, 'BTC serisi eskiden yeniye');
   assert.deepEqual(notlar(g), []);
-  assert.ok(!istekler.some((u) => /api\.binance\.com|er-api|yahoo|pax-gold/.test(u)), 'yasakli kaynak istenmedi');
+  assert.ok(!istekler.some((u) => /api\.binance\.com|er-api|yahoo|pax-gold|goldprice/.test(u)), 'yasakli kaynak istenmedi');
+  assert.ok(!istekler.some((u) => /charts\/1D\.json\?symbol=%40LCO\.2/.test(u)), 'vade uzakken ikinci ay Brent barlari istenmedi');
+  assert.equal(e.BRENT.sozlesme, 'LCOF7');
 });
 await test('Swissquote tamamen yok: altin/EUR/DXY CNBC\'den, DXY bacaksiz, not yok', async () => {
   S.sq = null;
@@ -174,17 +182,48 @@ await test('CNBC grafik servisi yok, kotasyon var: altin grafigi PAXG sekli ama 
   assert.equal(g.enstrumanlar.BRENT.kaynak, 'cnbc (10 dk gecikmeli)');
   assert.deepEqual(notlar(g), ['BRENT verisi 10 dk öncesine ait']);
 });
-await test('CNBC kotasyonu yok, barlar var: onceki kapanis barlardan (Brent icin Londra 19:30 uzlasisi)', async () => {
+await test('CNBC kotasyonu yok, barlar var: onceki kapanis barlardan (Brent icin gunluk barlardaki ICE uzlasisi)', async () => {
   S.cnbc = null;
-  const g = await piyasaGoruntusu();
-  const e = g.enstrumanlar;
-  // Sahte barlar 2000 dakikada %1 yukseliyor. Sinirdan hemen onceki bar: XAU/EUR/DXY icin Sali 22:00 UTC
-  // (son bardan 839 dk once), Brent icin Sali 19:30 UTC (son bardan 989 dk once).
+  let g = await piyasaGoruntusu();
+  let e = g.enstrumanlar;
+  // Sahte 1 dk'lik barlar 2000 dakikada %1 yukseliyor. Sinirdan hemen onceki bar: XAU/EUR icin Sali 17:00 NY
+  // (22:00 UTC, son bardan 839 dk once), DXY icin "15:10" NY etiketi (20:10 UTC, 949 dk once).
   yakin(e.XAUUSD.oncekiKapanis, 4045.2 * (1 - (0.01 * 839) / 1999), 0.03, 'XAU kapanis');
-  yakin(e.DXY.oncekiKapanis, 102.52 * (1 - (0.01 * 839) / 1999), 0.001, 'DXY kapanis');
-  yakin(e.BRENT.oncekiKapanis, 93.2 * (1 - (0.01 * 989) / 1999), 0.001, 'Brent uzlasi');
-  for (const k of ['XAUUSD', 'EURUSD', 'DXY', 'BRENT']) assert.ok(e[k].degisim > 0 && e[k].degisim < 1, `${k} degisim ${e[k].degisim}`);
+  yakin(e.DXY.oncekiKapanis, 102.52 * (1 - (0.01 * 949) / 1999), 0.001, 'DXY kapanis (New York 15:00)');
+  yakin(e.BRENT.oncekiKapanis, 91.49, 1e-9, 'Brent: gunluk bardaki uzlasi');
+  for (const k of ['XAUUSD', 'EURUSD', 'DXY', 'BRENT']) assert.ok(e[k].degisim > 0 && e[k].degisim < 2, `${k} degisim ${e[k].degisim}`);
   assert.deepEqual(notlar(g), [], 'kapanis barlardan bulundu: okuyucu notu yok');
+  // Gunluk barlar da yoksa: 1 dk'lik barlarda Londra 19:30'dan (19:30 UTC, son bardan 989 dk once) hemen onceki bar.
+  S.gunluk = null;
+  g = await piyasaGoruntusu(); e = g.enstrumanlar;
+  yakin(e.BRENT.oncekiKapanis, 93.2 * (1 - (0.01 * 989) / 1999), 0.001, 'Brent: Londra 19:30 oncesi bar');
+  assert.deepEqual(notlar(g), []);
+});
+await test('CNBC kotasyonu bos govde donuyor (taninmayan istemci): hata sayilir, kapanislar barlardan gelir', async () => {
+  S.cnbc = {};
+  const g = await piyasaGoruntusu();
+  assert.ok(g.sorunlar.some((s) => s.enstruman === 'CNBC' && /bos yanit/.test(s.mesaj)), 'CNBC sorunu loglandi');
+  assert.equal(g.enstrumanlar.XAUUSD.kaynak, 'swissquote'); assert.ok(g.enstrumanlar.XAUUSD.oncekiKapanis > 4000);
+});
+await test('Brent vade gecisi: vadeye 5 is gunu kala ikinci ay kontrati yayimlanir', async () => {
+  SIMDI = GercekDate.UTC(2026, 10, 20, 12, 0, 0); // Cuma 20 Kasim: 30 Kasim vadesine 6 is gunu
+  let g = await piyasaGoruntusu();
+  assert.equal(g.enstrumanlar.BRENT.sozlesme, 'LCOF7'); yakin(g.enstrumanlar.BRENT.fiyat, 93.2, 1e-9, 'on ay');
+  SIMDI = GercekDate.UTC(2026, 10, 23, 12, 0, 0); // Pazartesi 23 Kasim: 5 is gunu
+  g = await piyasaGoruntusu();
+  const b = g.enstrumanlar.BRENT;
+  assert.equal(b.sozlesme, 'LCOG7'); yakin(b.fiyat, 90.9, 1e-9, 'ikinci ay bari'); assert.equal(b.kaynak, 'cnbc (1 dk bar)');
+  yakin(b.oncekiKapanis, 89.45, 1e-9, 'ikinci ayin kendi uzlasisi'); yakin(b.degisim, ((90.9 - 89.45) / 89.45) * 100, 1e-6, 'degisim');
+  assert.equal(b.seriEtiketi, '1D'); assert.deepEqual(notlar(g), []);
+  // Vade gecince CNBC'nin on ay adi yeni kontrata doner; kural kendiliginden on aya geri gelir.
+  SIMDI = GercekDate.UTC(2026, 11, 1, 12, 0, 0);
+  S.cnbc['@LCO.1'] = { ...S.cnbc['@LCO.2'] }; S.bar['@LCO.1'] = { ...S.bar['@LCO.2'] };
+  g = await piyasaGoruntusu();
+  assert.equal(g.enstrumanlar.BRENT.sozlesme, 'LCOG7'); yakin(g.enstrumanlar.BRENT.fiyat, 90.9, 1e-9, 'yeni on ay');
+  // Kotasyon yokken vade ayin son is gunu varsayilir.
+  SIMDI = GercekDate.UTC(2026, 10, 25, 12, 0, 0); S = varsayilan(); S.cnbc = null;
+  g = await piyasaGoruntusu();
+  yakin(g.enstrumanlar.BRENT.fiyat, 90.9, 1e-9, 'kotasyonsuz: takvim kurali ikinci aya gecirir');
 });
 await test('Brent bari bayat: 10 dk gecikmeli kotasyona duser ve okuyucuya not duser', async () => {
   S.bar['@LCO.1'].yas = 20 * 60_000;
@@ -197,12 +236,12 @@ await test('Swissquote altini bayat (5 dk), CNBC taze: CNBC secilir, not yok', a
   const g = await piyasaGoruntusu();
   assert.equal(g.enstrumanlar.XAUUSD.kaynak, 'cnbc'); assert.deepEqual(notlar(g), []);
 });
-await test('iki taze kaynak uyusmuyor (goldprice 4045.8, gold-api 3900): oncelikli secilir, isaretlenir, sapan eslestirmeye giremez', async () => {
-  S.goldapi.fiyat = 3900; S.sq['XAU/USD'] = null; S.cnbc['XAU='] = { ...S.cnbc['XAU='], yas: 10 * 60_000 };
+await test('iki taze kaynak uyusmuyor (CNBC 4045.5, gold-api 3900): oncelikli secilir, isaretlenir, sapan eslestirmeye giremez', async () => {
+  S.goldapi.fiyat = 3900; S.sq['XAU/USD'] = null;
   const a = await spotAltin();
-  assert.equal(a.kaynak, 'goldprice'); assert.equal(a.uyusmuyor, true); assert.ok(a.notlar.some((n) => n.includes('gold-api')), 'sapma notu');
-  assert.deepEqual(Object.keys(a.adaylar), ['goldprice'], 'uyusmayan kaynak adaylarda yok');
-  assert.deepEqual(Object.keys(a.yaslar).sort(), ['cnbc', 'gold-api', 'goldprice'], 'yaslar yanit veren her kaynagi icerir');
+  assert.equal(a.kaynak, 'cnbc'); assert.equal(a.uyusmuyor, true); assert.ok(a.notlar.some((n) => n.includes('gold-api')), 'sapma notu');
+  assert.deepEqual(Object.keys(a.adaylar), ['cnbc'], 'uyusmayan kaynak adaylarda yok');
+  assert.deepEqual(Object.keys(a.yaslar).sort(), ['cnbc', 'gold-api'], 'yaslar yanit veren her kaynagi icerir');
   const g = await piyasaGoruntusu();
   assert.ok(notlar(g).includes('XAU/USD kaynakları birbirini tutmuyor, değer teyit edilemedi'), notlar(g).join('|'));
 });
@@ -210,14 +249,14 @@ await test('Swissquote sapik (4500), diger ucu tutarli: medyana uyan secilir', a
   S.sq['XAU/USD'].mid = 4500;
   const a = await spotAltin();
   assert.equal(a.kaynak, 'cnbc'); assert.ok(a.notlar.some((n) => n.includes('swissquote')));
-  assert.deepEqual(Object.keys(a.adaylar).sort(), ['cnbc', 'gold-api', 'goldprice'], 'elenen Swissquote adaylarda yok');
+  assert.deepEqual(Object.keys(a.adaylar).sort(), ['cnbc', 'gold-api'], 'elenen Swissquote adaylarda yok');
   assert.equal(a.uyusmuyor, false);
 });
 await test('oylama: kapanista sapan diye elenen kaynak, acilisin kaynagi olsa bile eslestirmeye giremez', async () => {
   const acilis = await spotAltin(); // hepsi uyumlu, Swissquote 4046 secilir
   assert.equal(acilis.kaynak, 'swissquote');
   // Bir saat sonra piyasa 4050'de (+%0,10 = duragan); Swissquote taze ama bozuk bir 4037 veriyor.
-  S.sq['XAU/USD'].mid = 4037; S.cnbc['XAU='].last = '4,049.50'; S.goldprice.fiyat = 4049.8; S.goldapi.fiyat = 4050.4;
+  S.sq['XAU/USD'].mid = 4037; S.cnbc['XAU='].last = '4,049.50'; S.goldapi.fiyat = 4050.4;
   const kapanis = await spotAltin();
   assert.equal(kapanis.kaynak, 'cnbc'); assert.ok(!('swissquote' in kapanis.adaylar));
   const e = kaynakEslestir(acilis, kapanis);
@@ -241,7 +280,7 @@ await test('EUR/USD: iki kaynak uyusmuyor ve bar yok -> Kraken hakem olur; DXY c
   assert.ok(!notlar(g).some((n) => n.startsWith('EUR/USD kaynak')), 'EUR/USD cozuldu');
 });
 await test('hafta ici tum altin kaynaklari bayat: en yenisi secilir ve not duser', async () => {
-  S.sq['XAU/USD'].yas = 40 * 60_000; S.cnbc['XAU='].yas = 30 * 60_000; S.goldprice.yas = 50 * 60_000; S.goldapi.yas = 45 * 60_000;
+  S.sq['XAU/USD'].yas = 40 * 60_000; S.cnbc['XAU='].yas = 30 * 60_000; S.goldapi.yas = 45 * 60_000;
   const g = await piyasaGoruntusu();
   assert.equal(g.enstrumanlar.XAUUSD.kaynak, 'cnbc'); assert.equal(g.enstrumanlar.XAUUSD.taze, false);
   assert.ok(notlar(g).includes('XAU/USD verisi 30 dk öncesine ait'), notlar(g).join('|'));
@@ -252,7 +291,7 @@ await test('hafta sonu (Cumartesi): eski kotasyon ariza sayilmaz, tek sakin not;
   for (const k of Object.keys(S.sq)) S.sq[k].yas = eski;
   for (const k of Object.keys(S.cnbc)) S.cnbc[k].yas = eski;
   for (const k of Object.keys(S.bar)) S.bar[k].yas = eski;
-  S.goldprice.yas = eski; S.goldapi.yas = eski;
+  S.goldapi.yas = eski;
   const g = await piyasaGoruntusu();
   assert.equal(g.kapali, true);
   assert.deepEqual(notlar(g), ['Döviz ve emtia piyasaları kapalı; DXY, BRENT, EUR/USD, XAU/USD son kapanış fiyatını gösteriyor']);
@@ -311,7 +350,7 @@ await test('bozuk onceki kapanis (%15ten fazla sapma) kullanilmaz', async () => 
   yakin(g.enstrumanlar.XAUUSD.degisim, ((4046.0 - 4028.22) / 4028.22) * 100, 0.002, 'degisim');
 });
 await test('hicbir altin kaynagi yok: enstruman yok, not var, digerleri calisir', async () => {
-  S.sq['XAU/USD'] = null; S.cnbc['XAU='] = undefined; delete S.cnbc['XAU=']; S.goldprice = null; S.goldapi = null;
+  S.sq['XAU/USD'] = null; S.cnbc['XAU='] = undefined; delete S.cnbc['XAU=']; S.goldapi = null;
   const g = await piyasaGoruntusu();
   assert.equal(g.enstrumanlar.XAUUSD, undefined); assert.ok(g.enstrumanlar.EURUSD && g.enstrumanlar.DXY);
   assert.ok(notlar(g).includes('XAU/USD için canlı veri alınamadı'));
@@ -355,11 +394,15 @@ await test('dxyHesapla ICE formulu; seriyeIndir kovalar; piyasaKapaliOlabilir', 
   assert.equal(piyasaKapaliOlabilir(ny(14, 12)), true, 'Cmt');
   assert.equal(piyasaKapaliOlabilir(ny(15, 17)), true, 'Paz 17:00');
   assert.equal(piyasaKapaliOlabilir(ny(15, 18)), false, 'Paz 18:00');
+  const gun = (ay, g) => GercekDate.UTC(2026, ay - 1, g, 12);
+  assert.equal(isGunuKaldi(gun(11, 20), gun(11, 30)), 6, 'Cuma 20 Kasim -> 30 Kasim');
+  assert.equal(isGunuKaldi(gun(11, 21), gun(11, 30)), 6, 'hafta sonu sayilmaz');
+  assert.equal(isGunuKaldi(gun(11, 23), gun(11, 30)), 5); assert.equal(isGunuKaldi(gun(11, 30), gun(11, 30)), 0); assert.equal(isGunuKaldi(gun(12, 1), gun(11, 30)), 0, 'gecmis vade');
 });
 await test('kaynakEslestir: ayni kaynak > ortak kaynak > karisik', async () => {
-  const acilis = { fiyat: 4046, kaynak: 'swissquote', adaylar: { swissquote: 4046, cnbc: 4045.5, goldprice: 4045.8 } };
+  const acilis = { fiyat: 4046, kaynak: 'swissquote', adaylar: { swissquote: 4046, cnbc: 4045.5, 'gold-api': 4046.4 } };
   assert.deepEqual(kaynakEslestir(acilis, { fiyat: 4050, kaynak: 'swissquote', adaylar: { swissquote: 4050, cnbc: 4049 } }), { acilisFiyat: 4046, kapanisFiyat: 4050, kaynak: 'swissquote', karisik: false });
-  assert.deepEqual(kaynakEslestir(acilis, { fiyat: 4049, kaynak: 'cnbc', adaylar: { cnbc: 4049, goldprice: 4049.4 } }), { acilisFiyat: 4045.5, kapanisFiyat: 4049, kaynak: 'cnbc', karisik: false });
+  assert.deepEqual(kaynakEslestir(acilis, { fiyat: 4049, kaynak: 'cnbc', adaylar: { cnbc: 4049, 'gold-api': 4049.4 } }), { acilisFiyat: 4045.5, kapanisFiyat: 4049, kaynak: 'cnbc', karisik: false });
   const k = kaynakEslestir({ fiyat: 4046, kaynak: 'swissquote', adaylar: { swissquote: 4046 } }, { fiyat: 4049.4, kaynak: 'gold-api', adaylar: { 'gold-api': 4049.4 } });
   assert.equal(k.karisik, true); assert.equal(k.acilisFiyat, 4046); assert.equal(k.kapanisFiyat, 4049.4);
   const elle = kaynakEslestir({ fiyat: 4040, kaynak: null, adaylar: {} }, { fiyat: 4050, kaynak: 'swissquote', adaylar: { swissquote: 4050 } });

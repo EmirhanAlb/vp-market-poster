@@ -26,10 +26,13 @@
  *   CNBC chart servisi         ayni sembollerin ~2 gunluk 1 dk'lik barlari;
  *                              Brent barlarinda kotasyondaki 10 dk'lik borsa
  *                              gecikmesi yok (barlar 1-3 dk geriden gelir)
- *   goldprice.org, gold-api    spot altin yedekleri
+ *   gold-api.com               spot altin yedegi (belgeli, ucretsiz; ~1 $ yuksek
+ *                              ve bir dakika kadar geriden)
  *   Coinbase, Kraken, Bitstamp, Binance veri aynasi, CoinGecko   BTC ve ETH
  * Calismayanlar: api.binance.com (ABD'den 451), Yahoo (runner'dan cogunlukla
- * 429), open.er-api ve jsDelivr doviz arsivi (gunluk).
+ * 429), open.er-api ve jsDelivr doviz arsivi (gunluk). Bilerek kullanilmayan:
+ * goldprice.org (verisini yalnizca kendi sayfasindan gelen isteklere aciyor;
+ * baska bir sitenin adresini Referer diye gondermek gerekirdi).
  *
  * Hicbiri SLA vermiyor. Bu yuzden altin, EUR/USD ve DXY icin birden fazla
  * kaynak okunuyor, en taze gecerli olan seciliyor ve kaynaklar birbiriyle
@@ -38,8 +41,9 @@
  * donuyor, okuyucuyu ilgilendirenler mesaja not olarak dusuyor.
  */
 
-const UA =
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36';
+// Kaynaklara tarayici taklidi yapilmadan, genel bir istemci adiyla gidilir.
+// (CNBC yalnizca varsayilan "node"/"curl" kimliklerini geri ceviriyor.)
+const UA = 'market-poster/1.0';
 
 const bekle = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -113,7 +117,11 @@ async function swissquote(taban, karsi) {
   return { fiyat: (enIyi.bid + enIyi.ask) / 2, zaman: enIyi.zaman };
 }
 
-/** CNBC kotasyonlari: { sembol: { fiyat, zaman, oncekiKapanis, gercekZaman } }. */
+/**
+ * CNBC kotasyonlari: { sembol: { fiyat, zaman, oncekiKapanis, gercekZaman,
+ * vadeSonu, sozlesme } }. Son ikisi vadeli kontratlar icin: son islem gunu (UTC
+ * gun basi, ms) ve kontrat kodu ("LCOF7").
+ */
 async function cnbcKotasyonlar(semboller) {
   const { veri } = await jsonAl(
     'https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol' +
@@ -129,15 +137,24 @@ async function cnbcKotasyonlar(semboller) {
       oncekiKapanis: sayi(q.previous_day_closing),
       // "false" = borsa verisi 10 dk gecikmeli (ICE Brent boyle).
       gercekZaman: q.realTime === 'true',
+      vadeSonu: /^\d{4}-\d{2}-\d{2}$/.test(q.expiration_date || '')
+        ? Date.parse(`${q.expiration_date}T00:00:00Z`)
+        : null,
+      sozlesme: q.altSymbol || null,
     };
   }
+  // CNBC tanimadigi istemciye HTTP 200 ile bos govde donuyor; bu sessizce
+  // "veri yok" sayilirsa onceki kapanislar iz birakmadan kaybolur.
+  if (Object.keys(sonuc).length === 0) throw new Error('bos yanit');
   return sonuc;
 }
 
 /** CNBC'nin ~2 gunluk 1 dk'lik barlari, eskiden yeniye: [{ t, c }]. */
 async function cnbcBarlar(sembol) {
+  // Duz adres 60 sn onbellekten geliyor; benzersiz parametreyle en yeni bar
+  // ~1,5-3 dk yerine ~1-2 dk eski oluyor.
   const { veri } = await jsonAl(
-    `https://ts-api.cnbc.com/harmony/app/charts/1D.json?symbol=${encodeURIComponent(sembol)}`,
+    `https://ts-api.cnbc.com/harmony/app/charts/1D.json?symbol=${encodeURIComponent(sembol)}&_=${Date.now()}`,
     { ms: 8000 },
   );
   const barlar = (veri?.barData?.priceBars || [])
@@ -148,14 +165,36 @@ async function cnbcBarlar(sembol) {
   return barlar;
 }
 
-async function goldprice() {
-  const { veri } = await jsonAl('https://data-asg.goldprice.org/dbXRates/USD', {
-    headers: { Referer: 'https://goldprice.org/' },
-  });
-  const satir = veri?.items?.[0];
-  if (!(satir?.xauPrice > 0)) throw new Error('fiyat yok');
-  // `tsj` kotasyonun ani; `ts` yanitin uretildigi an ve fiyat degismese de ilerleyebiliyor.
-  return { fiyat: Number(satir.xauPrice), zaman: Number(veri.tsj) || Number(veri.ts) || null };
+/** New York takvim gunu, "YYYYMMDD". */
+function nyGunu(ms) {
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' })
+      .formatToParts(new Date(ms))
+      .map((x) => [x.type, x.value]),
+  );
+  return `${p.year}${p.month}${p.day}`;
+}
+
+/**
+ * CNBC gunluk barlari: `fiyatAni`nin gununden onceki son islem gununun
+ * kapanisi. Vadeli kontratlarda gunluk barin kapanisi borsanin uzlasi fiyatidir
+ * (ICE Brent, 10.11.2026: 91,49). Kotasyon alinamadiginda Brent'in "onceki
+ * kapanis"i buradan gelir. Yalnizca `close` guvenilir; diger alanlar bos gelebiliyor.
+ */
+async function cnbcOncekiGunKapanisi(sembol, fiyatAni) {
+  const bugun = nyGunu(fiyatAni);
+  const { veri } = await jsonAl(
+    `https://ts-api.cnbc.com/harmony/app/bars/${encodeURIComponent(sembol)}/1D/` +
+      `${nyGunu(fiyatAni - 12 * 86_400_000)}000000/${bugun}235900/adjusted/EST5EDT.json`,
+    { ms: 5000 },
+  );
+  const onceki = (veri?.barData?.priceBars || [])
+    .map((b) => ({ gun: String(b.tradeTime || '').slice(0, 8), c: Number(b.close) }))
+    .filter((b) => /^\d{8}$/.test(b.gun) && b.gun < bugun && b.c > 0)
+    .sort((a, b) => (a.gun < b.gun ? -1 : 1))
+    .at(-1);
+  if (!onceki) throw new Error('gunluk bar yok');
+  return onceki.c;
 }
 
 async function goldApi() {
@@ -225,8 +264,16 @@ async function kraken(anahtar) {
   const k = Object.values(t.veri.result || {})[0];
   const alis = Number(k?.b?.[0]);
   const satis = Number(k?.a?.[0]);
-  // EUR/USD'de son islem dakikalarca eski olabiliyor; alis-satis ortasi guncel.
-  const fiyat = anahtar === 'EURUSD' && alis > 0 && satis >= alis ? (alis + satis) / 2 : Number(k?.c?.[0]);
+  const sonIslem = Number(k?.c?.[0]);
+  const defterVar = alis > 0 && satis >= alis;
+  // Ticker son islemin zamanini vermiyor ve son islem dakikalarca eski
+  // olabiliyor. EUR/USD'de alis-satis ortasi; kriptoda son islem, guncel
+  // alis-satis araliginin disinda kaldiysa araliga cekilir.
+  const fiyat = !defterVar
+    ? sonIslem
+    : anahtar === 'EURUSD'
+      ? (alis + satis) / 2
+      : Math.min(Math.max(sonIslem, alis), satis);
   // Ticker zaman damgasi vermiyor; istek ani kullaniliyor.
   return {
     fiyat,
@@ -368,6 +415,35 @@ export function dxyHesapla({ EURUSD, USDJPY, GBPUSD, USDCAD, USDSEK, USDCHF }) {
 }
 
 const KOVA_MS = 900_000;
+const GUN_MS = 86_400_000;
+
+const haftaIci = (gun) => ![0, 6].includes(new Date(gun * GUN_MS).getUTCDay());
+
+/** `an`in gununden (haric) `hedef`in gunune (dahil) kadar hafta ici gun sayisi; hedef gecmisse 0. */
+export function isGunuKaldi(an, hedef) {
+  let n = 0;
+  for (let g = Math.floor(an / GUN_MS) + 1; g <= Math.floor(hedef / GUN_MS); g++) if (haftaIci(g)) n += 1;
+  return n;
+}
+
+/** `an`in icinde bulundugu ayin son hafta ici gunu (UTC gun basi, ms): ICE Brent on ayinin olagan son islem gunu. */
+function ayinSonIsGunu(an) {
+  const d = new Date(an);
+  let gun = Math.floor(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0) / GUN_MS);
+  while (!haftaIci(gun)) gun -= 1;
+  return gun * GUN_MS;
+}
+
+/**
+ * Brent'te on aydan ikinci aya gecis: on ay kontratinin son islem gunune bu
+ * kadar is gunu ya da daha az kaldiginda ikinci ay yayimlanir. CNBC'nin
+ * "@LCO.1" adi biten kontrati son gunune kadar izliyor; islem hacmi ve araci
+ * kurumlarin kontratlari ise yaklasik bir hafta once sonraki aya geciyor (iki
+ * kontrat arasinda 11.11.2026'da 2,3 $ fark vardi, Ekim sonunda 3,7-5,1 $).
+ * Gecis yapilmazsa ayin son haftasinda poster, islem platformlarindan dolarlarca
+ * farkli bir Brent gosterir. BRENT_ROLL_IS_GUNU ile degistirilir; -1 kapatir.
+ */
+const BRENT_ROLL_IS_GUNU = Number(process.env.BRENT_ROLL_IS_GUNU ?? 5);
 
 /** 1 dk'lik barlari 15 dk'lik kovalara indirir: kova numarasi -> o kovadaki son kapanis. */
 function kovala(barlar) {
@@ -506,10 +582,10 @@ const dene = (soz) =>
 // --- SPOT ALTIN (oylama da kullaniyor) ----------------------------------------
 
 /** Spot altin kaynaklari, oncelik sirasiyla. */
-const ALTIN_SIRASI = ['swissquote', 'cnbc', 'goldprice', 'gold-api'];
+const ALTIN_SIRASI = ['swissquote', 'cnbc', 'gold-api'];
 
 /**
- * Spot XAU/USD'yi dort ayri kaynaktan okur.
+ * Spot XAU/USD'yi uc ayri kaynaktan okur.
  * @returns {Promise<{fiyat: number, kaynak: string, zaman: number|null, yasSn: number|null, taze: boolean,
  *   uyusmuyor: boolean, adaylar: Record<string, number>, yaslar: Record<string, number|null>,
  *   notlar: string[], hatalar: string[], oncekiKapanis: number|null}>}
@@ -517,19 +593,17 @@ const ALTIN_SIRASI = ['swissquote', 'cnbc', 'goldprice', 'gold-api'];
  *   `yaslar`: yanit veren her kaynagin verisinin yasi (sn).
  */
 export async function spotAltin({ cnbcSozu } = {}) {
-  const [sq, cq, gp, ga] = await Promise.all([
+  const [sq, cq, ga] = await Promise.all([
     dene(swissquote('XAU', 'USD')),
     // Poster goruntusu CNBC'yi zaten tek istekte okuyor; ayni yanit paylasilir.
     cnbcSozu || dene(cnbcKotasyonlar(['XAU='])),
-    dene(goldprice()),
     dene(goldApi()),
   ]);
   const an = Date.now();
-  const ham = { swissquote: sq.v, cnbc: cq.v?.['XAU='], goldprice: gp.v, 'gold-api': ga.v };
+  const ham = { swissquote: sq.v, cnbc: cq.v?.['XAU='], 'gold-api': ga.v };
   const hatalar = [
     ['swissquote', sq],
     ['cnbc', cq],
-    ['goldprice', gp],
     ['gold-api', ga],
   ]
     .filter(([, r]) => r.hata)
@@ -652,8 +726,13 @@ const veriYokNotu = (anahtar) => `${ENSTRUMANLAR[anahtar].ad} için canlı veri 
  * mesajina aynen dusulur (kullaniciya gorunen metin, Turkce karakterli).
  */
 export async function piyasaGoruntusu() {
-  const cnbcSozu = dene(cnbcKotasyonlar(['XAU=', 'EUR=', '.DXY', '@LCO.1']));
-  const [cq, altin, sqBacak, barXau, barGc, barEur, barDxy, barBrent, btc, eth] = await Promise.all([
+  const cnbcSozu = dene(cnbcKotasyonlar(['XAU=', 'EUR=', '.DXY', '@LCO.1', '@LCO.2']));
+  // Ikinci ay Brent barlari yalnizca vade gecisi yakinken gerekir. Burada takvime
+  // gore kaba bir on eleme yapilir; kesin karar kotasyondaki vade tarihine gore
+  // asagida verilir.
+  const baslangic = Date.now();
+  const ikinciAyGerekebilir = isGunuKaldi(baslangic, ayinSonIsGunu(baslangic)) <= BRENT_ROLL_IS_GUNU + 3;
+  const [cq, altin, sqBacak, barXau, barGc, barEur, barDxy, barBrent1, barBrent2, btc, eth] = await Promise.all([
     cnbcSozu,
     dene(spotAltin({ cnbcSozu })),
     Promise.all(BACAKLAR.map(([, a, b]) => dene(swissquote(a, b)))),
@@ -662,6 +741,7 @@ export async function piyasaGoruntusu() {
     dene(cnbcBarlar('EUR=')),
     dene(cnbcBarlar('.DXY')),
     dene(cnbcBarlar('@LCO.1')),
+    ikinciAyGerekebilir ? dene(cnbcBarlar('@LCO.2')) : null,
     kripto('BTCUSD'),
     kripto('ETHUSD'),
   ]);
@@ -831,10 +911,14 @@ export async function piyasaGoruntusu() {
     // CNBC'nin .DXY barlari 10 dk gecikmeli ve 10 dk ileri etiketli. Grafik sekli
     // icin onemsiz; fiyat olarak KULLANILMAZ, yalnizca iki kaynak birbirini
     // tutmadiginda hangisinin makul oldugunu gormek icin hakemdir.
-    const s = adaySec(adaylar, an, { sapma: 0.001, hakem: sonBarFiyati(barDxy.v, 20 * 60_000) });
+    // Iki kaynak normalde 0,003 puandan fazla ayrismiyor; 0,05 puanlik (%0,05) pay
+    // tek bir bozuk kuru (USD/JPY'de %0,5 hata endeksi 0,07 oynatir) yakalar.
+    const s = adaySec(adaylar, an, { sapma: 0.0005, hakem: sonBarFiyati(barDxy.v, 20 * 60_000) });
     if (s) {
       kaydet('DXY', s, {
-        oncekiKapanis: kapanis('.DXY', s.fiyat, barDxy.v),
+        // CNBC'nin .DXY kapanisi endeksin New York 15:00 degeri; barlar 10 dk ileri
+        // etiketli oldugu icin o an "15:10"dan hemen onceki bardir.
+        oncekiKapanis: kapanis('.DXY', s.fiyat, barDxy.v, sonDuvarSaati(an, 'America/New_York', 15, 10)),
         ...(barDxy.v ? gunlukSeri(barDxy.v, sinir) : {}),
         seriKaynak: 'cnbc',
       });
@@ -847,8 +931,18 @@ export async function piyasaGoruntusu() {
 
   // BRENT ----------------------------------------------------------------------
   {
-    const sonBar = barBrent.v?.at(-1);
-    const q = cnbc['@LCO.1'];
+    // Hangi kontrat: on ay, vadesine BRENT_ROLL_IS_GUNU is gunu kalana kadar.
+    // Vade tarihi CNBC kotasyonundan; o yoksa ayin son is gunu varsayilir.
+    const vade = cnbc['@LCO.1']?.vadeSonu ?? ayinSonIsGunu(an);
+    const kalan = isGunuKaldi(an, vade);
+    const ikinciAy = kalan <= BRENT_ROLL_IS_GUNU;
+    const sembol = ikinciAy ? '@LCO.2' : '@LCO.1';
+    const barlar = ikinciAy ? barBrent2 || (await dene(cnbcBarlar('@LCO.2'))) : barBrent1;
+    const q = cnbc[sembol];
+    if (ikinciAy) {
+      sorun('BRENT', `on ay kontratinin vadesine ${kalan} is gunu kaldi; ikinci ay (${q?.sozlesme || sembol}) yayimlaniyor`);
+    }
+    const sonBar = barlar.v?.at(-1);
     const adaylar = [
       sonBar && { kaynak: 'cnbc (1 dk bar)', fiyat: sonBar.c, zaman: sonBar.t },
       q && { kaynak: q.gercekZaman ? 'cnbc' : 'cnbc (10 dk gecikmeli)', fiyat: q.fiyat, zaman: q.zaman },
@@ -856,16 +950,22 @@ export async function piyasaGoruntusu() {
     // Gecikmeli kotasyon taze barla kiyaslanamaz (10 dk fark); sapma kontrolu yok.
     const s = adaySec(adaylar, an, { tazeMs: BAR_TAZE_MS, sapma: 1 });
     if (s) {
-      kaydet('BRENT', s, {
-        oncekiKapanis: kapanis('@LCO.1', s.fiyat, barBrent.v, brentKapanisAni),
-        ...(barBrent.v ? gunlukSeri(barBrent.v, sinir) : {}),
-        seriKaynak: 'cnbc',
-      });
+      // Onceki kapanis = onceki ICE uzlasi fiyati: kotasyondan; o yoksa gunluk
+      // barlardan; o da yoksa 1 dk'lik barlarda Londra 19:30'dan hemen onceki bar.
+      let oncekiKapanis = kapanis(sembol, s.fiyat);
+      if (!oncekiKapanis) {
+        const uzlasi = (await dene(cnbcOncekiGunKapanisi(sembol, s.zaman || an))).v;
+        oncekiKapanis =
+          [uzlasi, kapanisBarlardan(barlar.v, brentKapanisAni)].find((k) => k > 0 && Math.abs(s.fiyat - k) / k < 0.15) ??
+          null;
+      }
+      kaydet('BRENT', s, { oncekiKapanis, ...(barlar.v ? gunlukSeri(barlar.v, sinir) : {}), seriKaynak: 'cnbc' });
+      enstrumanlar.BRENT.sozlesme = q?.sozlesme || sembol;
     } else {
       // Poster bu durumda sitenin kendi Brent kaynagina (Yahoo, 10 dk gecikmeli)
       // birakilir. Okuyucu notu burada degil, kart cizildikten sonra dusulur
       // (poster-veri.js dogrula()): sitenin kaynagi da yanit vermeyebilir.
-      sorun('BRENT', `CNBC'den alinamadi (${barBrent.hata || 'bar yok'}); sitenin kendi kaynagina birakildi`);
+      sorun('BRENT', `CNBC'den alinamadi (${barlar.hata || 'bar yok'}); sitenin kendi kaynagina birakildi`);
     }
   }
 
@@ -949,7 +1049,7 @@ export function goruntuOzeti(goruntu) {
       const degisim = e.degisim == null ? '   —   ' : `${e.degisim >= 0 ? '+' : ''}${e.degisim.toFixed(2)}%`;
       const yas = e.yasSn == null ? 'zaman damgasi yok' : `${sureYaz(e.yasSn)} once`;
       const seri = e.seri ? `${e.seriEtiketi}, ${e.seri.length} nokta (${e.seriKaynak})` : 'yok';
-      return `  ${ad.padEnd(8)} ${e.fiyat.toFixed(ondalik).padStart(10)}  ${degisim.padStart(7)}  <- ${e.kaynak}, ${yas} | grafik: ${seri}`;
+      return `  ${ad.padEnd(8)} ${e.fiyat.toFixed(ondalik).padStart(10)}  ${degisim.padStart(7)}  <- ${e.kaynak}${e.sozlesme ? ` ${e.sozlesme}` : ''}, ${yas} | grafik: ${seri}`;
     })
     .join('\n');
 }

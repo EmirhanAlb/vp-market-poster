@@ -43,20 +43,29 @@ yakalanıp doğru kaynaklardan yanıtlanıyor; sayfa yalnızca çiziyor.
 ### Fiyatlar nereden geliyor?
 
 Hepsi anahtarsız, herkese açık kaynaklar; 11.11.2026'da GitHub'ın sunucularından tek tek sınandı.
-Hiçbiri hizmet garantisi vermiyor; bu yüzden her enstrümanın yedeği var.
+Hiçbiri hizmet garantisi vermiyor (gold-api.com dışında belgeli de değiller); bu yüzden her
+enstrümanın yedeği var. İstekler tarayıcı taklidi yapılmadan, `market-poster/1.0` istemci adıyla
+gider. Kalıcı ve platformla birebir aynı fiyat için doğru kaynak kurumun kendi fiyat akışıdır.
 
 | Enstrüman | Fiyat (öncelik sırasıyla) | Tazelik | Değişim yüzdesi |
 |---|---|---|---|
-| XAU/USD | Swissquote spot → CNBC `XAU=` → goldprice.org → gold-api.com | saniyeler | önceki kapanışa göre (New York 17:00) |
+| XAU/USD | Swissquote spot → CNBC `XAU=` → gold-api.com | saniyeler | önceki kapanışa göre (New York 17:00) |
 | EUR/USD | Swissquote spot → CNBC `EUR=` (ikisi de bayatsa ya da birbirini tutmuyorsa, piyasa açıkken Kraken) | saniyeler | önceki kapanışa göre (New York 17:00) |
 | DXY | Swissquote'un altı kurundan ICE formülü → CNBC `.DXY` | saniyeler | önceki ICE kapanışına göre |
-| BRENT | CNBC `@LCO.1` 1 dakikalık bar (ICE ön ay vadeli) → CNBC kotasyonu (10 dk gecikmeli) → sitenin kendi kaynağı | 1–3 dk | önceki ICE uzlaşı fiyatına göre |
+| BRENT | CNBC 1 dakikalık bar (ICE Brent vadeli: ön ay `@LCO.1`, vadeye 5 iş günü kala ikinci ay `@LCO.2`) → CNBC kotasyonu (10 dk gecikmeli) → sitenin kendi kaynağı | 1–2 dk | önceki ICE uzlaşı fiyatına göre |
 | BTC/USD, ETH/USD | Coinbase; yanıt vermezse ya da son işlemi bayatsa Kraken, Bitstamp, Binance veri aynası, CoinGecko | saniyeler | son 24 saat |
 
 **Yüzdeler.** Altın ve EUR/USD'de önceki kapanış New York 17:00 seviyesidir; işlem platformlarının
-günlük mumuyla aynı kural. Brent'te taban ICE uzlaşı fiyatıdır (Londra 19:30); yüzdeyi bir önceki
-seansın son işleminden ölçen platformlarda Brent yüzdesi farklı görünebilir. Önceki kapanış CNBC
-kotasyonundan, o gelmezse 1 dakikalık barlardan okunur.
+günlük mumuyla aynı kural. DXY'de endeksin New York 15:00 değeri, Brent'te ICE uzlaşı fiyatıdır
+(Londra 19:30); yüzdeyi bir önceki seansın son işleminden ölçen platformlarda Brent yüzdesi farklı
+görünebilir. Önceki kapanış CNBC kotasyonundan, o gelmezse barlardan okunur. BTC ve ETH'de referans
+tam 24 saat önceki fiyattır.
+
+**Brent hangi kontrat.** Posterdeki Brent, ICE Brent vadeli kontratıdır (nakit/spot Brent değil; ikisi
+arasında 1–2 $ fark olabilir). Ön ay kontratının son işlem gününe 5 iş günü kala ikinci aya geçilir:
+işlem hacmi ve aracı kurumların kontratları o günlerde sonraki aya geçer, iki kontrat arasında birkaç
+dolar fark olur. Eşik `BRENT_ROLL_IS_GUNU` ortam değişkeniyle değiştirilir (`-1` geçişi kapatır);
+hangi kontratın okunduğu Actions günlüğünde yazar (`LCOF7` gibi).
 
 **Grafikler.** Altın, EUR/USD, DXY ve Brent kartlarında grafik son New York 17:00'sinden bu yana
 15 dakikalık kapanışlarla çizilir ve kartta "1D" yazar: çizginin yönü ile yüzdenin işareti aynı şeyi
@@ -68,7 +77,7 @@ mumlarının yalnızca şekli (spot düzeyine taşınmış, "24H" etiketiyle), E
 kullanılır. **Yüzde hiçbir durumda token'dan türetilmez:** önceki kapanış bilinmiyorsa rozet boş (—)
 kalır ve mesaja not düşer.
 
-**Kaynak denetimi.** Altında en az üç taze kaynak varken diğerlerinden %0,25'ten fazla ayrışan kaynak
+**Kaynak denetimi.** Altında üç kaynak da tazeyken diğer ikisinden %0,25'ten fazla ayrışan kaynak
 elenir. EUR/USD ve DXY'de iki kaynak birbirini tutmazsa son 1 dakikalık bar (EUR/USD'de ayrıca Kraken)
 hakem olur; o da çözmezse öncelikli kaynak yayımlanır ve mesaja "kaynakları birbirini tutmuyor" notu
 düşer. Brent ve kriptoda kaynaklar birbiriyle karşılaştırılmaz.
@@ -220,6 +229,7 @@ Yakalama birkaç saniye sürer; mesaj hedef saatten yarım dakika içinde düşe
 - `POSTER_URL` — farklı bir dil/sayfa kullanmak için (varsayılan `https://vestaprimes.com/en/market-poster`)
 - `TZ_NAME` — saat damgası ve dosya adı için zaman dilimi (varsayılan `Europe/Istanbul`)
 - `LIVE_TIMEOUT_MS` — fiyatların çizilmesi için beklenecek süre (varsayılan 60000)
+- `BRENT_ROLL_IS_GUNU` — Brent'te ikinci ay kontratına vadeye kaç iş günü kala geçileceği (varsayılan 5)
 - `GRAFIK_BEKLEME_SN` — grafiklerin çizilmesi için üst sınır (varsayılan 50; workflow'da
   `POSTER_GRAFIK_BEKLEME_SN` repo değişkeniyle değiştirilir). Veri hazır geldiği için normalde birkaç
   saniye sürer; serisi hiç alınamamış bir kart için beklenmez.
@@ -441,8 +451,7 @@ Hafta içi her gün TR 14:00'te kanala bir oylama düşer: "Altın, ABD açılı
 seyreder?" (Yukarı / Aşağı / Durağan). Açılış fiyatı 09:30 New York'ta, kapanış bir saat sonra okunur;
 değişim ±%0,15'in içindeyse "Durağan" sayılır. Sonuç ve doğru bilenler kanala yazılır.
 
-**Fiyat:** gerçek spot altın (`src/poll/price.js` → `src/piyasa.js`): Swissquote → CNBC → goldprice.org
-→ gold-api.com. Açılış ve kapanış **aynı kaynaktan** eşleştirilir; kaynağın adı `state/poll-history.json`
+**Fiyat:** gerçek spot altın (`src/poll/price.js` → `src/piyasa.js`): Swissquote → CNBC → gold-api.com. Açılış ve kapanış **aynı kaynaktan** eşleştirilir; kaynağın adı `state/poll-history.json`
 kaydına yazılır. 11.11.2026'ya kadar fiyat PAXG token'ından (ya da vadeli kontrattan) okunuyordu ve
 hangisinin okunduğu kaydedilmiyordu; o tarihten önceki kayıtlarda `kaynak` alanı yoktur.
 

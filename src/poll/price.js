@@ -10,8 +10,8 @@
  * digerinden gelseydi yarim puani asan sahte bir hareket ilan edilirdi
  * ("duragan" bandi %0,15).
  *
- * Artik dort ayri spot kaynagi (Swissquote, CNBC, goldprice.org,
- * gold-api.com) birlikte okunuyor; bkz. src/piyasa.js. `kaynakEslestir()`
+ * Artik uc ayri spot kaynagi (Swissquote, CNBC, gold-api.com) birlikte
+ * okunuyor; bkz. src/piyasa.js. `kaynakEslestir()`
  * acilis ve kapanisi ayni kaynaktan eslestirir.
  */
 
