@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "ddc33d89efd1f160",
+      "ts": 1794492792411,
+      "baslik": "Nvidia’da Jensen Huang dönemi bitti: Kurucu CEO istifa etti, hisse %11 düştü"
+    },
+    {
+      "anahtar": "dc32a3115d04724f",
+      "ts": 1794492192486,
+      "baslik": "Son dakika... Skandalları büyüyordu: Nvidia CEO'su Huand istifa etti!"
+    },
+    {
       "anahtar": "547e5ef69554e36f",
       "ts": 1794485560444,
       "baslik": "Wall Street, Nvidia krizine tepki gösterdi: Bernstein ve Oppenheimer hisseyi düşürdü"
@@ -274,21 +284,6 @@
       "anahtar": "07a7edb41ddef291",
       "ts": 1793894438568,
       "baslik": "Türkiye Merkez Bankası rezervleri dört ayın en düşüğüne geriledi"
-    },
-    {
-      "anahtar": "e5d9f7dfde751e1d",
-      "ts": 1793884172666,
-      "baslik": "Haftalık yüzde 20’lik petrol çöküşü enflasyon korkularını azaltırken Alman tahvil getirileri Ağustos düşüklerine geriled"
-    },
-    {
-      "anahtar": "d7adb493efaf28ed",
-      "ts": 1793881751810,
-      "baslik": "Sterlin bugün: BoE 25 baz puan artırdı, dolar istihdam verisi öncesi sakinleşti"
-    },
-    {
-      "anahtar": "d379a858148798f2",
-      "ts": 1793881151693,
-      "baslik": "İngiltere Merkez Bankası faiz artırdı"
     }
   ]
 }
