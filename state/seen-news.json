@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "49f6140d66574cd9",
+      "ts": 1794476492435,
+      "baslik": "TCMB tahminini yükseltti: Emekli maaşları için yeni hesap yapıldı! Emekli zammı ne kadar olacak?"
+    },
+    {
       "anahtar": "0d4df57dd4068ad0",
       "ts": 1794472872371,
       "baslik": "Merkez Bankası enflasyon hedefini yükseltti: Emekli, asgari ücret ve memur maaşında hesaplar sil baştan değişti"
@@ -284,11 +289,6 @@
       "anahtar": "901688719cc39283",
       "ts": 1793873299484,
       "baslik": "Son dakika... MSB duyurdu: TAYFUN Blok-2 füzeleri ve HÜRKUŞ-II göreve hazır"
-    },
-    {
-      "anahtar": "ce3241f5a4311d77",
-      "ts": 1793868462298,
-      "baslik": "FTSE 100, BoE faiz kararı öncesi banka rallisiyle 3 aylık zirveye ulaştı"
     }
   ]
 }
