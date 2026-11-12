@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "b76b8e5323a40e33",
+      "ts": 1794471057203,
+      "baslik": "Son dakika... Merkez Bankası enflasyonun tek haneye düşmeyeceğini ilan etti"
+    },
+    {
+      "anahtar": "7f68995275b4aeb9",
+      "ts": 1794471057203,
+      "baslik": "İsveç’te enflasyon Ekim’de yüzde 0,9’a geriledi"
+    },
+    {
       "anahtar": "cfd2308b159aaabe",
       "ts": 1794462611244,
       "baslik": "Neslihan Köroğlu değerlendirdi: Enflasyon beklentisi %29,5’e yükseldi"
@@ -269,11 +279,6 @@
       "anahtar": "ce3241f5a4311d77",
       "ts": 1793868462298,
       "baslik": "FTSE 100, BoE faiz kararı öncesi banka rallisiyle 3 aylık zirveye ulaştı"
-    },
-    {
-      "anahtar": "a20b0421b0cd5dc4",
-      "ts": 1793866061839,
-      "baslik": "TCMB ekim ayı enflasyon raporunu yayımladı: Enerji ve gıda fiyatları öne çıktı"
     }
   ]
 }
