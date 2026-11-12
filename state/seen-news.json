@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "547e5ef69554e36f",
+      "ts": 1794485560444,
+      "baslik": "Wall Street, Nvidia krizine tepki gösterdi: Bernstein ve Oppenheimer hisseyi düşürdü"
+    },
+    {
       "anahtar": "cd67889271c7bdc2",
       "ts": 1794479521810,
       "baslik": "Sterlin bugün: Fed’in sert duruşuna rağmen sterlin düştü"
@@ -284,11 +289,6 @@
       "anahtar": "d379a858148798f2",
       "ts": 1793881151693,
       "baslik": "İngiltere Merkez Bankası faiz artırdı"
-    },
-    {
-      "anahtar": "32a3ea2812a1bff0",
-      "ts": 1793875114987,
-      "baslik": "İtalya’da perakende satışlar Eylül’de %0,1 arttı; 3Ç hacmi %0,5 düştü"
     }
   ]
 }
