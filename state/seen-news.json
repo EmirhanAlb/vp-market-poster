@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "cfd2308b159aaabe",
+      "ts": 1794462611244,
+      "baslik": "Neslihan Köroğlu değerlendirdi: Enflasyon beklentisi %29,5’e yükseldi"
+    },
+    {
       "anahtar": "10e789cdeff41d5b",
       "ts": 1794450538472,
       "baslik": "Japonya’da ÜFE enflasyonu Ekim’de beklentileri aştı"
@@ -269,16 +274,6 @@
       "anahtar": "a20b0421b0cd5dc4",
       "ts": 1793866061839,
       "baslik": "TCMB ekim ayı enflasyon raporunu yayımladı: Enerji ve gıda fiyatları öne çıktı"
-    },
-    {
-      "anahtar": "d29eb32458c4d4fa",
-      "ts": 1793857614438,
-      "baslik": "Bitcoin toparlandı, petrol çakıldı! Seçim sonrası piyasalar hareketlendi: Şimdi sırada ne var?"
-    },
-    {
-      "anahtar": "cfb7cd6f7661ae8b",
-      "ts": 1793852768397,
-      "baslik": "Petrol fiyatları çakıldı! Piyasalar savaşın bitmesini fiyatlıyor"
     }
   ]
 }
