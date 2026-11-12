@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "6c4f92b3501cd51d",
+      "ts": 1794500661794,
+      "baslik": "TD Cowen enflasyon ortamında en iyi perakende hisselerini açıkladı"
+    },
+    {
       "anahtar": "ddc33d89efd1f160",
       "ts": 1794492792411,
       "baslik": "Nvidia’da Jensen Huang dönemi bitti: Kurucu CEO istifa etti, hisse %11 düştü"
@@ -279,11 +284,6 @@
       "anahtar": "99b709c3e8e1ac22",
       "ts": 1793928244121,
       "baslik": "Petrol yeni tanker saldırılarıyla yükseldi ancak sert haftalık kayba yöneldi"
-    },
-    {
-      "anahtar": "07a7edb41ddef291",
-      "ts": 1793894438568,
-      "baslik": "Türkiye Merkez Bankası rezervleri dört ayın en düşüğüne geriledi"
     }
   ]
 }
