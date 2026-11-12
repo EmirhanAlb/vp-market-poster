@@ -629,6 +629,34 @@
       "oySayisi": 0,
       "gecersiz": 0,
       "kazananlar": []
+    },
+    {
+      "tarih": "12.11.2026",
+      "kanal": "C08AJ51934P",
+      "ts": "1794481208.108829",
+      "acilisFiyat": 3904.285,
+      "kapanisFiyat": 3859.935,
+      "kaynak": "swissquote",
+      "degisim": -1.136,
+      "yon": "asagi",
+      "oySayisi": 1,
+      "gecersiz": 0,
+      "kazananlar": []
+    },
+    {
+      "tarih": "12.11.2026",
+      "kanal": "C0BNPGR567R",
+      "ts": "1794481214.263119",
+      "acilisFiyat": 3904.285,
+      "kapanisFiyat": 3859.935,
+      "kaynak": "swissquote",
+      "degisim": -1.136,
+      "yon": "asagi",
+      "oySayisi": 4,
+      "gecersiz": 0,
+      "kazananlar": [
+        "U0BN7JJGVU1"
+      ]
     }
   ]
 }
