@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "94c36bc99aff7b03",
+      "ts": 1794575494258,
+      "baslik": "HSBC TCMB’nin aralık faiz kararına ilişkin yeni tahminini açıkladı"
+    },
+    {
       "anahtar": "e928c9d7bcdc0315",
       "ts": 1794564036191,
       "baslik": "Bakan Şimşek açıkladı! Cari açık 39,2 milyar dolara geriledi"
@@ -289,16 +294,6 @@
       "anahtar": "de9e1389d83c6525",
       "ts": 1793972327636,
       "baslik": "ABD'de işsizlik oranı yüzde 4,1'e geriledi"
-    },
-    {
-      "anahtar": "24dc83790f61421c",
-      "ts": 1793963274247,
-      "baslik": "Altın ve gümüş için çöküş uyarısı yaptı, nedenini açıkladı"
-    },
-    {
-      "anahtar": "fe72541ca12056a6",
-      "ts": 1793962048732,
-      "baslik": "Macaristan’da perakende satışlar Eylül’de %4,3 arttı"
     }
   ]
 }
