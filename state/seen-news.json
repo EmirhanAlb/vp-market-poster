@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "e2c93f89115698df",
+      "ts": 1794580309877,
+      "baslik": "Goolsbee: Fed yüzde 2’lik enflasyon hedefine ulaşamıyor"
+    },
+    {
       "anahtar": "94c36bc99aff7b03",
       "ts": 1794575494258,
       "baslik": "HSBC TCMB’nin aralık faiz kararına ilişkin yeni tahminini açıkladı"
@@ -284,16 +289,6 @@
       "anahtar": "08ecab71e535efe6",
       "ts": 1793978374190,
       "baslik": "Ikea’nın satışları enflasyon nedeniyle 43,8 milyar avroya geriledi"
-    },
-    {
-      "anahtar": "09bc9e4665fcd230",
-      "ts": 1793974128082,
-      "baslik": "ABD'de tarım dışı istihdam ekimde beklentilerin üzerine çıktı"
-    },
-    {
-      "anahtar": "de9e1389d83c6525",
-      "ts": 1793972327636,
-      "baslik": "ABD'de işsizlik oranı yüzde 4,1'e geriledi"
     }
   ]
 }
