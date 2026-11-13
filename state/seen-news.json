@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "c01f9002ce4c9b4f",
+      "ts": 1794547116859,
+      "baslik": "Fed beklentisi doları 19 ayın zirvesine yükseltti"
+    },
+    {
+      "anahtar": "ad248eec4b7b72f5",
+      "ts": 1794545917655,
+      "baslik": "Merkez Bankası'nın raporundan sızdı: Meslek meslek yeni memur maaşları ortaya çıktı"
+    },
+    {
       "anahtar": "9083a60cd9887902",
       "ts": 1794513323455,
       "baslik": "ABD'nin bütçe açığı ekim ayında rekor kırdı"
@@ -284,16 +294,6 @@
       "anahtar": "22f40c0b75c5026e",
       "ts": 1793943937341,
       "baslik": "Tayland’da TÜFE enflasyonu Ekim’de dört yılın zirvesine çıktı"
-    },
-    {
-      "anahtar": "59623637f36971e1",
-      "ts": 1793941537215,
-      "baslik": "Bankacılık krizi baskıyı artırdı, Paraguay Devlet Başkanı Pena istifa etti"
-    },
-    {
-      "anahtar": "99b709c3e8e1ac22",
-      "ts": 1793928244121,
-      "baslik": "Petrol yeni tanker saldırılarıyla yükseldi ancak sert haftalık kayba yöneldi"
     }
   ]
 }
