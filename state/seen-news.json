@@ -1,6 +1,21 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "63da8db240ad0c69",
+      "ts": 1794556178481,
+      "baslik": "Bitcoin, satış baskısı ve jeopolitik risklerle yeniden 70 bin doların altına geriledi"
+    },
+    {
+      "anahtar": "13e31ee360672e53",
+      "ts": 1794554979047,
+      "baslik": "TCMB'nin kasım ayı Piyasa Katılımcıları Anketi'ne göre TÜFE yıl sonu artış beklentisi yüzde 30,04'e yükseldi"
+    },
+    {
+      "anahtar": "8d1d09524ecd7b4b",
+      "ts": 1794554979047,
+      "baslik": "Finlandiya’da enflasyon Ekim 2026’da %3,1’e yükseldi"
+    },
+    {
       "anahtar": "c01f9002ce4c9b4f",
       "ts": 1794547116859,
       "baslik": "Fed beklentisi doları 19 ayın zirvesine yükseltti"
@@ -289,11 +304,6 @@
       "anahtar": "40c56d8bf9f6ddfc",
       "ts": 1793951798689,
       "baslik": "Goldman, Fed’in sert duruşu nedeniyle altın fiyat tahminini düşürdü"
-    },
-    {
-      "anahtar": "22f40c0b75c5026e",
-      "ts": 1793943937341,
-      "baslik": "Tayland’da TÜFE enflasyonu Ekim’de dört yılın zirvesine çıktı"
     }
   ]
 }
