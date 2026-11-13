@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "6455c239c5b6362c",
+      "ts": 1794561015469,
+      "baslik": "Şahin Fed, küresel tahvil rallisini bitirirken Avro getirileri çok haftanın zirvesine ulaştı"
+    },
+    {
       "anahtar": "63da8db240ad0c69",
       "ts": 1794556178481,
       "baslik": "Bitcoin, satış baskısı ve jeopolitik risklerle yeniden 70 bin doların altına geriledi"
@@ -294,16 +299,6 @@
       "anahtar": "ba7a216714095ab7",
       "ts": 1793956632206,
       "baslik": "Yapay zeka çöküşü ve ABD istihdam verisi piyasaları etkiliyor"
-    },
-    {
-      "anahtar": "56a9a26b8b245c67",
-      "ts": 1793955415384,
-      "baslik": "Tahvil piyasaları yükseldi: Teknoloji hisseleri çöküşü güvenli liman talebini artırdı"
-    },
-    {
-      "anahtar": "40c56d8bf9f6ddfc",
-      "ts": 1793951798689,
-      "baslik": "Goldman, Fed’in sert duruşu nedeniyle altın fiyat tahminini düşürdü"
     }
   ]
 }
