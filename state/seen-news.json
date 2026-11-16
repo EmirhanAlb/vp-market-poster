@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "45eee7c1418c8d3f",
+      "ts": 1794794523939,
+      "baslik": "Altın 3.900 doların altına düştü, Fed’in Aralık zammı beklentileri güçlendi"
+    },
+    {
       "anahtar": "30bbb2da4bb6feeb",
       "ts": 1794751080170,
       "baslik": "İran duyurdu: Hürmüz Boğazı'nda mayınlara çarpan 2 petrol tankerinden biri battı"
@@ -269,16 +274,6 @@
       "anahtar": "dd7fc1c387815c6c",
       "ts": 1794191999416,
       "baslik": "Çin’de TÜFE beklentilerin altında kaldı; fabrika fiyatları hızlandı"
-    },
-    {
-      "anahtar": "935f645ba348392f",
-      "ts": 1794188364735,
-      "baslik": "Altın, istihdam verisinin ardından 4.100 doların üzerine çıktı"
-    },
-    {
-      "anahtar": "51ac7d443575ac33",
-      "ts": 1794184746042,
-      "baslik": "Trump İran’la görüşmelerde ilerleme olursa yeni saldırılar ’olası değil’ dedi, petrol fiyatları düştü"
     }
   ]
 }
