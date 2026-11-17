@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "569987022d5e4c06",
+      "ts": 1794900253431,
+      "baslik": "Tarım ÜFE ekimde aylık bazda yüzde 1,02 arttı"
+    },
+    {
       "anahtar": "715a6ea4233b9e42",
       "ts": 1794890588093,
       "baslik": "Asya dövizleri durgun, dolar Fed sıkılaştırma beklentileriyle 19 aylık zirveye ulaştı"
@@ -259,21 +264,6 @@
       "anahtar": "1a779777935b82f9",
       "ts": 1794296451738,
       "baslik": "Norveç’te çekirdek enflasyon Ekim’de beklentinin altında arttı"
-    },
-    {
-      "anahtar": "9fde6e452e950d3e",
-      "ts": 1794292830368,
-      "baslik": "Altın, Fed faiz ipuçları için ABD enflasyon verilerini beklerken geriledi"
-    },
-    {
-      "anahtar": "1606f28774e6d896",
-      "ts": 1794291629303,
-      "baslik": "Hollanda’da enflasyon Ekim’de gaz fiyatlarıyla yüzde 3,7’ye yükseldi"
-    },
-    {
-      "anahtar": "c661828248d30615",
-      "ts": 1794289809628,
-      "baslik": "Brent petrol çakıldı! Savaşın kaderi o tarihte değişebilir"
     }
   ]
 }
