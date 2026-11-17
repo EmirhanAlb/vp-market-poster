@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "58385b7faeb95879",
+      "ts": 1794938282368,
+      "baslik": "ABD'de yeni kriz! Ulusal Güvenlik Ajansı gizli iletişim ağı çöktü"
+    },
+    {
       "anahtar": "e6b0dd4ce92eb44b",
       "ts": 1794915339707,
       "baslik": "AB Komisyonu yüksek enflasyon ve enerji maliyetlerinin baskısı altında Birliğin büyüme tahminini yükseltti"
@@ -244,26 +249,6 @@
       "anahtar": "f2bf6291b4d9e7f8",
       "ts": 1794368886448,
       "baslik": "Güçlü enflasyon sonrası Fed’in Aralık’ta faiz artırma ihtimali %88’e yükseldi"
-    },
-    {
-      "anahtar": "fa97fc3380252cad",
-      "ts": 1794328468088,
-      "baslik": "Rusya'nın bütçe açığı yaklaşık yüzde 33 arttı"
-    },
-    {
-      "anahtar": "d121d616556aca4f",
-      "ts": 1794319410473,
-      "baslik": "Sıcak TÜFE verisi güçlü işgücü piyasasıyla birleşince ABD tahvil faizleri yükseldi"
-    },
-    {
-      "anahtar": "8247187cf469b5e1",
-      "ts": 1794319410473,
-      "baslik": "ABD'de enflasyon açıklandı: Altın çakıldı dolar tırmanışa geçti"
-    },
-    {
-      "anahtar": "36770af5fcd0638e",
-      "ts": 1794316988957,
-      "baslik": "Sanayi üretimi eylülde yüzde 2,6 arttı"
     }
   ]
 }
