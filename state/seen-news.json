@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "e6b0dd4ce92eb44b",
+      "ts": 1794915339707,
+      "baslik": "AB Komisyonu yüksek enflasyon ve enerji maliyetlerinin baskısı altında Birliğin büyüme tahminini yükseltti"
+    },
+    {
       "anahtar": "86011cca5a6a01d1",
       "ts": 1794909903670,
       "baslik": "İtalya’da enflasyon enerji fiyatlarıyla Ekim’de %5,5’e yükseldi"
@@ -259,11 +264,6 @@
       "anahtar": "36770af5fcd0638e",
       "ts": 1794316988957,
       "baslik": "Sanayi üretimi eylülde yüzde 2,6 arttı"
-    },
-    {
-      "anahtar": "b2219843258adb05",
-      "ts": 1794307332974,
-      "baslik": "Trump İran saldırılarını durdurdu, Avrupa gaz fiyatları düştü"
     }
   ]
 }
