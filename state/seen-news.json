@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "2b1a236ff72870c6",
+      "ts": 1794901470561,
+      "baslik": "Asya borsaları, ABD’nin yapay zeka çip kısıtlamalarını sıkılaştırmasıyla geriledi"
+    },
+    {
+      "anahtar": "4b181b0a267400bf",
+      "ts": 1794901470561,
+      "baslik": "İngiltere işsizlik oranı %4,6’ya düştü, beklentiyi aştı"
+    },
+    {
       "anahtar": "569987022d5e4c06",
       "ts": 1794900253431,
       "baslik": "Tarım ÜFE ekimde aylık bazda yüzde 1,02 arttı"
@@ -259,11 +269,6 @@
       "anahtar": "7887fc774d235207",
       "ts": 1794300067923,
       "baslik": "Petrol fiyatlarındaki düşüş enflasyon endişesini azalttı, Avrupa hisseleri rekor seviyelere yaklaşıyor"
-    },
-    {
-      "anahtar": "1a779777935b82f9",
-      "ts": 1794296451738,
-      "baslik": "Norveç’te çekirdek enflasyon Ekim’de beklentinin altında arttı"
     }
   ]
 }
