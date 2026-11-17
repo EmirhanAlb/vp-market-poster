@@ -713,6 +713,38 @@
       "oySayisi": 4,
       "gecersiz": 0,
       "kazananlar": []
+    },
+    {
+      "tarih": "17.11.2026",
+      "kanal": "C08AJ51934P",
+      "ts": "1794913208.660149",
+      "acilisFiyat": 3862.59,
+      "kapanisFiyat": 3870.45,
+      "kaynak": "swissquote",
+      "degisim": 0.203,
+      "yon": "yukari",
+      "oySayisi": 2,
+      "gecersiz": 0,
+      "kazananlar": [
+        "U08BGH62D6U"
+      ]
+    },
+    {
+      "tarih": "17.11.2026",
+      "kanal": "C0BNPGR567R",
+      "ts": "1794913213.888009",
+      "acilisFiyat": 3862.59,
+      "kapanisFiyat": 3870.45,
+      "kaynak": "swissquote",
+      "degisim": 0.203,
+      "yon": "yukari",
+      "oySayisi": 4,
+      "gecersiz": 0,
+      "kazananlar": [
+        "U0BNK2944AD",
+        "U0BVB3WM1V3",
+        "U0CHZBERJCE"
+      ]
     }
   ]
 }
