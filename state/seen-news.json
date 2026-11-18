@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "30cc5b5d6585b9f3",
+      "ts": 1794981745955,
+      "baslik": "Altın 3.800 doların altına düştü; Fed faiz artışı beklentileri satışı derinleştiriyor"
+    },
+    {
+      "anahtar": "1d6ba3f351a7bba6",
+      "ts": 1794979946608,
+      "baslik": "ABD stokları petrolü düşürdü, Hürmüz riski kayıpları sınırladı"
+    },
+    {
       "anahtar": "63bd2184b7e76a26",
       "ts": 1794944320231,
       "baslik": "Ukrayna’nın Kırım köprüsüne saldırısı sonrası Euronext buğdayı yükseldi"
@@ -239,21 +249,6 @@
       "anahtar": "b34e22aa2e2e0ccf",
       "ts": 1794379748543,
       "baslik": "Bitcoin 74 bin doların altına düştü, sıcak TÜFE faiz artışı beklentilerini güçlendirdi"
-    },
-    {
-      "anahtar": "11268a2904543ded",
-      "ts": 1794374316827,
-      "baslik": "Petrol fiyatları dipten döndü! Hürmüz Boğazı'nda saldırılar rekor kırdı"
-    },
-    {
-      "anahtar": "f7f29c0fe7a03dfd",
-      "ts": 1794374316827,
-      "baslik": "Geçen sene kayyım atanmıştı… Merkez Bankası o kuruluşun faaliyet iznini iptal etti"
-    },
-    {
-      "anahtar": "f2bf6291b4d9e7f8",
-      "ts": 1794368886448,
-      "baslik": "Güçlü enflasyon sonrası Fed’in Aralık’ta faiz artırma ihtimali %88’e yükseldi"
     }
   ]
 }
