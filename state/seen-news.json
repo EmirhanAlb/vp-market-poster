@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "c2191295fd3ca6cc",
+      "ts": 1795016215232,
+      "baslik": "FranceAgriMer Fransız buğday ihracat tahminini %11 artırdı"
+    },
+    {
       "anahtar": "6673e4118a58ef07",
       "ts": 1795006505946,
       "baslik": "Fed tutanakları öncesinde ABD Hazine tahvil getirileri yaklaşık bir haftanın en düşük seviyesine geriledi"
@@ -244,16 +249,6 @@
       "anahtar": "848fb6ceaf9bafce",
       "ts": 1794425618367,
       "baslik": "Merkez Bankası kredi büyüme sınırlarını yükseltti"
-    },
-    {
-      "anahtar": "dd52d872e0fe2f00",
-      "ts": 1794403901084,
-      "baslik": "İtalya’nın sanayi üretimi Eylül’de %1,2 arttı"
-    },
-    {
-      "anahtar": "8f6abd3f95ee3c63",
-      "ts": 1794402082654,
-      "baslik": "Jefferies enflasyon desteği azalırken 2 AB özel kimyasal distribütörünü düşürdü"
     }
   ]
 }
