@@ -745,6 +745,34 @@
         "U0BVB3WM1V3",
         "U0CHZBERJCE"
       ]
+    },
+    {
+      "tarih": "18.11.2026",
+      "kanal": "C08AJ51934P",
+      "ts": "1794999607.802959",
+      "acilisFiyat": 3778.865,
+      "kapanisFiyat": 3757.455,
+      "kaynak": "swissquote",
+      "degisim": -0.567,
+      "yon": "asagi",
+      "oySayisi": 2,
+      "gecersiz": 0,
+      "kazananlar": []
+    },
+    {
+      "tarih": "18.11.2026",
+      "kanal": "C0BNPGR567R",
+      "ts": "1794999613.920909",
+      "acilisFiyat": 3778.865,
+      "kapanisFiyat": 3757.455,
+      "kaynak": "swissquote",
+      "degisim": -0.567,
+      "yon": "asagi",
+      "oySayisi": 4,
+      "gecersiz": 0,
+      "kazananlar": [
+        "U0BN7JJGVU1"
+      ]
     }
   ]
 }
