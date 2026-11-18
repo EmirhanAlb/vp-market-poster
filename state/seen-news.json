@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "9d24c473157b1ff5",
+      "ts": 1794997430048,
+      "baslik": "Avrupa gaz fiyatları geriledi; İran saldırıları düşüşü sınırladı"
+    },
+    {
+      "anahtar": "3cb685d116ddaff2",
+      "ts": 1794996830632,
+      "baslik": "İngiltere’de ekim enflasyonu rekor dizel fiyatlarıyla yüzde 3,6’ya yükseldi"
+    },
+    {
       "anahtar": "1a45e55b6e7f8bb8",
       "ts": 1794990193627,
       "baslik": "Endonezya rupiah rekor düşük seviyede, faiz oranını %6’ya yükseltti"
@@ -234,11 +244,6 @@
       "anahtar": "8f6abd3f95ee3c63",
       "ts": 1794402082654,
       "baslik": "Jefferies enflasyon desteği azalırken 2 AB özel kimyasal distribütörünü düşürdü"
-    },
-    {
-      "anahtar": "2e180dafcdc8d416",
-      "ts": 1794388810037,
-      "baslik": "Küresel tahviller düştü, sıcak ABD TÜFE ve Fed retoriği 50 baz puanlık artış korkusunu tetikledi"
     }
   ]
 }
