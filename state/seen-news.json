@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "1a45e55b6e7f8bb8",
+      "ts": 1794990193627,
+      "baslik": "Endonezya rupiah rekor düşük seviyede, faiz oranını %6’ya yükseltti"
+    },
+    {
       "anahtar": "30cc5b5d6585b9f3",
       "ts": 1794981745955,
       "baslik": "Altın 3.800 doların altına düştü; Fed faiz artışı beklentileri satışı derinleştiriyor"
@@ -234,21 +239,6 @@
       "anahtar": "2e180dafcdc8d416",
       "ts": 1794388810037,
       "baslik": "Küresel tahviller düştü, sıcak ABD TÜFE ve Fed retoriği 50 baz puanlık artış korkusunu tetikledi"
-    },
-    {
-      "anahtar": "c67ad74b77a9f7eb",
-      "ts": 1794383367033,
-      "baslik": "Almanya'da enflasyon %2,8'e geriledi"
-    },
-    {
-      "anahtar": "45158e0edfd3cf10",
-      "ts": 1794382767226,
-      "baslik": "Ticaret satış hacmi eylülde yıllık bazda azalırken perakende satış hacmi arttı"
-    },
-    {
-      "anahtar": "b34e22aa2e2e0ccf",
-      "ts": 1794379748543,
-      "baslik": "Bitcoin 74 bin doların altına düştü, sıcak TÜFE faiz artışı beklentilerini güçlendirdi"
     }
   ]
 }
