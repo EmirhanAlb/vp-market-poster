@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "3b852443ab315050",
+      "ts": 1795068725291,
+      "baslik": "İngiltere’de siber saldırılar Ekim’de rekor seviyeye yaklaştı"
+    },
+    {
       "anahtar": "ae7bd9b8b7472727",
       "ts": 1795063873161,
       "baslik": "BOJ Başkanı Ueda'dan faiz artışı sinyali: Aralık beklentisi yüzde 84'e çıktı"
@@ -239,11 +244,6 @@
       "anahtar": "7f68995275b4aeb9",
       "ts": 1794471057203,
       "baslik": "İsveç’te enflasyon Ekim’de yüzde 0,9’a geriledi"
-    },
-    {
-      "anahtar": "cfd2308b159aaabe",
-      "ts": 1794462611244,
-      "baslik": "Neslihan Köroğlu değerlendirdi: Enflasyon beklentisi %29,5’e yükseldi"
     }
   ]
 }
