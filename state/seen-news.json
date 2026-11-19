@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "9ecbafbdd15c4089",
+      "ts": 1795084409344,
+      "baslik": "AB Komisyonu’na yapay zeka destekli siber saldırı: Maaş ve sağlık sistemleri çöktü"
+    },
+    {
       "anahtar": "f990c391244d7fdd",
       "ts": 1795073557279,
       "baslik": "Moody's ABD'nin kredi notunu açıkladı! Borç yükü ve bütçe açığına dikkat çekti"
@@ -219,41 +224,6 @@
       "anahtar": "547e5ef69554e36f",
       "ts": 1794485560444,
       "baslik": "Wall Street, Nvidia krizine tepki gösterdi: Bernstein ve Oppenheimer hisseyi düşürdü"
-    },
-    {
-      "anahtar": "cd67889271c7bdc2",
-      "ts": 1794479521810,
-      "baslik": "Sterlin bugün: Fed’in sert duruşuna rağmen sterlin düştü"
-    },
-    {
-      "anahtar": "3cc6b1ae773aecaa",
-      "ts": 1794479521810,
-      "baslik": "Nvidia’daki kriz, Strategy’nin endeksten çıkarılmasıyla baskıyı artırdı"
-    },
-    {
-      "anahtar": "49f6140d66574cd9",
-      "ts": 1794476492435,
-      "baslik": "TCMB tahminini yükseltti: Emekli maaşları için yeni hesap yapıldı! Emekli zammı ne kadar olacak?"
-    },
-    {
-      "anahtar": "0d4df57dd4068ad0",
-      "ts": 1794472872371,
-      "baslik": "Merkez Bankası enflasyon hedefini yükseltti: Emekli, asgari ücret ve memur maaşında hesaplar sil baştan değişti"
-    },
-    {
-      "anahtar": "48919330047543ec",
-      "ts": 1794472272473,
-      "baslik": "TCMB enflasyon tahminlerini artırdı"
-    },
-    {
-      "anahtar": "b76b8e5323a40e33",
-      "ts": 1794471057203,
-      "baslik": "Son dakika... Merkez Bankası enflasyonun tek haneye düşmeyeceğini ilan etti"
-    },
-    {
-      "anahtar": "7f68995275b4aeb9",
-      "ts": 1794471057203,
-      "baslik": "İsveç’te enflasyon Ekim’de yüzde 0,9’a geriledi"
     }
   ]
 }
