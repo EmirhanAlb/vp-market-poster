@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "ae7bd9b8b7472727",
+      "ts": 1795063873161,
+      "baslik": "BOJ Başkanı Ueda'dan faiz artışı sinyali: Aralık beklentisi yüzde 84'e çıktı"
+    },
+    {
+      "anahtar": "73b56d734de529a3",
+      "ts": 1795062673439,
+      "baslik": "Dolar Fed’in sert duruşuyla 19 ayın zirvesinde; Avustralya doları düştü"
+    },
+    {
       "anahtar": "c2191295fd3ca6cc",
       "ts": 1795016215232,
       "baslik": "FranceAgriMer Fransız buğday ihracat tahminini %11 artırdı"
@@ -234,21 +244,6 @@
       "anahtar": "cfd2308b159aaabe",
       "ts": 1794462611244,
       "baslik": "Neslihan Köroğlu değerlendirdi: Enflasyon beklentisi %29,5’e yükseldi"
-    },
-    {
-      "anahtar": "10e789cdeff41d5b",
-      "ts": 1794450538472,
-      "baslik": "Japonya’da ÜFE enflasyonu Ekim’de beklentileri aştı"
-    },
-    {
-      "anahtar": "f786daf1ab5f2bea",
-      "ts": 1794446919451,
-      "baslik": "Altın 4.000 doların altında, enflasyon endişeleri Fed’in sert hamlesini işaret ediyor"
-    },
-    {
-      "anahtar": "848fb6ceaf9bafce",
-      "ts": 1794425618367,
-      "baslik": "Merkez Bankası kredi büyüme sınırlarını yükseltti"
     }
   ]
 }
