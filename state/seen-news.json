@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "0aa2986190d41463",
+      "ts": 1795156253205,
+      "baslik": "Hollanda’da tüketici güveni Kasım’da hafif yükseldi"
+    },
+    {
       "anahtar": "c797ca1eb002bb64",
       "ts": 1795150216773,
       "baslik": "Altın 14 aylık dibe geriledi, Fed faiz artırımı beklentileriyle haftalık düşüşe yöneldi"
@@ -194,16 +199,6 @@
       "anahtar": "8d1d09524ecd7b4b",
       "ts": 1794554979047,
       "baslik": "Finlandiya’da enflasyon Ekim 2026’da %3,1’e yükseldi"
-    },
-    {
-      "anahtar": "c01f9002ce4c9b4f",
-      "ts": 1794547116859,
-      "baslik": "Fed beklentisi doları 19 ayın zirvesine yükseltti"
-    },
-    {
-      "anahtar": "ad248eec4b7b72f5",
-      "ts": 1794545917655,
-      "baslik": "Merkez Bankası'nın raporundan sızdı: Meslek meslek yeni memur maaşları ortaya çıktı"
     }
   ]
 }
