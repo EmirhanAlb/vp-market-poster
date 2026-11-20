@@ -1,6 +1,16 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "37233f86d4c64077",
+      "ts": 1795161083014,
+      "baslik": "İsveç’te işsizlik oranı Ekim’de %7,7’ye geriledi"
+    },
+    {
+      "anahtar": "76787731e66323dc",
+      "ts": 1795161083014,
+      "baslik": "İngiltere’de perakende satışlar Ekim’de beklentiyi aşarak yüzde 0,7 arttı"
+    },
+    {
       "anahtar": "ff0ef070e0e1a686",
       "ts": 1795159268574,
       "baslik": "Yurt dışı ÜFE ekimde aylık yüzde 0,75, yıllık yüzde 33,45 arttı"
@@ -194,21 +204,6 @@
       "anahtar": "6455c239c5b6362c",
       "ts": 1794561015469,
       "baslik": "Şahin Fed, küresel tahvil rallisini bitirirken Avro getirileri çok haftanın zirvesine ulaştı"
-    },
-    {
-      "anahtar": "63da8db240ad0c69",
-      "ts": 1794556178481,
-      "baslik": "Bitcoin, satış baskısı ve jeopolitik risklerle yeniden 70 bin doların altına geriledi"
-    },
-    {
-      "anahtar": "13e31ee360672e53",
-      "ts": 1794554979047,
-      "baslik": "TCMB'nin kasım ayı Piyasa Katılımcıları Anketi'ne göre TÜFE yıl sonu artış beklentisi yüzde 30,04'e yükseldi"
-    },
-    {
-      "anahtar": "8d1d09524ecd7b4b",
-      "ts": 1794554979047,
-      "baslik": "Finlandiya’da enflasyon Ekim 2026’da %3,1’e yükseldi"
     }
   ]
 }
