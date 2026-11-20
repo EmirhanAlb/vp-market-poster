@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "16ada39922db9ca5",
+      "ts": 1795170739455,
+      "baslik": "ECB döviz takas hatlarını genişletecek, Lagarde açıkladı"
+    },
+    {
       "anahtar": "37233f86d4c64077",
       "ts": 1795161083014,
       "baslik": "İsveç’te işsizlik oranı Ekim’de %7,7’ye geriledi"
@@ -194,16 +199,6 @@
       "anahtar": "94c36bc99aff7b03",
       "ts": 1794575494258,
       "baslik": "HSBC TCMB’nin aralık faiz kararına ilişkin yeni tahminini açıkladı"
-    },
-    {
-      "anahtar": "e928c9d7bcdc0315",
-      "ts": 1794564036191,
-      "baslik": "Bakan Şimşek açıkladı! Cari açık 39,2 milyar dolara geriledi"
-    },
-    {
-      "anahtar": "6455c239c5b6362c",
-      "ts": 1794561015469,
-      "baslik": "Şahin Fed, küresel tahvil rallisini bitirirken Avro getirileri çok haftanın zirvesine ulaştı"
     }
   ]
 }
