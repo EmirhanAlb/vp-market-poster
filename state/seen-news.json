@@ -1,6 +1,11 @@
 {
   "gonderilenler": [
     {
+      "anahtar": "7d8404a198fd1bc1",
+      "ts": 1795133290268,
+      "baslik": "Japonya’da TÜFE enflasyonu Ekim’de yükseldi, çekirdek rakam tahminlerin hafif altında"
+    },
+    {
       "anahtar": "9ecbafbdd15c4089",
       "ts": 1795084409344,
       "baslik": "AB Komisyonu’na yapay zeka destekli siber saldırı: Maaş ve sağlık sistemleri çöktü"
@@ -194,36 +199,6 @@
       "anahtar": "ad248eec4b7b72f5",
       "ts": 1794545917655,
       "baslik": "Merkez Bankası'nın raporundan sızdı: Meslek meslek yeni memur maaşları ortaya çıktı"
-    },
-    {
-      "anahtar": "9083a60cd9887902",
-      "ts": 1794513323455,
-      "baslik": "ABD'nin bütçe açığı ekim ayında rekor kırdı"
-    },
-    {
-      "anahtar": "153d9f7d2b34cefa",
-      "ts": 1794512123130,
-      "baslik": "SON DAKİKA | İhtiyaç, taşıt ve ticari kredilerinde yeni dönem! TCMB sınırlarını yükseltti"
-    },
-    {
-      "anahtar": "6c4f92b3501cd51d",
-      "ts": 1794500661794,
-      "baslik": "TD Cowen enflasyon ortamında en iyi perakende hisselerini açıkladı"
-    },
-    {
-      "anahtar": "ddc33d89efd1f160",
-      "ts": 1794492792411,
-      "baslik": "Nvidia’da Jensen Huang dönemi bitti: Kurucu CEO istifa etti, hisse %11 düştü"
-    },
-    {
-      "anahtar": "dc32a3115d04724f",
-      "ts": 1794492192486,
-      "baslik": "Son dakika... Skandalları büyüyordu: Nvidia CEO'su Huand istifa etti!"
-    },
-    {
-      "anahtar": "547e5ef69554e36f",
-      "ts": 1794485560444,
-      "baslik": "Wall Street, Nvidia krizine tepki gösterdi: Bernstein ve Oppenheimer hisseyi düşürdü"
     }
   ]
 }
